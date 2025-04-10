@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Selamat Ulang Tahun untuk Teh Riri</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      font-family: 'Poppins', sans-serif;
+      background: linear-gradient(120deg, #f6d365, #fda085);
+      overflow: hidden;
+      color: #fff;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      height: 100vh;
+      text-align: center;
+    }
+
+    h1 {
+      font-size: 2.5rem;
+      margin-bottom: 10px;
+      animation: fadeInDown 1.5s ease forwards;
+    }
+
+    p {
+      max-width: 600px;
+      font-size: 1.2rem;
+      line-height: 1.6;
+      opacity: 0;
+      animation: fadeInUp 2s ease 1s forwards;
+    }
+
+    @keyframes fadeInDown {
+      from {
+        opacity: 0;
+        transform: translateY(-30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    @keyframes fadeInUp {
+      from {
+        opacity: 0;
+        transform: translateY(30px);
+      }
+      to {
+        opacity: 1;
+        transform: translateY(0);
+      }
+    }
+
+    .confetti {
+      position: absolute;
+      width: 10px;
+      height: 10px;
+      background-color: #fff;
+      animation: fall 5s linear infinite;
+    }
+
+    @keyframes fall {
+      0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
+      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+  </style>
+</head>
+<body>
+  <h1>Selamat Ulang Tahun, Teh Riri!</h1>
+  <p>
+    Di hari spesial ini, semoga Teh Riri selalu dikelilingi oleh cinta, tawa, dan berkah tanpa batas. 
+  Terima kasih sudah menjadi sosok yang hangat dan menginspirasi. Semoga setiap langkah ke depan dipenuhi kemudahan dan kebahagiaan.  
+  Maap nii gabisa dateng, soalnya lupa juga, yaaa tapi tetep ngucapin aja dari sini teh, aam bikin nii buat teh riri, yaa intinya selamat ulang tahun, tambah tua, semoga panjang umur, sehat selalu, di berikan rezeki yang melimpah oleh allah swt, dan kelancaran di segala masalahnya, dinpermudah, semoga semua amal baiknya di terima di sisi Allah swt, Aamiin.
+  </p>
+  
+  <h2>HAPPY BIRTHDAY</h2>
+
+  <script>
+    // Generate confetti
+    for (let i = 0; i < 50; i++) {
+      const confetti = document.createElement("div");
+      confetti.classList.add("confetti");
+      confetti.style.left = Math.random() * 100 + "vw";
+      confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
+      confetti.style.animationDuration = (Math.random() * 2 + 3) + "s";
+      confetti.style.width = confetti.style.height = (Math.random() * 8 + 4) + "px";
+      document.body.appendChild(confetti);
+    }
+  </script>
+</body>
+  </html>
