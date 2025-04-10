@@ -19,10 +19,9 @@
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: flex-start;
       height: 100vh;
-      overflow: hidden;
-      padding: 20px;
+      overflow-y: scroll;
+      scroll-behavior: smooth;
     }
 
     header {
@@ -35,13 +34,16 @@
       font-weight: 600;
       font-size: 1.2rem;
       color: #222;
+      position: sticky;
+      top: 0;
+      z-index: 10;
     }
 
     main {
       text-align: center;
       margin-top: 5vh;
       max-width: 700px;
-      padding: 1rem;
+      padding: 2rem;
       background: rgba(255, 255, 255, 0.3);
       border-radius: 20px;
       box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
@@ -63,7 +65,7 @@
 
     p {
       font-size: 1.1rem;
-      line-height: 1.6;
+      line-height: 1.8;
       color: #333;
     }
 
@@ -109,6 +111,19 @@
   </main>
 
   <script>
+    // Auto Scroll Lambat
+    let scrollPos = 0;
+    const scrollInterval = setInterval(() => {
+      scrollPos += 1;
+      window.scrollTo({ top: scrollPos, behavior: "smooth" });
+
+      // Stop saat sudah mentok bawah
+      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
+        clearInterval(scrollInterval);
+      }
+    }, 50); // scroll pelan tiap 50ms
+
+    // Confetti
     for (let i = 0; i < 60; i++) {
       const confetti = document.createElement("div");
       confetti.classList.add("confetti");
