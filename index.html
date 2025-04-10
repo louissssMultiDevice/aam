@@ -1,54 +1,76 @@
 <!DOCTYPE html>
 <html lang="id">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>Selamat Ulang Tahun untuk Teh Riri</title>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>Fika-Ai | Aam - Digital Marketplace</title>
+  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
   <style>
-    body {
+    * {
+      box-sizing: border-box;
       margin: 0;
       padding: 0;
+    }
+
+    body {
       font-family: 'Poppins', sans-serif;
-      background: linear-gradient(120deg, #f6d365, #fda085);
-      overflow: hidden;
-      color: #fff;
+      background: linear-gradient(135deg, #fceabb, #f8b500);
+      color: #333;
       display: flex;
       flex-direction: column;
       align-items: center;
-      justify-content: center;
+      justify-content: flex-start;
       height: 100vh;
+      overflow: hidden;
+      padding: 20px;
+    }
+
+    header {
+      width: 100%;
+      background: rgba(255, 255, 255, 0.15);
+      backdrop-filter: blur(10px);
+      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
       text-align: center;
+      padding: 1rem;
+      font-weight: 600;
+      font-size: 1.2rem;
+      color: #222;
+    }
+
+    main {
+      text-align: center;
+      margin-top: 5vh;
+      max-width: 700px;
+      padding: 1rem;
+      background: rgba(255, 255, 255, 0.3);
+      border-radius: 20px;
+      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+      animation: fadeInUp 1.2s ease-out forwards;
     }
 
     h1 {
       font-size: 2.5rem;
-      margin-bottom: 10px;
-      animation: fadeInDown 1.5s ease forwards;
+      margin-bottom: 15px;
+      color: #2c2c2c;
+    }
+
+    h2 {
+      margin-top: 2rem;
+      font-size: 1.8rem;
+      color: #ff4e50;
+      letter-spacing: 2px;
     }
 
     p {
-      max-width: 600px;
-      font-size: 1.2rem;
+      font-size: 1.1rem;
       line-height: 1.6;
-      opacity: 0;
-      animation: fadeInUp 2s ease 1s forwards;
-    }
-
-    @keyframes fadeInDown {
-      from {
-        opacity: 0;
-        transform: translateY(-30px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
+      color: #333;
     }
 
     @keyframes fadeInUp {
       from {
         opacity: 0;
-        transform: translateY(30px);
+        transform: translateY(40px);
       }
       to {
         opacity: 1;
@@ -62,6 +84,7 @@
       height: 10px;
       background-color: #fff;
       animation: fall 5s linear infinite;
+      opacity: 0.8;
     }
 
     @keyframes fall {
@@ -71,26 +94,30 @@
   </style>
 </head>
 <body>
-  <h1>Selamat Ulang Tahun, Teh Riri!</h1>
-  <p>
-    Di hari spesial ini, semoga Teh Riri selalu dikelilingi oleh cinta, tawa, dan berkah tanpa batas. 
-  Terima kasih sudah menjadi sosok yang hangat dan menginspirasi. Semoga setiap langkah ke depan dipenuhi kemudahan dan kebahagiaan.  
-  Maap nii gabisa dateng, soalnya lupa juga, yaaa tapi tetep ngucapin aja dari sini teh, aam bikin nii buat teh riri, yaa intinya selamat ulang tahun, tambah tua, semoga panjang umur, sehat selalu, di berikan rezeki yang melimpah oleh allah swt, dan kelancaran di segala masalahnya, dinpermudah, semoga semua amal baiknya di terima di sisi Allah swt, Aamiin.
-  </p>
-  
-  <h2>HAPPY BIRTHDAY</h2>
+  <header>Fika-Ai | Aam - Digital Marketplace</header>
+  <main>
+    <h1>Selamat Ulang Tahun, Teh Riri!</h1>
+    <p>
+      Di hari spesial ini, semoga Teh Riri selalu dikelilingi oleh cinta, tawa, dan berkah tanpa batas.  
+      Terima kasih sudah menjadi sosok yang hangat dan menginspirasi.  
+      Semoga setiap langkah ke depan dipenuhi kemudahan dan kebahagiaan.  
+      Maap nii gabisa dateng, soalnya lupa juga. Tapi tetep ngucapin aja dari sini teh!  
+      Aam bikin ini spesial buat Teh Riri — semoga panjang umur, sehat selalu, rezeki lancar, dimudahkan urusannya, dan amal baiknya diterima Allah SWT.  
+      Aamiin ya Rabbal Alamiin.
+    </p>
+    <h2>HAPPY BIRTHDAY</h2>
+  </main>
 
   <script>
-    // Generate confetti
-    for (let i = 0; i < 50; i++) {
+    for (let i = 0; i < 60; i++) {
       const confetti = document.createElement("div");
       confetti.classList.add("confetti");
       confetti.style.left = Math.random() * 100 + "vw";
       confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
       confetti.style.animationDuration = (Math.random() * 2 + 3) + "s";
-      confetti.style.width = confetti.style.height = (Math.random() * 8 + 4) + "px";
+      confetti.style.width = confetti.style.height = (Math.random() * 6 + 4) + "px";
       document.body.appendChild(confetti);
     }
   </script>
 </body>
-  </html>
+</html>
