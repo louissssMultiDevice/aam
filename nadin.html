@@ -1,0 +1,219 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fika-Ai | Musik</title>
+  <style>
+    body {
+      margin: 0;
+      background: #f9f6ff;
+      font-family: 'Courier New', monospace;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 40px 20px;
+    }
+
+    h1 {
+      color: #a85cf9;
+      font-size: 22px;
+      margin-bottom: 20px;
+      text-align: center;
+      text-transform: uppercase;
+    }
+
+    .audio-player {
+      background: #fff;
+      padding: 20px;
+      border-radius: 16px;
+      box-shadow: 0 8px 20px rgba(0,0,0,0.15);
+      max-width: 500px;
+      width: 100%;
+      margin-bottom: 30px;
+    }
+
+    .controls {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+    }
+
+    .progress-container {
+      flex: 1;
+      height: 6px;
+      background: #eee;
+      border-radius: 4px;
+      cursor: pointer;
+      position: relative;
+    }
+
+    .progress {
+      background: #a85cf9;
+      height: 100%;
+      width: 0;
+      border-radius: 4px;
+      transition: width 0.1s;
+    }
+
+    .btn {
+      background: #a85cf9;
+      border: none;
+      color: white;
+      padding: 8px 12px;
+      border-radius: 8px;
+      cursor: pointer;
+      font-size: 12px;
+    }
+
+    .time {
+      font-size: 12px;
+      color: #555;
+      min-width: 40px;
+      text-align: right;
+    }
+
+    .lyrics-container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 20px;
+      box-shadow: 0 10px 40px rgba(0,0,0,0.2);
+      max-width: 700px;
+      width: 100%;
+    }
+
+    .line {
+      font-size: 14px;
+      margin: 6px 0;
+      white-space: pre-wrap;
+      overflow: hidden;
+      border-right: 2px solid #333;
+    }
+  </style>
+</head>
+<body>
+
+  <h1>Nadin Amizah - Rayuan Perempuan Gila (RPG)</h1>
+
+  <div class="audio-player">
+    <audio id="audio" src="musik/menurutmu.mp3"></audio>
+    <div class="controls">
+      <button class="btn" id="playPause">Play</button>
+      <div class="progress-container" id="progressContainer">
+        <div class="progress" id="progressBar"></div>
+      </div>
+      <div class="time" id="currentTime">0:00</div>
+    </div>
+  </div>
+
+  <div class="lyrics-container" id="text-area"></div>
+
+  <script>
+    const audio = document.getElementById("audio");
+    const playPauseBtn = document.getElementById("playPause");
+    const progressContainer = document.getElementById("progressContainer");
+    const progressBar = document.getElementById("progressBar");
+    const currentTimeText = document.getElementById("currentTime");
+    const container = document.getElementById("text-area");
+
+    const lines = [
+      "menurutmu, berapa lama lagi kau 'kan mencintaiku?",
+      "menurutmu, apa yang bisa terjadi dalam sewindu?",
+      "bukan apa, hanya bersiap, tak ada yang tahu, aku takut",
+      "tak pernah ada yang lama menungguku sejak dulu",
+      "yang terjadi sebelumnya",
+      "semua orang takut padaku, wo-oh-oh",
+      "memang tidak mudah",
+      "mencintai diri ini",
+      "namun, aku berjanji",
+      "akan mereda, wo-oh-oh, seperti semestinya",
+      "",
+      "menurutmu, apa benar saat ini kau masih mencintaiku?",
+      "menurutmu, apa yang bisa dicinta dari diriku?",
+      "bukan apa, hanya bersiap, tak ada yang tahu, aku takut",
+      "tak pernah ada yang lama menungguku sejak dulu",
+      "yang terjadi sebelumnya",
+      "semua orang takut padaku, wo-oh-oh",
+      "",
+      "panggil aku",
+      "perempuan gila",
+      "hantu berkepala",
+      "keji membunuh kasihnya",
+      "penuh ganggu",
+      "di dalam jiwanya",
+      "sambil penuh cinta",
+      "diam-diam berusaha",
+      "s'lalu tahu",
+      "akan ditinggalkan",
+      "namun, demi tuhan",
+      "aku berusaha",
+      "memang tidak mudah",
+      "mencintai diri ini",
+      "namun, aku berjanji",
+      "akan mereda seperti semestinya"
+    ];
+
+    let lineIndex = 0;
+
+    function typeLine(text, callback) {
+      const lineElem = document.createElement("div");
+      lineElem.className = "line";
+      container.appendChild(lineElem);
+
+      let charIndex = 0;
+      const typer = setInterval(() => {
+        if (charIndex < text.length) {
+          lineElem.textContent += text.charAt(charIndex);
+          charIndex++;
+        } else {
+          clearInterval(typer);
+          lineElem.style.borderRight = "none";
+          if (callback) callback();
+        }
+      }, 150); // Kecepatan ketik: 150ms per karakter
+    }
+
+    function typeAllLines() {
+      if (lineIndex < lines.length) {
+        typeLine(lines[lineIndex], () => {
+          lineIndex++;
+          typeAllLines();
+        });
+      }
+    }
+
+    playPauseBtn.addEventListener("click", () => {
+      if (audio.paused) {
+        audio.play();
+        playPauseBtn.textContent = "Pause";
+      } else {
+        audio.pause();
+        playPauseBtn.textContent = "Play";
+      }
+    });
+
+    audio.addEventListener("play", () => {
+      container.innerHTML = "";
+      lineIndex = 0;
+      typeAllLines();
+    });
+
+    audio.addEventListener("timeupdate", () => {
+      const percent = (audio.currentTime / audio.duration) * 100;
+      progressBar.style.width = percent + "%";
+
+      const minutes = Math.floor(audio.currentTime / 60);
+      const seconds = Math.floor(audio.currentTime % 60).toString().padStart(2, "0");
+      currentTimeText.textContent = `${minutes}:${seconds}`;
+    });
+
+    progressContainer.addEventListener("click", (e) => {
+      const width = progressContainer.clientWidth;
+      const clickX = e.offsetX;
+      const duration = audio.duration;
+      audio.currentTime = (clickX / width) * duration;
+    });
+  </script>
+
+</body>
+  </html>
