@@ -8,16 +8,17 @@
     body {
       margin: 0;
       background: #f9f6ff;
-      font-family: 'Courier New', monospace;
+      font-family: 'Segoe UI', sans-serif;
       display: flex;
       flex-direction: column;
       align-items: center;
       padding: 40px 20px;
+      color: #333;
     }
 
     h1 {
       color: #a85cf9;
-      font-size: 22px;
+      font-size: 24px;
       margin-bottom: 20px;
       text-align: center;
       text-transform: uppercase;
@@ -40,52 +41,70 @@
       box-shadow: 0 10px 40px rgba(0,0,0,0.2);
       max-width: 700px;
       width: 100%;
+      line-height: 1.8;
+    }
+
+    .section-title {
+      font-weight: bold;
+      margin: 20px 0 10px;
+      font-size: 15px;
+      color: #6a0dad;
     }
 
     .line {
+      font-size: 15px;
+      margin-left: 10px;
+    }
+
+    .info {
+      text-align: center;
+      margin-bottom: 20px;
       font-size: 14px;
-      margin: 6px 0;
-      white-space: pre-wrap;
+      color: #555;
     }
   </style>
 </head>
 <body>
 
-  <h1>Nadin Amizah - Rayuan Perempuan Gila (RPG)</h1>
+  <h1>Nadin Amizah - Rayuan Perempuan Gila</h1>
 
   <div class="audio-player">
-    <!-- Pemutar audio default -->
     <audio controls>
-      <source src="RayuanPerempuanGila.mp3" type="audio/mpeg">
+      <source src="./RayuanPerempuanGila.mp3" type="audio/mpeg">
       Browser kamu tidak mendukung audio player.
     </audio>
   </div>
 
   <div class="lyrics-container">
-    <div class="line">INTRO - RAYUAN PEREMPUAN GILA</div>
-    <div class="line">FIKA-AI | MUSIK MENU</div>
-    <div class="line">Music By Nadin Amizah</div>
-    <div class="line">IB : HANDI</div>
-    <div class="line">~~~~~~~~~~~~~~</div>
-    <div class="line">SILAHKAN MENDENGARKAN LAGUNYA DAN MEMBACA LURIKNYA</div>
+    <div class="info">
+      FIKA-AI | MUSIK MENU<br/>
+      Music by: Nadin Amizah | IB: Handi<br/>
+      — Silahkan mendengarkan dan membaca liriknya —
+    </div>
+
+    <div class="section-title">Verse 1</div>
     <div class="line">menurutmu, berapa lama lagi kau 'kan mencintaiku?</div>
     <div class="line">menurutmu, apa yang bisa terjadi dalam sewindu?</div>
     <div class="line">bukan apa, hanya bersiap, tak ada yang tahu, aku takut</div>
     <div class="line">tak pernah ada yang lama menungguku sejak dulu</div>
     <div class="line">yang terjadi sebelumnya</div>
     <div class="line">semua orang takut padaku, wo-oh-oh</div>
+
+    <div class="section-title">Chorus</div>
     <div class="line">memang tidak mudah</div>
     <div class="line">mencintai diri ini</div>
     <div class="line">namun, aku berjanji</div>
     <div class="line">akan mereda, wo-oh-oh, seperti semestinya</div>
-    <div class="line"></div>
+
+    <div class="section-title">Verse 2</div>
     <div class="line">menurutmu, apa benar saat ini kau masih mencintaiku?</div>
     <div class="line">menurutmu, apa yang bisa dicinta dari diriku?</div>
     <div class="line">bukan apa, hanya bersiap, tak ada yang tahu, aku takut</div>
     <div class="line">tak pernah ada yang lama menungguku sejak dulu</div>
     <div class="line">yang terjadi sebelumnya</div>
     <div class="line">semua orang takut padaku, wo-oh-oh</div>
-    <div class="line"></div>
+
+    <div class="section-title">Bridge</div>
     <div class="line">panggil aku</div>
     <div class="line">perempuan gila</div>
     <div class="line">hantu berkepala</div>
@@ -98,6 +117,8 @@
     <div class="line">akan ditinggalkan</div>
     <div class="line">namun, demi tuhan</div>
     <div class="line">aku berusaha</div>
+
+    <div class="section-title">Outro</div>
     <div class="line">memang tidak mudah</div>
     <div class="line">mencintai diri ini</div>
     <div class="line">namun, aku berjanji</div>
