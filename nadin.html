@@ -33,46 +33,6 @@
       margin-bottom: 30px;
     }
 
-    .controls {
-      display: flex;
-      align-items: center;
-      gap: 10px;
-    }
-
-    .progress-container {
-      flex: 1;
-      height: 6px;
-      background: #eee;
-      border-radius: 4px;
-      cursor: pointer;
-      position: relative;
-    }
-
-    .progress {
-      background: #a85cf9;
-      height: 100%;
-      width: 0;
-      border-radius: 4px;
-      transition: width 0.1s;
-    }
-
-    .btn {
-      background: #a85cf9;
-      border: none;
-      color: white;
-      padding: 8px 12px;
-      border-radius: 8px;
-      cursor: pointer;
-      font-size: 12px;
-    }
-
-    .time {
-      font-size: 12px;
-      color: #555;
-      min-width: 40px;
-      text-align: right;
-    }
-
     .lyrics-container {
       background: #fff;
       padding: 30px;
@@ -86,8 +46,6 @@
       font-size: 14px;
       margin: 6px 0;
       white-space: pre-wrap;
-      overflow: hidden;
-      border-right: 2px solid #333;
     }
   </style>
 </head>
@@ -96,129 +54,54 @@
   <h1>Nadin Amizah - Rayuan Perempuan Gila (RPG)</h1>
 
   <div class="audio-player">
-    <audio id="audio" src="RayuanPerempuanGila.mp3"></audio>
-    <div class="controls">
-      <button class="btn" id="playPause">Play</button>
-      <div class="progress-container" id="progressContainer">
-        <div class="progress" id="progressBar"></div>
-      </div>
-      <div class="time" id="currentTime">0:00</div>
-    </div>
+    <!-- Pemutar audio default -->
+    <audio controls>
+      <source src="RayuanPerempuanGila.mp3" type="audio/mpeg">
+      Browser kamu tidak mendukung audio player.
+    </audio>
   </div>
 
-  <div class="lyrics-container" id="text-area"></div>
-
-  <script>
-    const audio = document.getElementById("audio");
-    const playPauseBtn = document.getElementById("playPause");
-    const progressContainer = document.getElementById("progressContainer");
-    const progressBar = document.getElementById("progressBar");
-    const currentTimeText = document.getElementById("currentTime");
-    const container = document.getElementById("text-area");
-
-    const lines = [
-      "INTRO - RAYUAN PEREMPUAN GILA",
-      "FIKA-AI | MUSIK MENU",
-      "Music By Nadin Amizah",
-      "IB : HANDI",
-      "SILAHKAN MENDENGARKAN LAGUNYA DAN MEMBACA LURIKNYA",
-      "menurutmu, berapa lama lagi kau 'kan mencintaiku?",
-      "menurutmu, apa yang bisa terjadi dalam sewindu?",
-      "bukan apa, hanya bersiap, tak ada yang tahu, aku takut",
-      "tak pernah ada yang lama menungguku sejak dulu",
-      "yang terjadi sebelumnya",
-      "semua orang takut padaku, wo-oh-oh",
-      "memang tidak mudah",
-      "mencintai diri ini",
-      "namun, aku berjanji",
-      "akan mereda, wo-oh-oh, seperti semestinya",
-      "",
-      "menurutmu, apa benar saat ini kau masih mencintaiku?",
-      "menurutmu, apa yang bisa dicinta dari diriku?",
-      "bukan apa, hanya bersiap, tak ada yang tahu, aku takut",
-      "tak pernah ada yang lama menungguku sejak dulu",
-      "yang terjadi sebelumnya",
-      "semua orang takut padaku, wo-oh-oh",
-      "",
-      "panggil aku",
-      "perempuan gila",
-      "hantu berkepala",
-      "keji membunuh kasihnya",
-      "penuh ganggu",
-      "di dalam jiwanya",
-      "sambil penuh cinta",
-      "diam-diam berusaha",
-      "s'lalu tahu",
-      "akan ditinggalkan",
-      "namun, demi tuhan",
-      "aku berusaha",
-      "memang tidak mudah",
-      "mencintai diri ini",
-      "namun, aku berjanji",
-      "akan mereda seperti semestinya"
-    ];
-
-    let lineIndex = 0;
-
-    function typeLine(text, callback) {
-      const lineElem = document.createElement("div");
-      lineElem.className = "line";
-      container.appendChild(lineElem);
-
-      let charIndex = 0;
-      const typer = setInterval(() => {
-        if (charIndex < text.length) {
-          lineElem.textContent += text.charAt(charIndex);
-          charIndex++;
-        } else {
-          clearInterval(typer);
-          lineElem.style.borderRight = "none";
-          if (callback) callback();
-        }
-      }, 150); // Kecepatan ketik: 150ms per karakter
-    }
-
-    function typeAllLines() {
-      if (lineIndex < lines.length) {
-        typeLine(lines[lineIndex], () => {
-          lineIndex++;
-          typeAllLines();
-        });
-      }
-    }
-
-    playPauseBtn.addEventListener("click", () => {
-      if (audio.paused) {
-        audio.play();
-        playPauseBtn.textContent = "Pause";
-      } else {
-        audio.pause();
-        playPauseBtn.textContent = "Play";
-      }
-    });
-
-    audio.addEventListener("play", () => {
-      container.innerHTML = "";
-      lineIndex = 0;
-      typeAllLines();
-    });
-
-    audio.addEventListener("timeupdate", () => {
-      const percent = (audio.currentTime / audio.duration) * 100;
-      progressBar.style.width = percent + "%";
-
-      const minutes = Math.floor(audio.currentTime / 60);
-      const seconds = Math.floor(audio.currentTime % 60).toString().padStart(2, "0");
-      currentTimeText.textContent = `${minutes}:${seconds}`;
-    });
-
-    progressContainer.addEventListener("click", (e) => {
-      const width = progressContainer.clientWidth;
-      const clickX = e.offsetX;
-      const duration = audio.duration;
-      audio.currentTime = (clickX / width) * duration;
-    });
-  </script>
+  <div class="lyrics-container">
+    <div class="line">INTRO - RAYUAN PEREMPUAN GILA</div>
+    <div class="line">FIKA-AI | MUSIK MENU</div>
+    <div class="line">Music By Nadin Amizah</div>
+    <div class="line">IB : HANDI</div>
+    <div class="line">SILAHKAN MENDENGARKAN LAGUNYA DAN MEMBACA LURIKNYA</div>
+    <div class="line">menurutmu, berapa lama lagi kau 'kan mencintaiku?</div>
+    <div class="line">menurutmu, apa yang bisa terjadi dalam sewindu?</div>
+    <div class="line">bukan apa, hanya bersiap, tak ada yang tahu, aku takut</div>
+    <div class="line">tak pernah ada yang lama menungguku sejak dulu</div>
+    <div class="line">yang terjadi sebelumnya</div>
+    <div class="line">semua orang takut padaku, wo-oh-oh</div>
+    <div class="line">memang tidak mudah</div>
+    <div class="line">mencintai diri ini</div>
+    <div class="line">namun, aku berjanji</div>
+    <div class="line">akan mereda, wo-oh-oh, seperti semestinya</div>
+    <div class="line"></div>
+    <div class="line">menurutmu, apa benar saat ini kau masih mencintaiku?</div>
+    <div class="line">menurutmu, apa yang bisa dicinta dari diriku?</div>
+    <div class="line">bukan apa, hanya bersiap, tak ada yang tahu, aku takut</div>
+    <div class="line">tak pernah ada yang lama menungguku sejak dulu</div>
+    <div class="line">yang terjadi sebelumnya</div>
+    <div class="line">semua orang takut padaku, wo-oh-oh</div>
+    <div class="line"></div>
+    <div class="line">panggil aku</div>
+    <div class="line">perempuan gila</div>
+    <div class="line">hantu berkepala</div>
+    <div class="line">keji membunuh kasihnya</div>
+    <div class="line">penuh ganggu</div>
+    <div class="line">di dalam jiwanya</div>
+    <div class="line">sambil penuh cinta</div>
+    <div class="line">diam-diam berusaha</div>
+    <div class="line">s'lalu tahu</div>
+    <div class="line">akan ditinggalkan</div>
+    <div class="line">namun, demi tuhan</div>
+    <div class="line">aku berusaha</div>
+    <div class="line">memang tidak mudah</div>
+    <div class="line">mencintai diri ini</div>
+    <div class="line">namun, aku berjanji</div>
+    <div class="line">akan mereda seperti semestinya</div>
+  </div>
 
 </body>
-  </html>
+</html>
