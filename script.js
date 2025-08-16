@@ -1,44 +1,50 @@
-const CONFIG = {
-  apiKey: "PAYKU_B8945B42C8954E81717F8252B75C9925", // Ganti dengan API Key Payku kamu
-  secretKey: "d9b93c69582b7f42f27ea87eea61b1ec1dafa19e20b4bb7cbd47062df5859c50",    // Ganti dengan Secret Key Payku kamu
-  baseURL: "https://payku.my.id",
+const payBtn = document.getElementById('payBtn');
+const amountEl = document.getElementById('amount');
+const qrisContainer = document.getElementById('qrisContainer');
+const statusTxt = document.getElementById('statusTxt');
+
+payBtn.onclick = async () => {
+  const amount = parseInt(amountEl.value);
+  if (!amount || amount < 100) return statusTxt.innerText = 'Masukkan nominal minimal 100';
+
+  statusTxt.innerText = 'Membuat transaksi...';
+  const resp = await fetch('/api/create-transaction', {
+    method: 'POST',
+    headers: {'Content-Type':'application/json'},
+    body: JSON.stringify({
+      amount,
+      description: 'Pembayaran digital',
+      customer_name: 'Buyer',
+      customer_email: 'buyer@example.com',
+      customer_phone: '081234567890',
+      webhook_url: `${window.location.origin}/api/webhook`
+    })
+  });
+  const data = await resp.json();
+
+  if (data.success) {
+    const { qris_url, transaction_id } = data.data;
+    qrisContainer.innerHTML = `<img src="${qris_url}" alt="QRIS Code" />`;
+    statusTxt.innerText = 'Scan QRIS dan tunggu deteksi otomatis...';
+    pollStatus(transaction_id);
+  } else {
+    statusTxt.innerText = 'Error: ' + data.message;
+  }
 };
 
-document.getElementById("payBtn").addEventListener("click", async () => {
-  const amount = document.getElementById("amount").value;
-  const statusText = document.getElementById("status");
-
-  if (!amount || amount < 1000) {
-    statusText.innerText = "❌ Minimal pembayaran Rp 1.000";
-    return;
-  }
-
-  statusText.innerText = "🔄 Membuat transaksi...";
-
-  try {
-    const res = await fetch(`${CONFIG.baseURL}/api/create-transaction`, {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-        "apiKey": CONFIG.apiKey,
-        "secretKey": CONFIG.secretKey,
-      },
-      body: JSON.stringify({
-        amount: amount,
-        method: "qris",
-      }),
-    });
-
-    const data = await res.json();
-
-    if (data.success) {
-      document.querySelector(".qris-img").src = data.data.qrImage;
-      statusText.innerText = "✅ Silakan scan QRIS untuk membayar.";
-    } else {
-      statusText.innerText = "❌ Gagal membuat pembayaran.";
+function pollStatus(txId) {
+  let attempts = 0;
+  const max = 60;
+  const interval = setInterval(async () => {
+    attempts++;
+    const resp = await fetch(`/api/transaction/${txId}`);
+    const d = await resp.json();
+    if (d.success && d.data.status === 'paid') {
+      clearInterval(interval);
+      statusTxt.innerText = '✅ Pembayaran sukses!';
+    } else if (attempts >= max) {
+      clearInterval(interval);
+      statusTxt.innerText = '⏳ QRIS expired';
     }
-  } catch (err) {
-    console.error(err);
-    statusText.innerText = "⚠️ Terjadi kesalahan server.";
-  }
-});
+  }, 5000);
+}
