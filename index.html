@@ -1,40 +1,404 @@
 <!doctype html>
 <html lang="id">
 <head>
-  <meta charset="utf-8">
-  <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Warung Pedia — Marketplace</title>
-  <style>
-    body{font-family:Arial,Helvetica,sans-serif;background:#0f1724;color:#e6eef6;padding:20px}
-    .card{background:#071428;padding:16px;border-radius:8px;margin-bottom:12px}
-    .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
-    img.qr{max-width:280px}
-  </style>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width,initial-scale=1" />
+<title>Warung Pedia — Marketplace</title>
+<style>
+  :root{
+    --bg:#071224;
+    --card:#0b1724;
+    --muted:#9aa4b2;
+    --accent:#f87171; /* merah muda */
+    --card-border: rgba(255,255,255,0.03);
+    --glass: rgba(255,255,255,0.02);
+  }
+  *{box-sizing:border-box;font-family:Inter,system-ui,-apple-system,Segoe UI,Roboto,'Helvetica Neue',Arial;height:inherit}
+  html,body{height:100%;margin:0;background:linear-gradient(180deg,#061021 0%, #071428 100%);color:#e6eef6}
+  .container{max-width:1200px;margin:24px auto;padding:20px}
+  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+  .brand{display:flex;gap:12px;align-items:center}
+  .logo{width:44px;height:44px;border-radius:8px;background:linear-gradient(135deg,var(--accent),#ff9aa2);display:flex;align-items:center;justify-content:center;font-weight:700}
+  h1{font-size:18px;margin:0}
+  .subtitle{font-size:13px;color:var(--muted)}
+  .top-actions{display:flex;gap:8px}
+  .btn{background:transparent;border:1px solid var(--card-border);padding:8px 12px;border-radius:8px;color:inherit;cursor:pointer}
+  main{margin-top:18px}
+  section{margin-bottom:28px}
+  section h2{margin:0 0 12px 0;font-size:18px}
+  .grid{display:grid;grid-template-columns:repeat(3, 1fr);gap:14px}
+  @media (max-width:980px){.grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:640px){.grid{grid-template-columns:1fr}}
+  .card{background:var(--card);padding:14px;border-radius:10px;border:1px solid var(--card-border);box-shadow:0 6px 18px rgba(2,6,23,0.5)}
+  .card .title{font-weight:700}
+  .card .sub{font-size:13px;color:var(--muted);margin-top:6px}
+  .price{float:right;font-weight:700;font-size:13px}
+  .card-footer{display:flex;gap:8px;margin-top:12px;align-items:center}
+  .small-btn{padding:6px 10px;border-radius:8px;border:1px solid rgba(255,255,255,0.04);background:transparent;cursor:pointer}
+  .show-more{color:var(--accent);text-decoration:underline;background:transparent;border:none;cursor:pointer;font-size:13px}
+  .section-sub{color:var(--muted);font-size:13px;margin-bottom:8px}
+  .contact{color:var(--muted);font-size:14px}
+  footer{margin-top:24px;padding-top:18px;border-top:1px solid rgba(255,255,255,0.02);display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap}
+  .modal-wrap{position:fixed;inset:0;display:none;align-items:center;justify-content:center;background:rgba(1,6,12,0.6);z-index:60;padding:16px}
+  .modal-wrap.open{display:flex}
+  .modal{background:linear-gradient(180deg, rgba(255,255,255,0.02), rgba(255,255,255,0.01));padding:18px;border-radius:12px;max-width:520px;width:100%;border:1px solid var(--card-border)}
+  .qr-img{width:220px;max-width:100%;display:block;margin:10px 0}
+  .tag{display:inline-block;padding:4px 8px;border-radius:999px;border:1px solid rgba(255,255,255,0.04);font-size:12px;color:var(--muted)}
+  /* layout tweaks */
+  .product-header{display:flex;justify-content:space-between;align-items:center}
+  .vps-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:14px}
+  @media (max-width:980px){.vps-grid{grid-template-columns:repeat(2,1fr)}}
+  @media (max-width:640px){.vps-grid{grid-template-columns:1fr}}
+  .empty{height:1px}
+</style>
 </head>
 <body>
-  <h1>Warung Pedia</h1>
+  <div class="container">
+    <header>
+      <div class="brand">
+        <div class="logo">WP</div>
+        <div>
+          <h1>Warung Pedia</h1>
+          <div class="subtitle">Digital marketplace — nokos, panel, vps, jasa</div>
+        </div>
+      </div>
+      <div class="top-actions">
+        <button class="btn" onclick="contactUs()">Contact Us</button>
+        <button class="btn" onclick="openCart()">Keranjang</button>
+      </div>
+    </header>
 
-  <div class="card">
-    <h3>Pilih Produk</h3>
-    <select id="productSelect">
-      <option value="nokos_all_01">NOKOS All Region — Rp5.000</option>
-      <option value="panel_1GB">Panel Bot 1GB — Rp25.000</option>
-    </select>
-    <div style="margin-top:8px">
-      <label>Nominal / Harga (otomatis terisi): </label>
-      <input id="amountInput" type="number" value="5000" />
-    </div>
-    <div style="margin-top:8px">
-      <label>Nomor (opsional): </label>
-      <input id="phoneInput" type="text" placeholder="0812xxxx" />
-    </div>
-    <div style="margin-top:12px">
-      <button class="btn" id="payBtn">Bayar via QRIS</button>
+    <main>
+      <!-- Menu Nomer -->
+      <section>
+        <div class="product-header">
+          <div>
+            <h2>Menu Nomer</h2>
+            <div class="section-sub">nokos all region</div>
+          </div>
+          <div class="tag">stok auto-delivery</div>
+        </div>
+
+        <div class="grid" style="margin-top:12px">
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div class="title">NOKOS • All Region</div>
+                <div class="sub">Stok auto-delivery</div>
+              </div>
+              <div class="price">Rp5.000</div>
+            </div>
+            <div class="card-footer">
+              <button class="small-btn" onclick="buy('NOKOS • All Region',5000,'nokos_all')">Beli</button>
+              <button class="small-btn" onclick="showDetail('NOKOS • All Region','Detail nomor, region, dsb')">Detail</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- Pterodactyl Panel -->
+      <section>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h2>Pterodactyl Panel</h2>
+          <div class="section-sub">Panel Bot — pilih ukuran</div>
+        </div>
+
+        <div class="grid" style="margin-top:12px">
+          <!-- generate multiple cards (example) -->
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div class="title">Panel Bot 1GB</div>
+                <div class="sub">Pterodactyl Panel</div>
+              </div>
+              <div class="price">Rp25.000</div>
+            </div>
+            <div class="card-footer">
+              <button class="small-btn" onclick="buy('Panel Bot 1GB',25000,'panel_1gb')">Beli</button>
+              <button class="show-more" onclick="toggleMore(this)">Show More</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div class="title">Panel Bot 2GB</div>
+                <div class="sub">Pterodactyl Panel</div>
+              </div>
+              <div class="price">Rp50.000</div>
+            </div>
+            <div class="card-footer">
+              <button class="small-btn" onclick="buy('Panel Bot 2GB',50000,'panel_2gb')">Beli</button>
+              <button class="show-more" onclick="toggleMore(this)">Show More</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div class="title">Panel Bot 3GB</div>
+                <div class="sub">Pterodactyl Panel</div>
+              </div>
+              <div class="price">Rp75.000</div>
+            </div>
+            <div class="card-footer">
+              <button class="small-btn" onclick="buy('Panel Bot 3GB',75000,'panel_3gb')">Beli</button>
+              <button class="show-more" onclick="toggleMore(this)">Show More</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div class="title">Panel Bot 4GB</div>
+                <div class="sub">Pterodactyl Panel</div>
+              </div>
+              <div class="price">Rp100.000</div>
+            </div>
+            <div class="card-footer">
+              <button class="small-btn" onclick="buy('Panel Bot 4GB',100000,'panel_4gb')">Beli</button>
+              <button class="show-more" onclick="toggleMore(this)">Show More</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div class="title">Panel Bot 5GB</div>
+                <div class="sub">Pterodactyl Panel</div>
+              </div>
+              <div class="price">Rp125.000</div>
+            </div>
+            <div class="card-footer">
+              <button class="small-btn" onclick="buy('Panel Bot 5GB',125000,'panel_5gb')">Beli</button>
+              <button class="show-more" onclick="toggleMore(this)">Show More</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div class="title">Panel Bot 6GB</div>
+                <div class="sub">Pterodactyl Panel</div>
+              </div>
+              <div class="price">Rp150.000</div>
+            </div>
+            <div class="card-footer">
+              <button class="small-btn" onclick="buy('Panel Bot 6GB',150000,'panel_6gb')">Beli</button>
+              <button class="show-more" onclick="toggleMore(this)">Show More</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div class="title">Panel Bot 7GB</div>
+                <div class="sub">Pterodactyl Panel</div>
+              </div>
+              <div class="price">Rp175.000</div>
+            </div>
+            <div class="card-footer">
+              <button class="small-btn" onclick="buy('Panel Bot 7GB',175000,'panel_7gb')">Beli</button>
+              <button class="show-more" onclick="toggleMore(this)">Show More</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div class="title">Panel Bot 8GB</div>
+                <div class="sub">Pterodactyl Panel</div>
+              </div>
+              <div class="price">Rp200.000</div>
+            </div>
+            <div class="card-footer">
+              <button class="small-btn" onclick="buy('Panel Bot 8GB',200000,'panel_8gb')">Beli</button>
+              <button class="show-more" onclick="toggleMore(this)">Show More</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div class="title">Panel Bot 9GB</div>
+                <div class="sub">Pterodactyl Panel</div>
+              </div>
+              <div class="price">Rp225.000</div>
+            </div>
+            <div class="card-footer">
+              <button class="small-btn" onclick="buy('Panel Bot 9GB',225000,'panel_9gb')">Beli</button>
+              <button class="show-more" onclick="toggleMore(this)">Show More</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div class="title">Panel Bot 10GB</div>
+                <div class="sub">Pterodactyl Panel</div>
+              </div>
+              <div class="price">Rp250.000</div>
+            </div>
+            <div class="card-footer">
+              <button class="small-btn" onclick="buy('Panel Bot 10GB',250000,'panel_10gb')">Beli</button>
+              <button class="show-more" onclick="toggleMore(this)">Show More</button>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;align-items:center;justify-content:space-between">
+              <div>
+                <div class="title">Panel Bot Unlimited</div>
+                <div class="sub">Pterodactyl Panel</div>
+              </div>
+              <div class="price">Rp200.000</div>
+            </div>
+            <div class="card-footer">
+              <button class="small-btn" onclick="buy('Panel Bot Unlimited',200000,'panel_unli')">Beli</button>
+              <button class="show-more" onclick="toggleMore(this)">Show More</button>
+            </div>
+          </div>
+
+        </div>
+      </section>
+
+      <!-- VPS -->
+      <section>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h2>VPS</h2>
+          <div class="section-sub">Pilih paket VPS</div>
+        </div>
+
+        <div class="vps-grid" style="margin-top:12px">
+          <div class="card"><div class="title">8GB C4</div><div class="sub">Rp150.000/bulan</div><div style="margin-top:12px"><button class="small-btn" onclick="buy('8GB C4',150000,'vps_8_c4')">Beli</button></div></div>
+          <div class="card"><div class="title">8GB C8</div><div class="sub">Rp200.000/bulan</div><div style="margin-top:12px"><button class="small-btn" onclick="buy('8GB C8',200000,'vps_8_c8')">Beli</button></div></div>
+          <div class="card"><div class="title">16GB C6</div><div class="sub">Rp300.000/bulan</div><div style="margin-top:12px"><button class="small-btn" onclick="buy('16GB C6',300000,'vps_16_c6')">Beli</button></div></div>
+          <div class="card"><div class="title">16GB C8</div><div class="sub">Rp350.000/bulan</div><div style="margin-top:12px"><button class="small-btn" onclick="buy('16GB C8',350000,'vps_16_c8')">Beli</button></div></div>
+        </div>
+      </section>
+
+      <!-- Jasa -->
+      <section>
+        <div style="display:flex;justify-content:space-between;align-items:center">
+          <h2>Jasa Hanami</h2>
+          <div class="section-sub">Jasa pembuatan web & bot</div>
+        </div>
+
+        <div class="grid" style="margin-top:12px">
+          <div class="card">
+            <div class="title">Jasa Bikin Website</div>
+            <div class="sub">Mulai Rp150.000</div>
+            <div style="margin-top:12px"><button class="small-btn" onclick="orderService('Jasa Bikin Website')">Order</button></div>
+          </div>
+          <div class="card">
+            <div class="title">Jasa Bikin Script Bot WhatsApp</div>
+            <div class="sub">Mulai Rp100.000</div>
+            <div style="margin-top:12px"><button class="small-btn" onclick="orderService('Jasa Bikin Script Bot WhatsApp')">Order</button></div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <footer>
+      <div>
+        <div class="contact">Contact Us<br/>WhatsApp: <a href="https://wa.me/6285800650661" style="color:var(--accent);text-decoration:none">+62 858-0065-0661</a><br/>Email: -</div>
+      </div>
+      <div style="color:var(--muted)">© Warung Pedia • Auto-delivery & QRIS (Payku) ready</div>
+    </footer>
+  </div>
+
+  <!-- Modal -->
+  <div class="modal-wrap" id="modal">
+    <div class="modal" role="dialog" aria-modal="true">
+      <div style="display:flex;justify-content:space-between;align-items:center">
+        <strong id="modalTitle">Checkout</strong>
+        <button class="btn" onclick="closeModal()">Tutup</button>
+      </div>
+      <div id="modalBody" style="margin-top:12px">
+        <div class="sub">Menunggu tindakan...</div>
+      </div>
+      <div style="display:flex;justify-content:flex-end;margin-top:12px">
+        <button class="small-btn" onclick="closeModal()">Close</button>
+      </div>
     </div>
   </div>
 
-  <div id="result"></div>
+<script>
+  function contactUs(){
+    window.open('https://wa.me/6285800650661','_blank');
+  }
+  function openCart(){
+    alert('Keranjang kosong (fitur belum aktif).');
+  }
 
-  <script src="/script.js" defer></script>
+  function toggleMore(el){
+    const card = el.closest('.card');
+    if(!card.querySelector('.more')){
+      const more = document.createElement('div'); more.className='more'; more.style.marginTop='10px';
+      more.innerHTML = '<div style="color:var(--muted);font-size:13px">Fitur: Support, Install, Backup. Klik Beli untuk order.</div>';
+      card.appendChild(more);
+      el.innerText = 'Hide';
+    } else {
+      card.querySelector('.more').remove();
+      el.innerText = 'Show More';
+    }
+  }
+
+  function showDetail(title, text){
+    openModal(title, `<div class="sub">${text}</div>`);
+  }
+
+  function buy(title, price, sku){
+    const body = `
+      <div style="display:flex;flex-direction:column;gap:8px">
+        <div><strong>${title}</strong></div>
+        <div class="sub">Nominal: Rp${price.toLocaleString()}</div>
+        <div style="margin-top:6px"><button class="small-btn" onclick="createQris(${price}, '${sku}')">Bayar via QRIS (Simulasi)</button></div>
+      </div>
+    `;
+    openModal('Checkout — ' + title, body);
+  }
+
+  function orderService(name){
+    openModal('Order Service', `<div class="sub">Kirim pesan order untuk: <strong>${name}</strong><br/><a href="https://wa.me/6285800650661" target="_blank" style="color:var(--accent)">Chat via WhatsApp</a></div>`);
+  }
+
+  function openModal(title, html){
+    document.getElementById('modalTitle').innerText = title;
+    document.getElementById('modalBody').innerHTML = html;
+    document.getElementById('modal').classList.add('open');
+  }
+  function closeModal(){ document.getElementById('modal').classList.remove('open'); }
+
+  // Simulasi create QRIS (frontend only). Ganti dengan panggilan backend /api/create-transaction
+  function createQris(amount, sku){
+    const fakeTx = {
+      transaction_id: 'TRX' + Date.now().toString().slice(-6),
+      amount,
+      qris_url: 'https://api.qrserver.com/v1/create-qr-code/?size=300x300&data=PAY-' + Math.random().toString(36).slice(2,8)
+    };
+    const html = `
+      <div class="sub">Scan QRIS di bawah untuk bayar dalam 5 menit.</div>
+      <img class="qr-img" src="${fakeTx.qris_url}" alt="QRIS" />
+      <div style="margin-top:6px">ID: ${fakeTx.transaction_id} • Nominal: Rp${fakeTx.amount.toLocaleString()}</div>
+      <div style="margin-top:8px" class="sub">Status: <span id="payStatus">pending</span></div>
+      <div style="margin-top:8px"><button class="small-btn" onclick="simulatePaid('${fakeTx.transaction_id}', '${sku}')">Simulasi Pembayaran (PAID)</button></div>
+    `;
+    document.getElementById('modalBody').innerHTML = html;
+  }
+
+  // Simulasi: setelah klik, akan tampil pesan sukses + contoh auto-delivery
+  function simulatePaid(txid, sku){
+    const statusEl = document.getElementById('payStatus');
+    if(statusEl) statusEl.innerText = 'paid';
+    // contoh auto-delivery (buat kode)
+    const kode = 'KODE-' + (sku||'ITEM').toUpperCase() + '-' + Date.now().toString().slice(-6);
+    setTimeout(()=> {
+      const extra = `<div style="margin-top:10px;padding:10px;background:rgba(0,0,0,0.18);border-radius:8px"><strong>✅ Pembayaran diterima</strong><div class="sub">Produk: ${sku || 'item'}</div><div style="margin-top:6px">Kode: <strong>${kode}</strong></div></div>`;
+      document.getElementById('modalBody').innerHTML += extra;
+    }, 600);
+  }
+</script>
 </body>
-</html>
+  </html>
