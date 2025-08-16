@@ -1,64 +1,44 @@
-// Simulasi Integrasi QRIS Payku
-const API_KEY = "PAYKU_B8945B42C8954E81717F8252B75C9925";
-const SECRET_KEY = "d9b93c69582b7f42f27ea87eea61b1ec1dafa19e20b4bb7cbd47062df5859c50";
+const CONFIG = {
+  apiKey: "PAYKU_B8945B42C8954E81717F8252B75C9925", // Ganti dengan API Key Payku kamu
+  secretKey: "d9b93c69582b7f42f27ea87eea61b1ec1dafa19e20b4bb7cbd47062df5859c50",    // Ganti dengan Secret Key Payku kamu
+  baseURL: "https://payku.my.id",
+};
 
-document.querySelectorAll(".bayar").forEach(btn => {
-  btn.addEventListener("click", async () => {
-    const produk = btn.dataset.produk;
-    const harga = btn.dataset.harga;
+document.getElementById("payBtn").addEventListener("click", async () => {
+  const amount = document.getElementById("amount").value;
+  const statusText = document.getElementById("status");
 
-    alert(`Membuat transaksi untuk: ${produk} | Rp${harga}`);
+  if (!amount || amount < 1000) {
+    statusText.innerText = "❌ Minimal pembayaran Rp 1.000";
+    return;
+  }
 
-    // Fetch API Payku
-    const response = await fetch("https://payku.my.id/api/qris/create", {
+  statusText.innerText = "🔄 Membuat transaksi...";
+
+  try {
+    const res = await fetch(`${CONFIG.baseURL}/api/qris/create`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
-        "apiKey": API_KEY,
-        "secretKey": SECRET_KEY
+        "apiKey": CONFIG.apiKey,
+        "secretKey": CONFIG.secretKey,
       },
       body: JSON.stringify({
-        amount: harga,
-        note: produk,
-        method: "qris"
-      })
+        amount: amount,
+        method: "qris",
+      }),
     });
 
-    const data = await response.json();
-    if (data.status === "success") {
-      document.getElementById("qris-container").innerHTML = `
-        <h3>Scan QRIS</h3>
-        <img src="${data.data.qrImage}" alt="QRIS Code" width="250">
-        <p><strong>ID Transaksi:</strong> ${data.data.invoiceId}</p>
-      `;
+    const data = await res.json();
+
+    if (data.success) {
+      document.querySelector(".qris-img").src = data.data.qrImage;
+      statusText.innerText = "✅ Silakan scan QRIS untuk membayar.";
     } else {
-      alert("Gagal membuat transaksi!");
+      statusText.innerText = "❌ Gagal membuat pembayaran.";
     }
-  });
-});}
-
-/* =====================
-   🔹 PAYMENT STATUS POLLING
-===================== */
-function pollStatus(transactionId) {
-  let attempts = 0;
-  const max = 60;
-
-  const interval = setInterval(async () => {
-    attempts++;
-    try {
-      const res = await fetch(`/api/transaction/${transactionId}`);
-      const d = await res.json();
-
-      if (d.success && d.data.status === "paid") {
-        clearInterval(interval);
-        showPaidSuccess(d.data);
-      } else if (attempts >= max) {
-        clearInterval(interval);
-        showExpired();
-      }
-    } catch (err) {
-      console.error("Error polling:", err);
-    }
-  }, 5000);
-}
+  } catch (err) {
+    console.error(err);
+    statusText.innerText = "⚠️ Terjadi kesalahan server.";
+  }
+});
