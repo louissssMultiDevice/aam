@@ -6,9 +6,9 @@ const app = express();
 app.use(bodyParser.json());
 
 const CONFIG = {
-  apiKey: process.env.PAYKU_API_KEY,
-  secretKey: process.env.PAYKU_SECRET_KEY,
-  baseURL: 'https://payku.my.id/api'
+  apiKey: 'PAYKU_B8945B42C8954E81717F8252B75C9925',
+  secretKey: 'd9b93c69582b7f42f27ea87eea61b1ec1dafa19e20b4bb7cbd47062df5859c50',
+  baseURL: 'https://payku.my.id'
 };
 
 function generateSignature(data, secretKey, timestamp) {
