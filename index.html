@@ -1,138 +1,499 @@
-<!DOCTYPE html>
-<html lang="id">
+<!DOCTYPE html><html lang="id" class="scroll-smooth">
 <head>
-  <meta charset="UTF-8" />
+  <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width, initial-scale=1" />
-  <title>Fika-Ai | Aam - Digital Marketplace</title>
-  <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet" />
+  <title>Fika Digital Marketplace — QRIS Auto Payment</title>
+  <meta name="description" content="Jual kebutuhan digital: nokos all region, panel Pterodactyl, VPS, dan jasa — pembayaran QRIS all payment, auto detect & auto kirim." />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
+  <!-- TailwindCSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <!-- Lucide Icons -->
+  <script type="module">
+    import { createIcons, Home, ShoppingCart, PhoneCall, ChevronDown, ChevronUp, Moon, Sun, QrCode, Loader2, CheckCircle2, XCircle, Copy } from "https://cdn.jsdelivr.net/npm/lucide@0.468.0/+esm";
+    window.lucideReady = () => createIcons({ attrs: { class: 'w-5 h-5' } });
+    window.Lucide = { Home, ShoppingCart, PhoneCall, ChevronDown, ChevronUp, Moon, Sun, QrCode, Loader2, CheckCircle2, XCircle, Copy };
+  </script>
   <style>
-    * {
-      box-sizing: border-box;
-      margin: 0;
-      padding: 0;
-    }
-
-    body {
-      font-family: 'Poppins', sans-serif;
-      background: linear-gradient(135deg, #fceabb, #f8b500);
-      color: #333;
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      height: 100vh;
-      overflow-y: scroll;
-      scroll-behavior: smooth;
-    }
-
-    header {
-      width: 100%;
-      background: rgba(255, 255, 255, 0.15);
-      backdrop-filter: blur(10px);
-      box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-      text-align: center;
-      padding: 1rem;
-      font-weight: 600;
-      font-size: 1.2rem;
-      color: #222;
-      position: sticky;
-      top: 0;
-      z-index: 10;
-    }
-
-    main {
-      text-align: center;
-      margin-top: 5vh;
-      max-width: 700px;
-      padding: 2rem;
-      background: rgba(255, 255, 255, 0.3);
-      border-radius: 20px;
-      box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
-      animation: fadeInUp 1.2s ease-out forwards;
-    }
-
-    h1 {
-      font-size: 2.5rem;
-      margin-bottom: 15px;
-      color: #2c2c2c;
-    }
-
-    h2 {
-      margin-top: 2rem;
-      font-size: 1.8rem;
-      color: #ff4e50;
-      letter-spacing: 2px;
-    }
-
-    p {
-      font-size: 1.1rem;
-      line-height: 1.8;
-      color: #333;
-    }
-
-    @keyframes fadeInUp {
-      from {
-        opacity: 0;
-        transform: translateY(40px);
-      }
-      to {
-        opacity: 1;
-        transform: translateY(0);
-      }
-    }
-
-    .confetti {
-      position: absolute;
-      width: 10px;
-      height: 10px;
-      background-color: #fff;
-      animation: fall 5s linear infinite;
-      opacity: 0.8;
-    }
-
-    @keyframes fall {
-      0% { transform: translateY(-100px) rotate(0deg); opacity: 1; }
-      100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
-    }
+    /* Simple glass + gradient background */
+    :root { --bg: linear-gradient(120deg, #0ea5e9 0%, #8b5cf6 60%, #f43f5e 100%); }
+    .bg-hero { background-image: var(--bg); }
+    .glass { backdrop-filter: blur(10px); background: rgba(255,255,255,.08); }
+    .dark .glass { background: rgba(0,0,0,.25); }
+    .btn { @apply inline-flex items-center gap-2 rounded-2xl px-4 py-2 font-medium shadow; }
+    .btn-primary { @apply bg-indigo-600 text-white hover:bg-indigo-500; }
+    .btn-outline { @apply border border-white/30 text-white hover:bg-white/10; }
+    .btn-ghost { @apply bg-white text-gray-900 hover:bg-gray-100; }
+    .badge { @apply text-xs px-2 py-1 rounded-full bg-black/10 dark:bg-white/10; }
   </style>
 </head>
-<body>
-  <header>Fika-Ai | Aam - Digital Marketplace</header>
-  <main>
-    <h1>Selamat Ulang Tahun, Teh Riri!</h1>
-    <p>
-      Di hari spesial ini, semoga Teh Riri selalu dikelilingi oleh cinta, tawa, dan berkah tanpa batas.  
-      Terima kasih sudah menjadi sosok yang hangat dan menginspirasi.  
-      Semoga setiap langkah ke depan dipenuhi kemudahan dan kebahagiaan.  
-      Maap nii gabisa dateng, soalnya lupa juga. Tapi tetep ngucapin aja dari sini teh!  
-      Aam bikin ini spesial buat Teh Riri — semoga panjang umur, sehat selalu, rezeki lancar, dimudahkan urusannya, dan amal baiknya diterima Allah SWT.  
-      Aamiin ya Rabbal Alamiin.
-    </p>
-    <h2>HAPPY BIRTHDAY</h2>
-  </main>
+<body class="min-h-screen text-gray-100 bg-gray-950 selection:bg-indigo-500/40">
+  <!-- Navbar -->
+  <header class="sticky top-0 z-40 border-b border-white/10 bg-gray-950/70 backdrop-blur">
+    <div class="max-w-7xl mx-auto px-4 py-3 flex items-center justify-between">
+      <a href="#" class="flex items-center gap-2 font-bold text-white text-lg">
+        <span class="inline-flex w-8 h-8 rounded-2xl bg-gradient-to-tr from-indigo-500 to-sky-400 items-center justify-center">F</span>
+        Fika Digital Marketplace
+      </a>
+      <nav class="hidden md:flex items-center gap-4">
+        <a href="#produk" class="hover:text-indigo-300">Produk</a>
+        <a href="#jasa" class="hover:text-indigo-300">Jasa</a>
+        <a href="#kontak" class="hover:text-indigo-300">Kontak</a>
+      </nav>
+      <div class="flex items-center gap-2">
+        <button id="toggleTheme" class="btn btn-outline !px-3" title="Toggle theme">
+          <i data-lucide="moon"></i><span class="hidden sm:inline">Tema</span>
+        </button>
+        <a href="#riwayat" class="btn btn-primary"><i data-lucide="shopping-cart"></i><span class="hidden sm:inline">Riwayat</span></a>
+      </div>
+    </div>
+  </header>  <!-- Hero -->  <section class="bg-hero">
+    <div class="max-w-7xl mx-auto px-4 py-16">
+      <div class="grid md:grid-cols-2 gap-8 items-center">
+        <div class="space-y-6 text-white">
+          <div class="inline-flex items-center gap-2 badge bg-white/20">QRIS All Payment • Auto Detect • Auto Kirim</div>
+          <h1 class="text-4xl md:text-5xl font-extrabold leading-tight">Jual Kebutuhan Digital<br/>Cepat, Aman, Otomatis</h1>
+          <p class="text-white/80">Bayar pakai QRIS (semua e-wallet & bank), sistem mendeteksi otomatis, lalu pesanan terkirim tanpa nunggu admin.</p>
+          <div class="flex items-center gap-3">
+            <a href="#produk" class="btn btn-ghost"><i data-lucide="home"></i>Lihat Produk</a>
+            <a href="#kontak" class="btn btn-outline"><i data-lucide="phone-call"></i>Hubungi Kami</a>
+          </div>
+        </div>
+        <div class="glass rounded-3xl p-6 shadow-2xl border border-white/10">
+          <div class="aspect-square rounded-2xl bg-black/30 grid place-content-center">
+            <i data-lucide="qr-code" class="w-28 h-28"></i>
+          </div>
+          <div class="mt-4 text-sm text-white/70">Contoh tampilan QRIS saat checkout. Sistem akan mengecek status pembayaran secara berkala hingga <span class="font-semibold text-white">PAID</span>, lalu mengirimkan pesanan otomatis.</div>
+        </div>
+      </div>
+    </div>
+  </section>  <!-- Produk -->  <main id="produk" class="max-w-7xl mx-auto px-4 py-14">
+    <!-- Menu Nomer (Nokos) -->
+    <section class="mb-12">
+      <header class="flex items-end justify-between mb-4">
+        <div>
+          <h2 class="text-2xl font-bold">Menu Nomer</h2>
+          <p class="text-white/60">Nokos All Region — siap pakai.</p>
+        </div>
+      </header>
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="glass border border-white/10 rounded-2xl p-5 flex flex-col">
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold">Nokos All Region</h3>
+            <span class="badge">Instan</span>
+          </div>
+          <p class="text-white/70 mt-2">Nomor kosong untuk verifikasi berbagai layanan. *Stock dinamis.*</p>
+          <div class="mt-4 text-2xl font-bold">Rp10.000</div>
+          <button class="btn btn-primary mt-auto" onclick='startCheckout({sku:"nokos-all", name:"Nokos All Region", amount:10000, deliver:"code"})'>Beli via QRIS</button>
+        </div>
+      </div>
+    </section><!-- Pterodactyl Menu -->
+<section class="mb-12">
+  <header class="flex items-end justify-between mb-4">
+    <div>
+      <h2 class="text-2xl font-bold">Pterodactyl Panel</h2>
+      <p class="text-white/60">Panel Bot • Tersedia berbagai paket RAM</p>
+    </div>
+    <button class="btn btn-outline" data-toggle="ptero"><i data-lucide="chevron-down"></i><span>Show More</span></button>
+  </header>
+  <div class="grid md:grid-cols-3 gap-4 hidden" id="ptero-list">
+    <!-- Generated by JS: 1GB..10GB + Unlimited -->
+  </div>
+</section>
 
-  <script>
-    // Auto Scroll Lambat
-    let scrollPos = 0;
-    const scrollInterval = setInterval(() => {
-      scrollPos += 1;
-      window.scrollTo({ top: scrollPos, behavior: "smooth" });
+<!-- VPS Menu -->
+<section class="mb-12">
+  <header class="flex items-end justify-between mb-4">
+    <div>
+      <h2 class="text-2xl font-bold">Menu VPS</h2>
+      <p class="text-white/60">Performa mantap untuk bot & server.</p>
+    </div>
+    <button class="btn btn-outline" data-toggle="vps"><i data-lucide="chevron-down"></i><span>Show More</span></button>
+  </header>
+  <div class="grid md:grid-cols-3 gap-4 hidden" id="vps-list">
+    <!-- Generated by JS: 8GB C4, 8GB C8, 16GB C6, 16GB C8 -->
+  </div>
+</section>
 
-      // Stop saat sudah mentok bawah
-      if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 2) {
-        clearInterval(scrollInterval);
-      }
-    }, 50); // scroll pelan tiap 50ms
+<!-- Jasa -->
+<section id="jasa" class="mb-12">
+  <header class="flex items-end justify-between mb-4">
+    <div>
+      <h2 class="text-2xl font-bold">Menu Jasa</h2>
+      <p class="text-white/60">Jasa Hanami — profesional & cepat.</p>
+    </div>
+    <button class="btn btn-outline" data-toggle="jasa"><i data-lucide="chevron-down"></i><span>Show More</span></button>
+  </header>
+  <div class="grid md:grid-cols-3 gap-4 hidden" id="jasa-list">
+    <!-- Generated by JS: Jasa Website, Jasa Script Bot -->
+  </div>
+</section>
 
-    // Confetti
-    for (let i = 0; i < 60; i++) {
-      const confetti = document.createElement("div");
-      confetti.classList.add("confetti");
-      confetti.style.left = Math.random() * 100 + "vw";
-      confetti.style.backgroundColor = `hsl(${Math.random() * 360}, 70%, 60%)`;
-      confetti.style.animationDuration = (Math.random() * 2 + 3) + "s";
-      confetti.style.width = confetti.style.height = (Math.random() * 6 + 4) + "px";
-      document.body.appendChild(confetti);
+<!-- Riwayat -->
+<section id="riwayat" class="mb-12">
+  <h2 class="text-2xl font-bold mb-3">Riwayat Transaksi</h2>
+  <div id="history" class="grid gap-3"></div>
+</section>
+
+  </main>  <!-- Kontak -->  <section id="kontak" class="bg-gradient-to-b from-gray-900 to-gray-950 border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 py-14">
+      <h2 class="text-2xl font-bold mb-6">Contact Us</h2>
+      <div class="grid md:grid-cols-3 gap-4">
+        <a target="_blank" href="https://wa.me/6285800650661" class="glass rounded-2xl p-6 hover:ring-2 ring-green-500 transition">
+          <div class="flex items-center gap-3">
+            <i data-lucide="phone-call" class="w-6 h-6"></i>
+            <div>
+              <div class="font-semibold">WhatsApp</div>
+              <div class="text-white/70 text-sm">+62 858-0065-0661</div>
+            </div>
+          </div>
+          <div class="mt-4"><span class="btn btn-ghost">Chat Sekarang</span></div>
+        </a>
+        <button class="glass rounded-2xl p-6 hover:ring-2 ring-indigo-500 text-left" onclick="copyText('-')">
+          <div class="flex items-center gap-3">
+            <i data-lucide="phone-call" class="w-6 h-6 rotate-90"></i>
+            <div>
+              <div class="font-semibold">Email</div>
+              <div class="text-white/70 text-sm">(belum tersedia)</div>
+            </div>
+          </div>
+          <div class="mt-4"><span class="btn btn-ghost"><i data-lucide="copy"></i>Salin Placeholder</span></div>
+        </button>
+        <a href="#produk" class="glass rounded-2xl p-6 hover:ring-2 ring-sky-500">
+          <div class="font-semibold">Butuh Bantuan?</div>
+          <p class="text-white/70 text-sm mt-1">Klik di sini, kami siap bantu pilih paket yang pas!</p>
+          <div class="mt-4"><span class="btn btn-ghost">Mulai Belanja</span></div>
+        </a>
+      </div>
+    </div>
+  </section>  <!-- Footer -->  <footer class="border-t border-white/10">
+    <div class="max-w-7xl mx-auto px-4 py-8 text-white/60 text-sm flex items-center justify-between">
+      <p>© <span id="y"></span> Fika Digital Marketplace. All rights reserved.</p>
+      <a href="#" class="hover:text-white">Kebijakan & Ketentuan</a>
+    </div>
+  </footer>  <!-- Checkout Modal -->  <dialog id="checkoutDialog" class="backdrop:bg-black/70 rounded-2xl p-0 w-[95vw] max-w-lg">
+    <div class="glass border border-white/10 rounded-2xl p-6">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="text-sm text-white/60">Pembayaran QRIS</div>
+          <div class="text-xl font-bold" id="coTitle">—</div>
+        </div>
+        <button class="btn btn-outline !px-3" onclick="closeCheckout()"><i data-lucide="x-circle"></i>Tutup</button>
+      </div>
+      <div class="grid md:grid-cols-2 gap-4 mt-4">
+        <div class="aspect-square rounded-2xl bg-black/30 grid place-content-center overflow-hidden" id="qrBox">
+          <i data-lucide="qr-code" class="w-20 h-20 opacity-60"></i>
+        </div>
+        <div>
+          <div class="text-sm text-white/70">Total Bayar</div>
+          <div class="text-3xl font-extrabold" id="coAmount">Rp0</div>
+          <div class="mt-2 text-white/70">Order ID: <span id="coRef">—</span></div>
+          <div class="mt-4 flex flex-wrap gap-2">
+            <button id="btnOpenPaymentUrl" class="btn btn-primary" disabled>Buka di App</button>
+            <button class="btn btn-outline" onclick="copyText(currentOrder?.reference||'')"><i data-lucide='copy'></i> Salin Ref</button>
+            <button class="btn btn-outline" onclick="simulatePaid()">Simulasi Paid</button>
+          </div>
+          <div class="mt-4 text-sm text-white/70" id="coStatus">Menunggu pembayaran…</div>
+        </div>
+      </div>
+    </div>
+  </dialog>  <!-- Delivery Modal -->  <dialog id="deliveryDialog" class="backdrop:bg-black/70 rounded-2xl p-0 w-[95vw] max-w-lg">
+    <div class="glass border border-white/10 rounded-2xl p-6">
+      <div class="flex items-start justify-between">
+        <div>
+          <div class="text-sm text-white/60">Auto Delivery</div>
+          <div class="text-xl font-bold" id="delivTitle">Pesanan Terkirim</div>
+        </div>
+        <button class="btn btn-outline !px-3" onclick="document.getElementById('deliveryDialog').close()"><i data-lucide="x-circle"></i>Tutup</button>
+      </div>
+      <div class="mt-4">
+        <pre id="deliveryData" class="bg-black/40 rounded-xl p-4 overflow-auto text-sm"></pre>
+        <div class="mt-3 flex gap-2">
+          <button class="btn btn-primary" onclick="copyText(document.getElementById('deliveryData').innerText)"><i data-lucide='copy'></i> Salin</button>
+          <button class="btn btn-ghost" onclick="addToHistory(currentOrder)">Simpan ke Riwayat</button>
+        </div>
+      </div>
+    </div>
+  </dialog>  <script>
+    // ---- THEME ----
+    const html = document.documentElement;
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme === 'light') html.classList.remove('dark'); else html.classList.add('dark');
+    document.getElementById('toggleTheme').addEventListener('click', () => {
+      const isDark = html.classList.toggle('dark');
+      localStorage.setItem('theme', isDark ? 'dark' : 'light');
+    });
+
+    // ---- UTIL ----
+    const ID = () => 'ORD-' + Math.random().toString(36).slice(2, 8).toUpperCase();
+    const currency = n => new Intl.NumberFormat('id-ID', { style: 'currency', currency: 'IDR', maximumFractionDigits: 0 }).format(n);
+    const copyText = async (t) => { try { await navigator.clipboard.writeText(t); toast('Disalin: ' + t.slice(0,24)); } catch(e){ alert('Gagal salin'); } };
+
+    // ---- TOAST ----
+    const toast = (msg) => {
+      const t = document.createElement('div');
+      t.className = 'fixed bottom-6 left-1/2 -translate-x-1/2 bg-white text-gray-900 px-4 py-2 rounded-2xl shadow z-50';
+      t.textContent = msg; document.body.appendChild(t);
+      setTimeout(()=> t.remove(), 2400);
+    };
+
+    // ---- DATA ----
+    const pteroPrices = { 1:5000,2:9000,3:12000,4:15000,5:18000,6:21000,7:24000,8:27000,9:30000,10:33000, unlimited: 60000 };
+    const vpsList = [
+      { name:'VPS 8GB C4', specs:'8GB RAM • 4 vCPU', amount:85000, sku:'vps-8-4' },
+      { name:'VPS 8GB C8', specs:'8GB RAM • 8 vCPU', amount:120000, sku:'vps-8-8' },
+      { name:'VPS 16GB C6', specs:'16GB RAM • 6 vCPU', amount:180000, sku:'vps-16-6' },
+      { name:'VPS 16GB C8', specs:'16GB RAM • 8 vCPU', amount:220000, sku:'vps-16-8' },
+    ];
+
+    // ---- RENDERERS ----
+    function renderPtero() {
+      const grid = document.getElementById('ptero-list');
+      grid.innerHTML = '';
+      for (let i=1;i<=10;i++) addPteroCard(i, pteroPrices[i]);
+      addPteroCard('Unlimited', pteroPrices.unlimited);
+      window.lucideReady && window.lucideReady();
     }
+    function addPteroCard(label, price){
+      const grid = document.getElementById('ptero-list');
+      const div = document.createElement('div');
+      div.className = 'glass border border-white/10 rounded-2xl p-5 flex flex-col';
+      div.innerHTML = `
+        <div class="flex items-center justify-between">
+          <h3 class="text-lg font-semibold">Panel Bot ${label}</h3>
+          <span class="badge">Pterodactyl</span>
+        </div>
+        <p class="text-white/70 mt-2">Lokasi cepat, uptime tinggi, support Bot & Minecraft.</p>
+        <div class="mt-4 text-2xl font-bold">${currency(price)}</div>
+        <button class="btn btn-primary mt-auto">Beli via QRIS</button>
+      `;
+      div.querySelector('button').addEventListener('click', () => startCheckout({ sku: `panel-${String(label).toLowerCase()}`, name: `Panel Bot ${label}`, amount: price, deliver:'panel' }));
+      grid.appendChild(div);
+    }
+
+    function renderVps(){
+      const grid = document.getElementById('vps-list');
+      grid.innerHTML = '';
+      vpsList.forEach(v => {
+        const card = document.createElement('div');
+        card.className = 'glass border border-white/10 rounded-2xl p-5 flex flex-col';
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold">${v.name}</h3>
+            <span class="badge">VPS</span>
+          </div>
+          <p class="text-white/70 mt-2">${v.specs}</p>
+          <div class="mt-4 text-2xl font-bold">${currency(v.amount)}</div>
+          <button class="btn btn-primary mt-auto">Beli via QRIS</button>
+        `;
+        card.querySelector('button').addEventListener('click', () => startCheckout({ sku: v.sku, name: v.name, amount: v.amount, deliver:'vps' }));
+        grid.appendChild(card);
+      });
+    }
+
+    function renderJasa(){
+      const grid = document.getElementById('jasa-list');
+      const items = [
+        { name:'Jasa Bikin Website', desc:'Paket landing page / toko modern', amount:150000, sku:'jasa-web' },
+        { name:'Jasa Bikin Script Bot WhatsApp', desc:'Custom fitur sesuai kebutuhan', amount:120000, sku:'jasa-bot' },
+      ];
+      grid.innerHTML = '';
+      items.forEach(v => {
+        const card = document.createElement('div');
+        card.className = 'glass border border-white/10 rounded-2xl p-5 flex flex-col';
+        card.innerHTML = `
+          <div class="flex items-center justify-between">
+            <h3 class="text-lg font-semibold">${v.name}</h3>
+            <span class="badge">Jasa Hanami</span>
+          </div>
+          <p class="text-white/70 mt-2">${v.desc}</p>
+          <div class="mt-4 text-2xl font-bold">${currency(v.amount)}</div>
+          <button class="btn btn-primary mt-auto">Order via QRIS</button>
+        `;
+        card.querySelector('button').addEventListener('click', () => startCheckout({ sku: v.sku, name: v.name, amount: v.amount, deliver:'service' }));
+        grid.appendChild(card);
+      });
+    }
+
+    // ---- TOGGLES ----
+    function setupToggles(){
+      const map = {
+        ptero: () => { const el = document.getElementById('ptero-list'); el.classList.toggle('hidden'); },
+        vps: () => { const el = document.getElementById('vps-list'); el.classList.toggle('hidden'); },
+        jasa: () => { const el = document.getElementById('jasa-list'); el.classList.toggle('hidden'); },
+      };
+      document.querySelectorAll('[data-toggle]').forEach(btn => {
+        btn.addEventListener('click', () => map[btn.dataset.toggle] && map[btn.dataset.toggle]());
+      });
+    }
+
+    // ---- CHECKOUT + QRIS INTEGRASI (template) ----
+    // Ubah CONFIG sesuai gateway yang Anda gunakan.
+    const CONFIG = {
+      // Contoh Payku / Xendit / Duitku / dsb — isi server API Anda sendiri.
+      apikey: 'PAYKU_B8945B42C8954E81717F8252B75C9925',
+      createEndpoint: '/api/create-qris', // POST {amount, sku, name, callback_url}
+      statusEndpoint: '/api/status/',      // GET /api/status/:reference
+      secret: 'd9b93c69582b7f42f27ea87eea61b1ec1dafa19e20b4bb7cbd47062df5859c50',          // jika diperlukan di server, jangan taruh di frontend
+      pollInterval: 5000,                  // 5s
+      maxPoll: 120,                        // 10 menit
+    };
+
+    let currentOrder = null, pollTimer = null, pollCount = 0;
+
+    async function startCheckout(item){
+      currentOrder = {
+        reference: ID(),
+        ...item,
+        createdAt: Date.now(),
+        status: 'PENDING'
+      };
+      // Buka dialog
+      openCheckout();
+      updateCheckoutUI({ loading:true });
+
+      // === GANTI BAGIAN INI DENGAN REQUEST KE SERVER ANDA ===
+      // DEMO: buat QR dari teks payment_url (menggunakan chart.googleapis.com)
+      const payment_url = location.origin + '/pay/' + currentOrder.reference; // placeholder
+      const qr_url = `https://chart.googleapis.com/chart?cht=qr&chs=512x512&chl=${encodeURIComponent(payment_url)}`;
+      const expires_at = Date.now() + 10*60*1000; // 10 menit
+      // === END DEMO ===
+
+      currentOrder.qr_url = qr_url;
+      currentOrder.payment_url = payment_url;
+      currentOrder.expires_at = expires_at;
+
+      updateCheckoutUI({ loading:false });
+      startPolling();
+    }
+
+    function openCheckout(){ document.getElementById('checkoutDialog').showModal(); }
+    function closeCheckout(){ clearInterval(pollTimer); document.getElementById('checkoutDialog').close(); }
+
+    function updateCheckoutUI({loading}){
+      document.getElementById('coTitle').textContent = currentOrder.name;
+      document.getElementById('coAmount').textContent = currency(currentOrder.amount);
+      document.getElementById('coRef').textContent = currentOrder.reference;
+      const qr = document.getElementById('qrBox');
+      qr.innerHTML = loading ? `<div class='animate-pulse text-white/60 text-sm grid place-content-center h-full'>Mempersiapkan QRIS…</div>` : `<img src='${currentOrder.qr_url}' alt='QRIS' class='w-full h-full object-cover'/>`;
+      const btnOpen = document.getElementById('btnOpenPaymentUrl');
+      btnOpen.disabled = false; btnOpen.onclick = ()=> window.open(currentOrder.payment_url, '_blank');
+      document.getElementById('coStatus').textContent = 'Menunggu pembayaran…';
+      window.lucideReady && window.lucideReady();
+         100% { transform: translateY(100vh) rotate(360deg); opacity: 0; }
+    }
+
+    function startPolling(){
+      clearInterval(pollTimer); pollCount = 0;
+      pollTimer = setInterval(async ()=>{
+        pollCount++;
+        // === GANTI DENGAN FETCH STATUS KE SERVER ===
+        // const res = await fetch(CONFIG.statusEndpoint + currentOrder.reference);
+        // const data = await res.json(); // {status: 'PAID'|'EXPIRED'|'PENDING'}
+        const data = window.__SIM_PAID__ ? {status:'PAID'} : {status:'PENDING'}; // DEMO ONLY
+        // ===========================================
+
+        if (data.status === 'PAID') {
+          currentOrder.status = 'PAID';
+          document.getElementById('coStatus').textContent = 'Pembayaran diterima. Mengirim pesanan…';
+          clearInterval(pollTimer);
+          setTimeout(()=> deliver(currentOrder), 1000);
+        } else if (pollCount >= CONFIG.maxPoll) {
+          currentOrder.status = 'EXPIRED';
+          document.getElementById('coStatus').textContent = 'Waktu pembayaran habis. Silakan ulangi.';
+          clearInterval(pollTimer);
+        }
+      }, CONFIG.pollInterval);
+    }
+
+    // Tombol demo untuk menandai status PAID
+    function simulatePaid(){ window.__SIM_PAID__ = true; toast('Simulasi: status PAID'); }
+
+    // ---- DELIVERY ----
+    function deliver(order){
+      // Contoh auto-kirim sesuai tipe product
+      let payload = '';
+      if (order.deliver === 'panel') {
+        payload = [
+          `Produk : ${order.name}`,
+          `Server : Pterodactyl`,
+          `URL    : https://panel.fika.local/login`,
+          `Email  : user_${order.reference.toLowerCase()}@mail.local`,
+          `Pass   : ${Math.random().toString(36).slice(2,10)}`,
+          `Catatan: Aktif 30 hari, perpanjang otomatis bila topup sebelum jatuh tempo.`
+        ].join('\n');
+      } else if (order.deliver === 'vps') {
+        payload = [
+          `Produk : ${order.name}`,
+          `Host   : vps-${order.reference.toLowerCase()}.fika.local`,
+          `IP     : 203.0.113.${Math.floor(Math.random()*200+10)}`,
+          `Login  : root`,
+          `Pass   : ${Math.random().toString(36).slice(2,12)}`,
+          `Catatan: Silakan ganti password saat pertama login.`
+        ].join('\n');
+      } else if (order.deliver === 'service') {
+        payload = [
+          `Order  : ${order.name}`,
+          `Ticket : TCK-${order.reference}`,
+          `Status : Scheduled`,
+          `Follow : WA 6285800650661 (kirim ID ticket)`
+        ].join('\n');
+      } else { // code / voucher
+        payload = [
+          `Produk : ${order.name}`,
+          `Kode   : ${order.reference}-${Math.random().toString(36).slice(2,8).toUpperCase()}`,
+          `Catatan: Gunakan 1x redeem, non-refundable.`
+        ].join('\n');
+      }
+
+      document.getElementById('deliveryData').textContent = payload;
+      document.getElementById('delivTitle').textContent = `Pesanan ${order.reference} — ${order.name}`;
+      document.getElementById('deliveryDialog').showModal();
+    }
+
+    function addToHistory(order){
+      const list = JSON.parse(localStorage.getItem('history')||'[]');
+      const entry = { ...order, savedAt: Date.now() };
+      list.unshift(entry);
+      localStorage.setItem('history', JSON.stringify(list));
+      renderHistory(); toast('Disimpan ke Riwayat');
+    }
+
+    function renderHistory(){
+      const root = document.getElementById('history');
+      const list = JSON.parse(localStorage.getItem('history')||'[]');
+      root.innerHTML = list.length ? '' : '<div class="text-white/50">Belum ada transaksi disimpan.</div>';
+      list.forEach(o => {
+        const item = document.createElement('div');
+        item.className = 'glass border border-white/10 rounded-2xl p-4 flex flex-wrap items-center justify-between gap-3';
+        item.innerHTML = `
+          <div>
+            <div class="font-semibold">${o.name}</div>
+            <div class="text-white/60 text-sm">${o.reference} • ${new Date(o.createdAt).toLocaleString('id-ID')}</div>
+          </div>
+          <div class="flex items-center gap-2">
+            <span class="badge">${o.status}</span>
+            <button class="btn btn-outline !px-3">Detail</button>
+          </div>
+        `;
+        item.querySelector('button').addEventListener('click', ()=>{
+          const lines = [
+            `Item : ${o.name}`,
+            `Ref  : ${o.reference}`,
+            `Harga: ${currency(o.amount)}`,
+            `Status: ${o.status}`,
+            `Waktu: ${new Date(o.createdAt).toLocaleString('id-ID')}`,
+          ].join('\n');
+          alert(lines);
+        });
+        root.appendChild(item);
+      });
+    }
+
+    // ---- INIT ----
+    renderPtero(); renderVps(); renderJasa(); setupToggles(); renderHistory();
+    document.getElementById('y').textContent = new Date().getFullYear();
+    (window.lucideReady) && window.lucideReady();
   </script>
 </body>
 </html>
