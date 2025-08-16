@@ -3,95 +3,70 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Warung Digital - Marketplace</title>
-  <link rel="stylesheet" href="style.css">
+  <title>Warung Pedia - Digital Marketplace</title>
+  <link rel="stylesheet" href="assets/css/style.css">
 </head>
 <body>
+  <!-- HEADER -->
   <header>
-    <h1>🌐 Warung Digital</h1>
-    <nav>
-      <button onclick="toggleCart()">🛒 Cart (<span id="cart-count">0</span>)</button>
-    </nav>
+    <div class="container">
+      <h1 class="logo">⚡ Warung Pedia</h1>
+      <nav>
+        <ul>
+          <li><a href="#produk">Produk</a></li>
+          <li><a href="#pembayaran">Pembayaran</a></li>
+          <li><a href="#kontak">Kontak</a></li>
+        </ul>
+      </nav>
+    </div>
   </header>
 
-  <main>
-    <!-- NOKOS -->
-    <section>
-      <h2>[ Menu Nomor ]</h2>
-      <div class="products">
-        <div class="product-card">
-          <h3>Nokos All Region</h3>
-          <p>Nomor virtual semua region</p>
-          <p class="price">Rp5.000</p>
-          <button onclick="addToCart('Nokos All Region', 5000, 'NOKOS01')">Tambah ke Cart</button>
-        </div>
-      </div>
-    </section>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-text">
+      <h2>Marketplace Digital Modern</h2>
+      <p>Beli kebutuhan digital dengan <span class="highlight">QRIS All Payment</span> cepat, aman, otomatis.</p>
+      <a href="#produk" class="btn">Belanja Sekarang</a>
+    </div>
+  </section>
 
-    <!-- PTERODACTYL -->
-    <section>
-      <h2>[ Pterodactyl Menu ]</h2>
-      <button class="show-more" onclick="toggleList('panel-list')">Panel Bot ▼</button>
-      <div id="panel-list" class="hidden products">
-        <script>
-          const panelList = [1,2,3,4,5,6,7,8,9,10,"Unlimited"];
-          panelList.forEach(size=>{
-            document.write(`
-              <div class="product-card">
-                <h3>Panel ${size}GB</h3>
-                <p>Pterodactyl Bot Panel</p>
-                <p class="price">Rp${(size==='Unlimited'?100000:(size*5000)).toLocaleString()}</p>
-                <button onclick="addToCart('Panel ${size}GB', ${size==='Unlimited'?100000:size*5000}, 'PNL${size}')">Tambah ke Cart</button>
-              </div>
-            `);
-          });
-        </script>
+  <!-- PRODUK -->
+  <section id="produk" class="produk">
+    <h2>📦 Produk Kami</h2>
+    <div class="produk-grid">
+      <div class="card">
+        <h3>Nokos All Region</h3>
+        <p>Nomor kosong untuk berbagai kebutuhan.</p>
+        <button class="btn bayar" data-produk="Nokos All Region" data-harga="10000">Beli Sekarang</button>
       </div>
-    </section>
-
-    <!-- VPS -->
-    <section>
-      <h2>[ Menu VPS ]</h2>
-      <button class="show-more" onclick="toggleList('vps-list')">List VPS ▼</button>
-      <div id="vps-list" class="hidden products">
-        <div class="product-card">
-          <h3>8GB C4</h3>
-          <p>Server VPS</p>
-          <p class="price">Rp80.000</p>
-          <button onclick="addToCart('VPS 8GB C4', 80000, 'VPS8C4')">Tambah ke Cart</button>
-        </div>
-        <div class="product-card">
-          <h3>8GB C8</h3>
-          <p>Server VPS</p>
-          <p class="price">Rp85.000</p>
-          <button onclick="addToCart('VPS 8GB C8', 85000, 'VPS8C8')">Tambah ke Cart</button>
-        </div>
-        <div class="product-card">
-          <h3>16GB C6</h3>
-          <p>Server VPS</p>
-          <p class="price">Rp120.000</p>
-          <button onclick="addToCart('VPS 16GB C6', 120000, 'VPS16C6')">Tambah ke Cart</button>
-        </div>
-        <div class="product-card">
-          <h3>16GB C8</h3>
-          <p>Server VPS</p>
-          <p class="price">Rp125.000</p>
-          <button onclick="addToCart('VPS 16GB C8', 125000, 'VPS16C8')">Tambah ke Cart</button>
-        </div>
+      <div class="card">
+        <h3>Panel Bot</h3>
+        <p>Paket 1GB - Unlimited untuk bot Anda.</p>
+        <button class="btn bayar" data-produk="Panel Bot 1GB" data-harga="15000">Beli Sekarang</button>
       </div>
-    </section>
+      <div class="card">
+        <h3>Panel Minecraft</h3>
+        <p>Hosting Minecraft murah & cepat.</p>
+        <button class="btn bayar" data-produk="Panel Minecraft" data-harga="20000">Beli Sekarang</button>
+      </div>
+    </div>
+  </section>
 
-    <!-- JASA -->
-    <section>
-      <h2>[ Menu Jasa ]</h2>
-      <button class="show-more" onclick="toggleList('jasa-list')">Jasa Hanami ▼</button>
-      <div id="jasa-list" class="hidden products">
-        <div class="product-card">
-          <h3>Jasa Bikin Website</h3>
-          <p>Pembuatan website sesuai kebutuhan</p>
-          <p class="price">Rp150.000</p>
-          <button onclick="addToCart('Jasa Bikin Website', 150000, 'JASA01')">Tambah ke Cart</button>
-        </div>
+  <!-- QRIS PAYMENT -->
+  <section id="pembayaran" class="pembayaran">
+    <h2>💳 Pembayaran QRIS</h2>
+    <p>Scan QR untuk melakukan pembayaran otomatis.</p>
+    <div id="qris-container"></div>
+  </section>
+
+  <!-- FOOTER -->
+  <footer id="kontak">
+    <p>© 2025 Warung Pedia | Dibuat dengan ❤️ oleh Handii</p>
+  </footer>
+
+  <script src="assets/js/script.js"></script>
+</body>
+</html>        </div>
         <div class="product-card">
           <h3>Jasa Bikin Script Bot WhatsApp</h3>
           <p>Pembuatan script bot WhatsApp custom</p>
