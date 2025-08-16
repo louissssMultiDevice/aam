@@ -1,5 +1,43 @@
 let cart = [];
 
+async function payNow(title, price, sku) {
+  const resp = await fetch('/api/create-transaction', {
+    method: 'POST',
+    headers: { 'Content-Type':'application/json' },
+    body: JSON.stringify({
+      amount: price,
+      sku,
+      description: title,
+      customer_name: 'Buyer',
+      customer_email: `Buyer@Nami.com`,
+      customer_phone: '081234567890'
+    })
+  });
+  const data = await resp.json();
+  if (data.success) {
+    showQRModal(data.data.qris_url, data.data.transaction_id);
+    pollStatus(data.data.transaction_id);
+  } else {
+    alert('Gagal membuat transaksi: ' + data.message);
+  }
+}
+
+function pollStatus(transactionId) {
+  let attempts = 0, max = 60;
+  const interval = setInterval(async () => {
+    attempts++;
+    const res = await fetch(`/api/transaction/${transactionId}`);
+    const d = await res.json();
+    if (d.success && d.data.status === 'paid') {
+      clearInterval(interval);
+      showPaidSuccess(d.data);
+    } else if (attempts >= max) {
+      clearInterval(interval);
+      showExpired();
+    }
+  }, 5000);
+}
+
 function toggleCart() {
   document.getElementById("cart").classList.toggle("show");
 }
