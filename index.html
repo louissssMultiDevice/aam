@@ -3,110 +3,38 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Warung Pedia - Digital Marketplace</title>
+  <title>Warung Pedia - QRIS Payment</title>
   <link rel="stylesheet" href="style.css">
 </head>
 <body>
-  <!-- HEADER -->
-  <header>
-    <div class="container">
-      <h1 class="logo">⚡ Warung Pedia</h1>
-      <nav>
-        <ul>
-          <li><a href="#produk">Produk</a></li>
-          <li><a href="#pembayaran">Pembayaran</a></li>
-          <li><a href="#kontak">Kontak</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+  <div class="container">
+    <header>
+      <img src="assets/logo.png" alt="Logo" class="logo">
+      <h1>⚡ Warung Pedia Payment ⚡</h1>
+      <p class="subtitle">Pembayaran cepat & otomatis via QRIS</p>
+    </header>
 
-  <!-- HERO -->
-  <section class="hero">
-    <div class="hero-text">
-      <h2>Marketplace Digital Modern</h2>
-      <p>Beli kebutuhan digital dengan <span class="highlight">QRIS All Payment</span> cepat, aman, otomatis.</p>
-      <a href="#produk" class="btn">Belanja Sekarang</a>
-    </div>
-  </section>
+    <main>
+      <div class="payment-card">
+        <h2>Pembayaran QRIS</h2>
+        <p>Scan QR Code untuk membayar:</p>
+        <img src="assets/qris.png" alt="QRIS Code" class="qris-img">
 
-  <!-- PRODUK -->
-  <section id="produk" class="produk">
-    <h2>📦 Produk Kami</h2>
-    <div class="produk-grid">
-      <div class="card">
-        <h3>Nokos All Region</h3>
-        <p>Nomor kosong untuk berbagai kebutuhan.</p>
-        <button class="btn bayar" data-produk="Nokos All Region" data-harga="10000">Beli Sekarang</button>
-      </div>
-      <div class="card">
-        <h3>Panel Bot</h3>
-        <p>Paket 1GB - Unlimited untuk bot Anda.</p>
-        <button class="btn bayar" data-produk="Panel Bot 1GB" data-harga="15000">Beli Sekarang</button>
-      </div>
-      <div class="card">
-        <h3>Panel Minecraft</h3>
-        <p>Hosting Minecraft murah & cepat.</p>
-        <button class="btn bayar" data-produk="Panel Minecraft" data-harga="20000">Beli Sekarang</button>
-      </div>
-    </div>
-  </section>
-
-  <!-- QRIS PAYMENT -->
-  <section id="pembayaran" class="pembayaran">
-    <h2>💳 Pembayaran QRIS</h2>
-    <p>Scan QR untuk melakukan pembayaran otomatis.</p>
-    <div id="qris-container"></div>
-  </section>
-
-  <!-- FOOTER -->
-  <footer id="kontak">
-    <p>© 2025 Warung Pedia | Dibuat dengan ❤️ oleh Handii</p>
-  </footer>
-
-  <script src="assets/js/script.js"></script>
-</body>
-</html>        </div>
-        <div class="product-card">
-          <h3>Jasa Bikin Script Bot WhatsApp</h3>
-          <p>Pembuatan script bot WhatsApp custom</p>
-          <p class="price">Rp200.000</p>
-          <button onclick="addToCart('Jasa Bot WhatsApp', 200000, 'JASA02')">Tambah ke Cart</button>
+        <div class="amount-box">
+          <label for="amount">Nominal Pembayaran</label>
+          <input type="number" id="amount" placeholder="Masukkan jumlah (Rp)">
         </div>
+
+        <button id="payBtn" class="neon-btn">💳 Bayar Sekarang</button>
+        <p id="status" class="status-text">Menunggu pembayaran...</p>
       </div>
-    </section>
+    </main>
 
-    <!-- CONTACT -->
-    <section id="contact">
-      <h2>📞 Contact Us</h2>
-      <a class="btn" href="https://wa.me/6285800650661" target="_blank">💬 WhatsApp</a>
-      <a class="btn" href="mailto:yourmail@example.com">📧 Email</a>
-    </section>
-  </main>
-
-  <!-- CART SIDEBAR -->
-  <aside id="cart">
-    <h3>🛒 Keranjang</h3>
-    <ul id="cart-list"></ul>
-    <button onclick="checkout()">Checkout</button>
-  </aside>
-
-  <!-- QRIS MODAL -->
-  <div id="qrisModal" class="modal">
-    <div class="modal-content">
-      <span class="close" onclick="closeQR()">&times;</span>
-      <h2>Pembayaran QRIS</h2>
-      <img id="qrisImage" src="" alt="QRIS Code">
-      <p id="statusText">Menunggu pembayaran...</p>
-    </div>
+    <footer>
+      <p>© 2025 Warung Pedia | Powered by Payku</p>
+    </footer>
   </div>
-
+  
   <script src="script.js"></script>
-  <script>
-    // show-more toggle
-    function toggleList(id) {
-      document.getElementById(id).classList.toggle("hidden");
-    }
-  </script>
 </body>
 </html>
