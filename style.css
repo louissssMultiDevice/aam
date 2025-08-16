@@ -1,139 +1,118 @@
-/* Reset & Global */
+/* FONT FUTURISTIK */
+@import url('https://fonts.googleapis.com/css2?family=Orbitron:wght@400;700&display=swap');
+
 * {
   margin: 0;
   padding: 0;
   box-sizing: border-box;
-  font-family: 'Poppins', sans-serif;
+  font-family: 'Orbitron', sans-serif;
 }
 
 body {
-  background: #f4f7fa;
-  color: #333;
-  line-height: 1.6;
-}
-
-/* Header */
-header {
-  background: #111;
-  padding: 1rem 0;
-  color: white;
-  position: sticky;
-  top: 0;
-  z-index: 1000;
-}
-
-header .container {
-  width: 90%;
-  margin: auto;
+  background: radial-gradient(circle at center, #0f0f0f, #050505);
+  color: #f0f0f0;
+  min-height: 100vh;
   display: flex;
-  justify-content: space-between;
+  justify-content: center;
   align-items: center;
 }
 
+.container {
+  width: 100%;
+  max-width: 500px;
+  text-align: center;
+  padding: 20px;
+}
+
 header .logo {
-  font-size: 1.5rem;
-  font-weight: bold;
+  width: 80px;
+  filter: drop-shadow(0 0 10px cyan);
 }
 
-nav ul {
-  display: flex;
-  list-style: none;
+h1 {
+  font-size: 1.8rem;
+  margin-top: 10px;
+  color: #fff;
+  text-shadow: 0 0 10px cyan, 0 0 20px magenta;
 }
 
-nav ul li {
-  margin-left: 20px;
+.subtitle {
+  font-size: 0.9rem;
+  color: #aaa;
+  margin-bottom: 20px;
 }
 
-nav ul li a {
-  text-decoration: none;
-  color: white;
-  transition: 0.3s;
+.payment-card {
+  background: rgba(30, 30, 30, 0.85);
+  border-radius: 15px;
+  padding: 25px;
+  box-shadow: 0 0 15px rgba(0, 255, 255, 0.2);
+  backdrop-filter: blur(5px);
 }
 
-nav ul li a:hover {
-  color: #00ffcc;
-}
-
-/* Hero */
-.hero {
-  background: linear-gradient(135deg, #0077ff, #00ffcc);
-  color: white;
-  text-align: center;
-  padding: 5rem 2rem;
-}
-
-.hero h2 {
-  font-size: 2.5rem;
+.payment-card h2 {
   margin-bottom: 10px;
+  color: #0ff;
 }
 
-.hero p {
-  font-size: 1.2rem;
+.qris-img {
+  width: 200px;
+  margin: 15px 0;
+  border-radius: 10px;
+  border: 2px solid rgba(255,255,255,0.1);
+  box-shadow: 0 0 20px rgba(0, 255, 200, 0.5);
 }
 
-.btn {
-  display: inline-block;
-  margin-top: 20px;
-  padding: 10px 20px;
-  background: #00ffcc;
-  color: #111;
+.amount-box {
+  margin: 15px 0;
+  text-align: left;
+}
+
+.amount-box label {
+  font-size: 0.9rem;
+  color: #bbb;
+}
+
+.amount-box input {
+  width: 100%;
+  padding: 10px;
+  margin-top: 5px;
   border-radius: 8px;
-  font-weight: bold;
-  text-decoration: none;
-  transition: 0.3s;
-}
-
-.btn:hover {
-  background: #0077ff;
-  color: white;
-}
-
-/* Produk */
-.produk {
-  padding: 3rem 2rem;
-  text-align: center;
-}
-
-.produk-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-  gap: 20px;
-  margin-top: 20px;
-}
-
-.card {
-  background: white;
-  border-radius: 10px;
-  padding: 20px;
-  box-shadow: 0 5px 10px rgba(0,0,0,0.1);
-  transition: 0.3s;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-}
-
-/* Pembayaran */
-.pembayaran {
-  padding: 3rem 2rem;
-  text-align: center;
-  background: #eafaf6;
-}
-
-#qris-container {
-  margin-top: 20px;
-  padding: 20px;
-  border: 2px dashed #0077ff;
-  display: inline-block;
-  border-radius: 10px;
-  background: white;
-}
-
-/* Footer */
-footer {
+  border: none;
+  outline: none;
   background: #111;
-  color: white;
-  text-align: center;
-  padding: 1rem;
-  margin-top: 30px;
+  color: #fff;
+  font-size: 1rem;
+  box-shadow: 0 0 10px #0ff inset;
+}
+
+.neon-btn {
+  background: linear-gradient(90deg, #0ff, #f0f, #0ff);
+  border: none;
+  padding: 12px 25px;
+  margin-top: 15px;
+  border-radius: 50px;
+  color: black;
+  font-weight: bold;
+  cursor: pointer;
+  transition: 0.3s ease;
+  box-shadow: 0 0 20px cyan, 0 0 30px magenta;
+}
+
+.neon-btn:hover {
+  transform: scale(1.05);
+  box-shadow: 0 0 30px magenta, 0 0 40px cyan;
+}
+
+.status-text {
+  margin-top: 15px;
+  font-size: 0.95rem;
+  color: #0ff;
+  text-shadow: 0 0 10px #0ff;
+}
+
+footer {
+  margin-top: 20px;
+  font-size: 0.8rem;
+  color: #777;
 }
