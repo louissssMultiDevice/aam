@@ -1,97 +1,41 @@
-let cart = [];
+// Simulasi Integrasi QRIS Payku
+const API_KEY = "PAYKU_B8945B42C8954E81717F8252B75C9925";
+const SECRET_KEY = "d9b93c69582b7f42f27ea87eea61b1ec1dafa19e20b4bb7cbd47062df5859c50";
 
-/* =====================
-   🔹 CART HANDLER
-===================== */
-function toggleCart() {
-  document.getElementById("cart").classList.toggle("show");
-}
+document.querySelectorAll(".bayar").forEach(btn => {
+  btn.addEventListener("click", async () => {
+    const produk = btn.dataset.produk;
+    const harga = btn.dataset.harga;
 
-function addToCart(title, price, sku) {
-  cart.push({ title, price, sku });
-  document.getElementById("cart-count").innerText = cart.length;
-  renderCart();
-}
+    alert(`Membuat transaksi untuk: ${produk} | Rp${harga}`);
 
-function renderCart() {
-  const list = document.getElementById("cart-list");
-  list.innerHTML = "";
-  cart.forEach((item, i) => {
-    const li = document.createElement("li");
-    li.innerHTML = `
-      ${item.title} - Rp${item.price.toLocaleString()} 
-      <button onclick="removeFromCart(${i})">x</button>
-    `;
-    list.appendChild(li);
-  });
-}
-
-function removeFromCart(i) {
-  cart.splice(i, 1);
-  document.getElementById("cart-count").innerText = cart.length;
-  renderCart();
-}
-
-/* =====================
-   🔹 PAYMENT HANDLER
-===================== */
-async function payNow(title, price, sku) {
-  try {
-    const resp = await fetch("https://payku.my.id/api/create-transaction", {
+    // Fetch API Payku
+    const response = await fetch("https://payku.my.id/api/qris/create", {
       method: "POST",
-      headers: { "Content-Type": "application/json" },
+      headers: {
+        "Content-Type": "application/json",
+        "apiKey": API_KEY,
+        "secretKey": SECRET_KEY
+      },
       body: JSON.stringify({
-        amount: price,
-        sku,
-        description: title,
-        customer_name: "Buyer",
-        customer_email: "buyer@nami.com",
-        customer_phone: "081234567890",
-      }),
+        amount: harga,
+        note: produk,
+        method: "qris"
+      })
     });
 
-    const data = await resp.json();
-    if (data.success) {
-      showQRModal(data.data.qris_url);
-      pollStatus(data.data.transaction_id);
+    const data = await response.json();
+    if (data.status === "success") {
+      document.getElementById("qris-container").innerHTML = `
+        <h3>Scan QRIS</h3>
+        <img src="${data.data.qrImage}" alt="QRIS Code" width="250">
+        <p><strong>ID Transaksi:</strong> ${data.data.invoiceId}</p>
+      `;
     } else {
-      alert("Gagal membuat transaksi: " + data.message);
+      alert("Gagal membuat transaksi!");
     }
-  } catch (err) {
-    console.error("Error payNow:", err);
-    alert("Terjadi kesalahan saat membuat transaksi");
-  }
-}
-
-async function checkout() {
-  if (cart.length === 0) return alert("Keranjang kosong!");
-  const item = cart[0]; // ambil produk pertama (bisa dikembangkan jadi multi-item)
-
-  payNow(item.title, item.price, item.sku);
-}
-
-/* =====================
-   🔹 QRIS MODAL HANDLER
-===================== */
-function showQRModal(qrisUrl) {
-  document.getElementById("qrisImage").src = qrisUrl;
-  document.getElementById("qrisModal").style.display = "flex";
-  document.getElementById("statusText").innerText = "Menunggu pembayaran...";
-}
-
-function closeQR() {
-  document.getElementById("qrisModal").style.display = "none";
-}
-
-function showPaidSuccess(data) {
-  document.getElementById("statusText").innerText = "✅ Pembayaran Berhasil!";
-  console.log("Payment data:", data);
-}
-
-function showExpired() {
-  document.getElementById("statusText").innerText =
-    "❌ Pembayaran Gagal / Expired";
-}
+  });
+});}
 
 /* =====================
    🔹 PAYMENT STATUS POLLING
