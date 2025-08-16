@@ -1,0 +1,40 @@
+<!doctype html>
+<html lang="id">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Warung Pedia — Marketplace</title>
+  <style>
+    body{font-family:Arial,Helvetica,sans-serif;background:#0f1724;color:#e6eef6;padding:20px}
+    .card{background:#071428;padding:16px;border-radius:8px;margin-bottom:12px}
+    .btn{padding:8px 12px;border-radius:8px;border:none;cursor:pointer}
+    img.qr{max-width:280px}
+  </style>
+</head>
+<body>
+  <h1>Warung Pedia</h1>
+
+  <div class="card">
+    <h3>Pilih Produk</h3>
+    <select id="productSelect">
+      <option value="nokos_all_01">NOKOS All Region — Rp5.000</option>
+      <option value="panel_1GB">Panel Bot 1GB — Rp25.000</option>
+    </select>
+    <div style="margin-top:8px">
+      <label>Nominal / Harga (otomatis terisi): </label>
+      <input id="amountInput" type="number" value="5000" />
+    </div>
+    <div style="margin-top:8px">
+      <label>Nomor (opsional): </label>
+      <input id="phoneInput" type="text" placeholder="0812xxxx" />
+    </div>
+    <div style="margin-top:12px">
+      <button class="btn" id="payBtn">Bayar via QRIS</button>
+    </div>
+  </div>
+
+  <div id="result"></div>
+
+  <script src="/script.js" defer></script>
+</body>
+</html>
