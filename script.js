@@ -16,7 +16,7 @@ document.getElementById("payBtn").addEventListener("click", async () => {
   statusText.innerText = "🔄 Membuat transaksi...";
 
   try {
-    const res = await fetch(`${CONFIG.baseURL}/api/qris/create`, {
+    const res = await fetch(`${CONFIG.baseURL}/api/create-transaction`, {
       method: "POST",
       headers: {
         "Content-Type": "application/json",
