@@ -1,80 +1,76 @@
+// server.js
 const express = require('express');
-const bodyParser = require('body-parser');
 const axios = require('axios');
 const crypto = require('crypto');
+const bodyParser = require('body-parser');
 const app = express();
 app.use(bodyParser.json());
 
+// Konfigurasi dari Payku
 const CONFIG = {
   apiKey: 'PAYKU_B8945B42C8954E81717F8252B75C9925',
   secretKey: 'd9b93c69582b7f42f27ea87eea61b1ec1dafa19e20b4bb7cbd47062df5859c50',
-  baseURL: 'https://payku.my.id'
+  baseURL: 'https://payku.my.id/api'
 };
 
-function generateSignature(data, secretKey, timestamp) {
-  const payload = { ...data, timestamp };
-  const sortedKeys = Object.keys(payload).sort();
-  const str = sortedKeys.map(k => `${k}=${payload[k]}`).join('&');
-  return crypto.createHmac('sha256', secretKey).update(str).digest('hex');
+// Fungsi generate signature sesuai dokumentasi
+function generateSignature(payload, secretKey, timestamp) {
+  const data = { ...payload, timestamp };
+  const sortedKeys = Object.keys(data).sort();
+  const stringToSign = sortedKeys.map(k => `${k}=${data[k]}`).join('&');
+  return crypto.createHmac('sha256', secretKey).update(stringToSign).digest('hex');
 }
 
+// Endpoint buat transaksi QRIS
 app.post('/api/create-transaction', async (req, res) => {
   try {
-    const { amount, sku, description, customer_name, customer_email, customer_phone } = req.body;
+    const { amount, description, customer_name, customer_email, customer_phone, webhook_url } = req.body;
+    const external_id = `ORDER_${Date.now()}`;
+    const payload = { external_id, amount, description, customer_name, customer_email, customer_phone, webhook_url };
     const timestamp = Date.now().toString();
+    const signature = generateSignature(payload, CONFIG.secretKey, timestamp);
 
-    const body = {
-      external_id: `ORDER_${Date.now()}`,
-      amount,
-      description,
-      customer_name,
-      customer_email,
-      customer_phone,
-      webhook_url: process.env.WEBHOOK_URL
-    };
-
-    const signature = generateSignature(body, CONFIG.secretKey, timestamp);
-
-    const headers = {
-      'X-API-Key': CONFIG.apiKey,
-      'X-Signature': signature,
-      'X-Timestamp': timestamp,
-      'Content-Type': 'application/json'
-    };
-
-    const resp = await axios.post(`${CONFIG.baseURL}/create-transaction`, body, { headers });
+    const resp = await axios.post(`${CONFIG.baseURL}/create-transaction`, payload, {
+      headers: {
+        'X-API-Key': CONFIG.apiKey,
+        'X-Signature': signature,
+        'X-Timestamp': timestamp,
+        'Content-Type': 'application/json'
+      }
+    });
     return res.json(resp.data);
-  } catch (e) {
-    console.error(e.response?.data || e);
-    res.status(500).json({ success: false, message: e.message });
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    return res.status(500).json({ success: false, message: err.response?.data?.message || err.message });
   }
 });
 
-app.get('/api/transaction/:id', async (req, res) => {
+// Endpoint cek status transaksi
+app.get('/api/transaction/:transaction_id', async (req, res) => {
   try {
-    const transactionId = req.params.id;
+    const transaction_id = req.params.transaction_id;
     const timestamp = Date.now().toString();
-
     const signature = generateSignature({}, CONFIG.secretKey, timestamp);
-    const headers = {
-      'X-API-Key': CONFIG.apiKey,
-      'X-Signature': signature,
-      'X-Timestamp': timestamp
-    };
 
-    const resp = await axios.get(`${CONFIG.baseURL}/transaction/${transactionId}`, { headers });
+    const resp = await axios.get(`${CONFIG.baseURL}/transaction/${transaction_id}`, {
+      headers: {
+        'X-API-Key': CONFIG.apiKey,
+        'X-Signature': signature,
+        'X-Timestamp': timestamp
+      }
+    });
     return res.json(resp.data);
-  } catch (e) {
-    console.error(e.response?.data || e);
-    res.status(500).json({ success: false, message: e.message });
+  } catch (err) {
+    console.error(err.response?.data || err.message);
+    return res.status(500).json({ success: false, message: err.response?.data?.message || err.message });
   }
 });
 
+// Webhook Payku untuk auto delivery
 app.post('/api/webhook', (req, res) => {
-  console.log('Webhook Payku:', req.body);
-  // Lakukan auto-delivery jika status == 'paid'
+  console.log('Webhook Payku received:', req.body);
+  // Jika status 'paid', bisa implementasi auto-delivery di sini
   res.json({ success: true });
 });
 
-const port = process.env.PORT || 3000;
-app.listen(port, () => console.log(`Backend berjalan di http://localhost:${port}`));
+app.listen(3000, () => console.log('Server running at http://localhost:3000'));
