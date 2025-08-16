@@ -37,7 +37,7 @@ function removeFromCart(i) {
 ===================== */
 async function payNow(title, price, sku) {
   try {
-    const resp = await fetch("/api/create-transaction", {
+    const resp = await fetch("https://payku.my.id/api/create-transaction", {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({
