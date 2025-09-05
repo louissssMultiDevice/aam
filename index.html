@@ -268,7 +268,7 @@ setText('ua', navigator.userAgent);
 setText('device', navigator.platform || '—');
 setText('online', navigator.onLine ? 'online' : 'offline');
 
-(async function batteryInit(){
+async function batteryInit(){
   try{
     if('getBattery' in navigator){
       const b = await navigator.getBattery();
@@ -388,7 +388,7 @@ $('runAllFP').addEventListener('click', async ()=>{
 });
 
 /* webauthn / webxr summary */
-(async function checkWebAPIs(){ setText('webauthn', !!window.PublicKeyCredential ? 'Supported' : 'Not supported'); try{ if(navigator.xr && navigator.xr.isSessionSupported){ const sup = await navigator.xr.isSessionSupported('immersive-vr'); setText('webxr', sup ? 'VR Supported' : 'No VR'); } else setText('webxr','No WebXR'); }catch(e){ setText('webxr','Error'); } })();
+async function checkWebAPIs(){ setText('webauthn', !!window.PublicKeyCredential ? 'Supported' : 'Not supported'); try{ if(navigator.xr && navigator.xr.isSessionSupported){ const sup = await navigator.xr.isSessionSupported('immersive-vr'); setText('webxr', sup ? 'VR Supported' : 'No VR'); } else setText('webxr','No WebXR'); }catch(e){ setText('webxr','Error'); } })();
 
 /* ============================
    2D Charts (Chart.js lazy)
@@ -419,7 +419,7 @@ function fpsSampler(now){
 requestAnimationFrame(fpsSampler);
 
 // battery watch
-(async function batteryWatch(){ try{ if('getBattery' in navigator){ const b = await navigator.getBattery(); function p(){ pushLimited(batt2D, Math.round(b.level*100)); update2DCharts(); } ['levelchange','chargingchange'].forEach(e=>b.addEventListener(e,p)); p(); } }catch(e){} })();
+async function batteryWatch(){ try{ if('getBattery' in navigator){ const b = await navigator.getBattery(); function p(){ pushLimited(batt2D, Math.round(b.level*100)); update2DCharts(); } ['levelchange','chargingchange'].forEach(e=>b.addEventListener(e,p)); p(); } }catch(e){} })();
 
 window.__pushSpeed = function(kb){ pushLimited(speed2D, kb); update2DCharts(); };
 window.__pushTF = function(ms){ pushLimited(tf2D, ms); update2DCharts(); };
