@@ -1,10 +1,10 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Handi Dev • Device Insight — Final Ultra+</title>
-<meta name="theme-color" content="#071018" />
+<meta charset="utf-8"/>
+<meta name="viewport" content="width=device-width,initial-scale=1"/>
+<title>Handi Dev • Device Insight — Final Ultra+ (All-in-One)</title>
+<meta name="theme-color" content="#071018"/>
 <style>
   :root{
     --bg:#071018; --card:#0f1720; --text:#dff8f6; --muted:#9fbfc8;
@@ -210,535 +210,552 @@
   <!-- helper canvas for flags -->
   <canvas id="flagCanvas" width="512" height="320"></canvas>
 
-  <script>
-  // ---------- small helpers ----------
-  const $ = id => document.getElementById(id);
-  function setText(id, txt){ const e=$(id); if(e) e.textContent = txt; }
-  function showOverlay(txt='Loading…'){ $('overlay').classList.add('show'); $('overlayTxt').textContent = txt; }
-  function hideOverlay(){ $('overlay').classList.remove('show'); }
+<script>
+/* ============================
+   Helpers & UI wiring
+   ============================ */
+const $ = id => document.getElementById(id);
+function setText(id, txt){ const el = $(id); if(el) el.textContent = txt; }
+function showOverlay(txt='Loading…'){ $('overlay').classList.add('show'); $('overlayTxt').textContent = txt; }
+function hideOverlay(){ $('overlay').classList.remove('show'); }
 
-  // theme toggle
-  $('themeBtn').addEventListener('click', ()=>{
-    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
-    document.documentElement.setAttribute('data-theme', cur==='light' ? 'dark' : 'light');
-  });
+/* Theme toggle */
+$('themeBtn').addEventListener('click', ()=> {
+  const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+  document.documentElement.setAttribute('data-theme', cur==='light' ? 'dark' : 'light');
+});
 
-  // copy/export
-  function collectSnapshot(){
-    return {
-      ts:new Date().toISOString(),
-      ua:navigator.userAgent,
-      platform:navigator.platform,
-      cores:navigator.hardwareConcurrency||null,
-      ram:navigator.deviceMemory||null,
-      timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,
-      fingerprint:$('fingerprint')?.textContent || null
-    };
-  }
-  $('copyAll').addEventListener('click', async ()=>{ try{ await navigator.clipboard.writeText(JSON.stringify(collectSnapshot(),null,2)); alert('Disalin ke clipboard') }catch(e){alert('Gagal: '+e.message)}});
-  $('exportJSON').addEventListener('click', ()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(collectSnapshot(),null,2)],{type:'application/json'})); a.download='handidev-all.json'; a.click(); });
+/* Copy/export */
+function collectSnapshot(){
+  return {
+    ts: new Date().toISOString(),
+    ua: navigator.userAgent,
+    platform: navigator.platform,
+    cores: navigator.hardwareConcurrency||null,
+    ram: navigator.deviceMemory||null,
+    timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+    fingerprint: $('fingerprint')?.textContent || null
+  };
+}
+$('copyAll').addEventListener('click', async ()=> {
+  try{ await navigator.clipboard.writeText(JSON.stringify(collectSnapshot(),null,2)); alert('Disalin ke clipboard'); }
+  catch(e){ alert('Gagal salin: '+(e.message||e)); }
+});
+$('exportJSON').addEventListener('click', ()=> {
+  const a = document.createElement('a'); a.href = URL.createObjectURL(new Blob([JSON.stringify(collectSnapshot(),null,2)],{type:'application/json'}));
+  a.download = 'handidev-ultra-plus.json'; a.click();
+});
 
-  // show/hide charts
-  $('toggleCharts').addEventListener('click', ()=>{ $('chartsSection').style.display='block'; document.querySelector('.tab[data-tab="2d"]').click(); window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'}); });
-  $('closeCharts').addEventListener('click', ()=>{ $('chartsSection').style.display='none'; });
+/* Tabs */
+$('toggleCharts').addEventListener('click', ()=> {
+  $('chartsSection').style.display = 'block';
+  document.querySelector('.tab[data-tab="2d"]').click();
+  window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'});
+});
+$('closeCharts').addEventListener('click', ()=> $('chartsSection').style.display = 'none');
 
-  document.querySelectorAll('.tab').forEach(t=>{
-    t.addEventListener('click', async ()=>{
-      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-      t.classList.add('active');
-      const tab = t.getAttribute('data-tab');
-      if(tab === '2d'){ $('tab-2d').style.display=''; $('tab-3d').style.display='none'; if(!window._chartsInited) init2DCharts().catch(()=>{}); }
-      else { $('tab-2d').style.display='none'; $('tab-3d').style.display=''; if(!window._threeInited) initThree().catch(()=>{}); }
-    });
-  });
+document.querySelectorAll('.tab').forEach(t => t.addEventListener('click', async () => {
+  document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active')); t.classList.add('active');
+  const tab = t.getAttribute('data-tab');
+  if(tab==='2d'){ $('tab-2d').style.display=''; $('tab-3d').style.display='none'; if(!window._chartsInited) init2DCharts().catch(()=>{}); }
+  else { $('tab-2d').style.display='none'; $('tab-3d').style.display=''; if(!window._threeInited) initThree().catch(()=>{}); }
+}));
 
-  // ---------- basic fills ----------
-  setText('ua', navigator.userAgent);
-  setText('device', navigator.platform || '—');
-  setText('online', navigator.onLine? 'online':'offline');
+/* ============================
+   Basic detection (IP, device, battery, connection)
+   ============================ */
+setText('ua', navigator.userAgent);
+setText('device', navigator.platform || '—');
+setText('online', navigator.onLine ? 'online' : 'offline');
 
-  // battery
-  (async function batteryInit(){
-    try{
-      if('getBattery' in navigator){
-        const b = await navigator.getBattery();
-        function paint(){ setText('battery-level', Math.round(b.level*100)+'%'); setText('battery-status', b.charging? 'Charging':'Discharging'); }
-        ['levelchange','chargingchange'].forEach(e=>b.addEventListener(e,paint));
-        paint();
-      } else { setText('battery-level','—'); setText('battery-status','Not supported'); }
-    }catch(e){ setText('battery-level','—'); setText('battery-status','Error') }
-  })();
+(async function batteryInit(){
+  try{
+    if('getBattery' in navigator){
+      const b = await navigator.getBattery();
+      function paint(){ setText('battery-level', Math.round(b.level*100)+'%'); setText('battery-status', b.charging? 'Charging' : 'Discharging'); }
+      ['levelchange','chargingchange'].forEach(e=>b.addEventListener(e,paint));
+      paint();
+    } else { setText('battery-level','—'); setText('battery-status','Not supported'); }
+  }catch(e){ setText('battery-level','—'); setText('battery-status','Error'); }
+})();
 
-  // fetch IP
-  async function fetchIP(){ try{ showOverlay('Mengambil IP...'); const r = await fetch('https://api.ipify.org?format=json'); const j = await r.json(); setText('ip', j.ip || '—'); }catch(e){ setText('ip','Gagal ambil IP') } finally{ hideOverlay(); } }
-  $('btn-ip').addEventListener('click', fetchIP); fetchIP();
+async function fetchIP(){
+  try{ showOverlay('Mengambil IP...'); const r = await fetch('https://api.ipify.org?format=json'); const j = await r.json(); setText('ip', j.ip || '—'); }
+  catch(e){ setText('ip','Gagal ambil IP') } finally { hideOverlay(); }
+}
+$('btn-ip').addEventListener('click', fetchIP);
+fetchIP();
 
-  // connection paint
-  function paintNet(){ const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection; setText('downlink', c?.downlink ?? '—'); setText('online', navigator.onLine? 'online':'offline'); }
-  paintNet(); (navigator.connection||{}).addEventListener?.('change', paintNet); window.addEventListener('online', paintNet); window.addEventListener('offline', paintNet);
+function paintNet(){
+  const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
+  setText('downlink', c?.downlink ?? '—'); setText('online', navigator.onLine ? 'online' : 'offline');
+}
+paintNet();
+(navigator.connection||{}).addEventListener?.('change', paintNet);
+window.addEventListener('online', paintNet); window.addEventListener('offline', paintNet);
 
-  // sensors / devicemotion
-  const accelHistory = [];
-  function pushAccelSample(s){ accelHistory.push(s); if(accelHistory.length>60) accelHistory.shift(); }
-  if('DeviceMotionEvent' in window){
-    window.addEventListener('devicemotion', e=>{
-      const a = e.accelerationIncludingGravity || e.acceleration || {x:0,y:0,z:0};
-      pushAccelSample({x:a.x||0,y:a.y||0,z:a.z||0});
-    });
-  }
+/* Media devices & preview */
+async function detectMediaDevices(){
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices){ setText('camInfo','MediaDevices not supported'); return null; }
+    const devices = await navigator.mediaDevices.enumerateDevices();
+    const cams = devices.filter(d=>d.kind==='videoinput'); const mics = devices.filter(d=>d.kind==='audioinput');
+    const labelsVisible = cams.concat(mics).some(d=>d.label && d.label.length>0);
+    setText('camInfo', `Cameras: ${cams.length}, Mics: ${mics.length} • labels: ${labelsVisible? 'visible':'hidden'}`);
+    return {cams,mics,labelsVisible};
+  }catch(e){ setText('camInfo','Detect devices failed'); return null; }
+}
+$('btn-getDevices').addEventListener('click', detectMediaDevices);
 
-  // contacts & gmail hints
-  $('btn-checkContacts').addEventListener('click', ()=>{ setText('contactsInfo', ('contacts' in navigator || 'ContactsManager' in window) ? 'Contact Picker supported' : 'Contact Picker NOT supported') });
-  $('btn-pickContact').addEventListener('click', async ()=>{
-    if(!('contacts' in navigator) && !('ContactsManager' in window)){ alert('Contact Picker not available'); return; }
-    try{
-      const props=['name','tel','email','icon'];
-      const contacts = await navigator.contacts.select(props, {multiple:false});
-      if(contacts && contacts.length>0){ const c=contacts[0]; setText('contactsInfo', `Picked: ${ (c.name && c.name[0]) || (c.email && c.email[0]) || 'Contact' }`); } else setText('contactsInfo','No contact selected');
-    }catch(e){ setText('contactsInfo','Canceled / blocked') }
-  });
-  $('btn-checkGmail').addEventListener('click', async ()=>{
-    setText('gmailInfo','Checking...');
-    if(!('credentials' in navigator)){ setText('gmailInfo','Credential API not supported'); return; }
-    try{
-      const cred = await navigator.credentials.get?.({federated:{providers:['https://accounts.google.com']}, mediation:'silent'});
-      setText('gmailInfo', cred ? 'Google federated credential available (hint)' : 'No silent Google credential (or blocked)');
-    }catch(e){ setText('gmailInfo','Credential API exists but silent get failed/blocked') }
-  });
+$('btn-previewCam').addEventListener('click', async ()=>{
+  try{
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return alert('getUserMedia not supported');
+    showOverlay('Opening camera preview...');
+    const stream = await navigator.mediaDevices.getUserMedia({video:true, audio:false});
+    const wrap = $('camPreview'); wrap.innerHTML = '';
+    const v = document.createElement('video'); v.autoplay=true; v.playsInline=true; v.muted=true; v.srcObject = stream; v.style.width='260px'; v.style.borderRadius='8px'; wrap.appendChild(v);
+    // stop preview after 12s
+    setTimeout(()=>{ stream.getTracks().forEach(t=>t.stop()); wrap.innerHTML=''; hideOverlay(); }, 12000);
+  }catch(e){ hideOverlay(); alert('Preview failed: '+(e.message||e)); }
+});
 
-  // camera devices detection & preview
-  async function detectMediaDevices(){
-    try{
-      if(!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices){ setText('camInfo','MediaDevices not supported'); return null; }
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const cams = devices.filter(d=>d.kind==='videoinput'); const mics = devices.filter(d=>d.kind==='audioinput');
-      const labelsVisible = cams.concat(mics).some(d=>d.label && d.label.length>0);
-      setText('camInfo', `Cameras: ${cams.length}, Mics: ${mics.length} • labels: ${labelsVisible? 'visible':'hidden'}`);
-      return {cams,mics,labelsVisible};
-    }catch(e){ setText('camInfo','Detect devices failed'); return null; }
-  }
-  $('btn-getDevices').addEventListener('click', detectMediaDevices);
-  $('btn-previewCam').addEventListener('click', async ()=>{
-    try{
-      if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return alert('getUserMedia not supported');
-      showOverlay('Opening camera preview...');
-      const stream = await navigator.mediaDevices.getUserMedia({video:true, audio:false});
-      const wrap = $('camPreview'); wrap.innerHTML = '';
-      const v = document.createElement('video'); v.autoplay=true; v.playsInline=true; v.muted=true; v.srcObject=stream; v.style.width='240px'; v.style.borderRadius='8px'; wrap.appendChild(v);
-      // stop preview after 12s for privacy
-      setTimeout(()=>{ stream.getTracks().forEach(t=>t.stop()); wrap.innerHTML=''; hideOverlay(); }, 12000);
-    }catch(e){ hideOverlay(); alert('Preview failed: '+(e.message||e)); }
-  });
+/* Contacts & Gmail hint */
+$('btn-checkContacts').addEventListener('click', ()=> {
+  setText('contactsInfo', ('contacts' in navigator || 'ContactsManager' in window) ? 'Contact Picker supported' : 'Contact Picker NOT supported');
+});
+$('btn-pickContact').addEventListener('click', async ()=>{
+  if(!('contacts' in navigator) && !('ContactsManager' in window)){ alert('Contact Picker not available'); return; }
+  try{
+    const props = ['name','tel','email','icon'];
+    const contacts = await navigator.contacts.select(props, {multiple:false});
+    if(contacts && contacts.length>0){ const c = contacts[0]; setText('contactsInfo', `Picked: ${(c.name && c.name[0]) || (c.email && c.email[0]) || 'Contact'}`); } else setText('contactsInfo','No contact selected');
+  }catch(e){ setText('contactsInfo','Canceled / blocked'); }
+});
 
-  // ---------- Fingerprint utilities ----------
-  function canvasFingerprint(){
-    try{
-      const c=document.createElement('canvas'); c.width=512; c.height=200;
-      const ctx=c.getContext('2d');
-      ctx.textBaseline='top'; ctx.font='16px Arial';
-      ctx.fillStyle='#f60'; ctx.fillRect(125,1,62,20);
-      ctx.fillStyle='#069'; ctx.fillText('Handi Dev — Canvas FP',2,15);
-      ctx.fillStyle='rgba(102,200,0,0.7)'; ctx.fillText('✓ 測試 — 𝓕𝓟',4,45);
-      return c.toDataURL().slice(-120);
-    }catch(e){ return null; }
-  }
-  function getWebGLInfo(){
-    try{
-      const c=document.createElement('canvas'); const gl=c.getContext('webgl')||c.getContext('experimental-webgl'); if(!gl) return null;
-      const dbg=gl.getExtension('WEBGL_debug_renderer_info'); const vendor = dbg? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR); const renderer = dbg? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); return {vendor, renderer};
-    }catch(e){ return null; }
-  }
-  async function audioFingerprint(){
-    try{
-      const ac=new (window.AudioContext||window.webkitAudioContext)(); const osc=ac.createOscillator(); const node=ac.createAnalyser(); osc.type='sine'; osc.frequency.value = 440 + (Math.random()*100); osc.connect(node); node.connect(ac.destination); osc.start();
-      const arr=new Uint8Array(node.frequencyBinCount); node.getByteFrequencyData(arr); osc.stop(); await ac.close?.();
-      return Array.from(arr.slice(0,20)).join(',').slice(0,80);
-    }catch(e){ return null; }
-  }
-  function detectFont(font){
-    try{
-      const base=document.createElement('span'); base.style.fontFamily='monospace'; base.style.fontSize='72px'; base.innerText='mmmmmmmmmlli'; base.style.position='absolute'; base.style.left='-9999px'; document.body.appendChild(base);
-      const defaultWidth = base.offsetWidth; base.style.fontFamily = font + ', monospace'; const matched = base.offsetWidth !== defaultWidth; base.remove(); return matched;
-    }catch(e){ return false; }
-  }
-  function detectFontsList(){ const fonts=['Arial','Roboto','Segoe UI','Times New Roman','Courier New','Noto Sans','Inter']; return fonts.filter(f=>detectFont(f)); }
+$('btn-checkGmail').addEventListener('click', async ()=>{
+  setText('gmailInfo','Checking...');
+  if(!('credentials' in navigator)){ setText('gmailInfo','Credential API not supported'); return; }
+  try{
+    // silent federated get may be blocked — this is only a hint
+    const cred = await navigator.credentials.get?.({federated:{providers:['https://accounts.google.com']}, mediation:'silent'});
+    setText('gmailInfo', cred ? 'Google federated credential available (hint)' : 'No silent Google credential (or blocked)');
+  }catch(e){ setText('gmailInfo','Credential API exists but silent get failed/blocked'); }
+});
 
-  $('runCanvas').addEventListener('click', ()=>{ const c=canvasFingerprint(); setText('fingerprint', c? c.slice(0,28) : 'Gagal'); try{ const gl = document.createElement('canvas').getContext('webgl')||document.createElement('canvas').getContext('experimental-webgl'); const highp = gl && (gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision>0); setText('shaderPrec', highp? 'highp':'mediump/lowp'); }catch(e){ setText('shaderPrec','—') } });
-  $('runAudio').addEventListener('click', async ()=>{ setText('audioFP','Running...'); const a = await audioFingerprint(); setText('audioFP', a || 'Gagal'); });
-  $('runAllFP').addEventListener('click', async ()=>{
-    setText('fingerprint','Running...');
-    const webgl=getWebGLInfo(); const canvas=canvasFingerprint(); const audio=await audioFingerprint(); const fonts=detectFontsList();
-    const base = navigator.userAgent + '|' + navigator.language + '|' + JSON.stringify(webgl) + '|' + (canvas||'') + '|' + (audio||'') + '|' + fonts.join(',');
-    const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(base)); const hex = Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');
-    setText('fingerprint', hex.slice(0,28)); setText('fonts', fonts.join(', ')||'—'); setText('canvasHash', canvas||'—'); setText('audioFP', audio||'—');
-  });
+/* ============================
+   Fingerprint: canvas/audio/webgl/fonts
+   ============================ */
+function canvasFingerprint(){
+  try{
+    const c = document.createElement('canvas'); c.width=512; c.height=200; const ctx = c.getContext('2d');
+    ctx.textBaseline = 'top'; ctx.font = '16px Arial';
+    ctx.fillStyle = '#f60'; ctx.fillRect(125,1,62,20);
+    ctx.fillStyle = '#069'; ctx.fillText('Handi Dev — Canvas FP', 2, 15);
+    ctx.fillStyle = 'rgba(102,200,0,0.7)'; ctx.fillText('✓ 測試 — 𝓕𝓟', 4, 45);
+    return c.toDataURL().slice(-120);
+  }catch(e){ return null; }
+}
+function getWebGLInfo(){
+  try{
+    const c = document.createElement('canvas'); const gl = c.getContext('webgl')||c.getContext('experimental-webgl'); if(!gl) return null;
+    const dbg = gl.getExtension('WEBGL_debug_renderer_info'); const vendor = dbg? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR);
+    const renderer = dbg? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); return {vendor, renderer};
+  }catch(e){ return null; }
+}
+async function audioFingerprint(){
+  try{
+    const ac = new (window.AudioContext||window.webkitAudioContext)(); const osc = ac.createOscillator(); const node = ac.createAnalyser();
+    osc.type='sine'; osc.frequency.value = 440 + (Math.random()*100); osc.connect(node); node.connect(ac.destination); osc.start();
+    const arr = new Uint8Array(node.frequencyBinCount); node.getByteFrequencyData(arr); osc.stop(); await ac.close?.();
+    return Array.from(arr.slice(0,20)).join(',').slice(0,80);
+  }catch(e){ return null; }
+}
+function detectFont(font){
+  try{
+    const base = document.createElement('span'); base.style.fontFamily='monospace'; base.style.fontSize='72px'; base.innerText='mmmmmmmmmlli'; base.style.position='absolute'; base.style.left='-9999px'; document.body.appendChild(base);
+    const defaultWidth = base.offsetWidth; base.style.fontFamily = font + ', monospace'; const matched = base.offsetWidth !== defaultWidth; base.remove(); return matched;
+  }catch(e){ return false; }
+}
+function detectFontsList(){ const fonts=['Arial','Roboto','Segoe UI','Times New Roman','Courier New','Noto Sans','Inter']; return fonts.filter(f=>detectFont(f)); }
 
-  // webauthn/webxr summary
-  (async function checkWebAPIs(){ setText('webauthn', !!window.PublicKeyCredential ? 'Supported' : 'Not supported'); try{ if(navigator.xr && navigator.xr.isSessionSupported){ const sup = await navigator.xr.isSessionSupported('immersive-vr'); setText('webxr', sup ? 'VR Supported' : 'No VR'); } else setText('webxr','No WebXR') }catch(e){ setText('webxr','Error') } })();
+$('runCanvas').addEventListener('click', ()=> { const c = canvasFingerprint(); setText('fingerprint', c? c.slice(0,28) : 'Gagal'); try{ const gl = document.createElement('canvas').getContext('webgl')||document.createElement('canvas').getContext('experimental-webgl'); const highp = gl && (gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision>0); setText('shaderPrec', highp? 'highp' : 'mediump/lowp'); }catch(e){ setText('shaderPrec','—'); } });
+$('runAudio').addEventListener('click', async ()=>{ setText('audioFP','Running...'); const a = await audioFingerprint(); setText('audioFP', a || 'Gagal'); });
+$('runAllFP').addEventListener('click', async ()=>{
+  setText('fingerprint','Running...');
+  const webgl = getWebGLInfo(); const canvas = canvasFingerprint(); const audio = await audioFingerprint(); const fonts = detectFontsList();
+  const base = navigator.userAgent + '|' + navigator.language + '|' + JSON.stringify(webgl) + '|' + (canvas||'') + '|' + (audio||'') + '|' + fonts.join(',');
+  const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(base)); const hex = Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');
+  setText('fingerprint', hex.slice(0,28)); setText('fonts', fonts.join(', ')||'—'); setText('canvasHash', canvas||'—'); setText('audioFP', audio||'—');
+});
 
-  // ---------- Charts 2D (Chart.js lazy load) ----------
-  const maxPoints = 60;
-  const fpsHistory = Array(maxPoints).fill(null);
-  const heapHistory = Array(maxPoints).fill(null);
-  const batteryHistory = Array(maxPoints).fill(null);
-  const speedHistory = Array(maxPoints).fill(0);
-  const tfHeat = Array(maxPoints).fill(null);
-  const accelSamples = [];
-  function pushLimited(arr,v){ arr.push(v); if(arr.length>maxPoints) arr.shift(); }
+/* webauthn / webxr summary */
+(async function checkWebAPIs(){ setText('webauthn', !!window.PublicKeyCredential ? 'Supported' : 'Not supported'); try{ if(navigator.xr && navigator.xr.isSessionSupported){ const sup = await navigator.xr.isSessionSupported('immersive-vr'); setText('webxr', sup ? 'VR Supported' : 'No VR'); } else setText('webxr','No WebXR'); }catch(e){ setText('webxr','Error'); } })();
 
-  // FPS sampler
-  let frames = 0, last = performance.now();
-  function fpsSampler(now){
-    frames++;
-    if(now - last >= 1000){
-      pushLimited(fpsHistory, frames);
-      frames = 0;
-      last = now;
-      try{ if(performance?.memory) pushLimited(heapHistory, performance.memory.usedJSHeapSize/1024/1024); else pushLimited(heapHistory, null); }catch(e){ pushLimited(heapHistory, null); }
-      update2DCharts();
-    }
-    requestAnimationFrame(fpsSampler);
-  }
-  requestAnimationFrame(fpsSampler);
+/* ============================
+   2D Charts (Chart.js lazy)
+   ============================ */
+const MAX_POINTS = 60;
+const fps2D = Array(MAX_POINTS).fill(null);
+const heap2D = Array(MAX_POINTS).fill(null);
+const batt2D = Array(MAX_POINTS).fill(null);
+const speed2D = Array(MAX_POINTS).fill(0);
+const tf2D = Array(MAX_POINTS).fill(null);
+const accelHistory = [];
 
-  // battery watch
-  (async function batteryWatch(){ try{ if('getBattery' in navigator){ const b = await navigator.getBattery(); function p(){ pushLimited(batteryHistory, Math.round(b.level*100)); update2DCharts(); } ['levelchange','chargingchange'].forEach(e=>b.addEventListener(e,p)); p(); } }catch(e){} })();
+function pushLimited(arr, val){ arr.push(val); if(arr.length>MAX_POINTS) arr.shift(); }
 
-  window.__pushSpeed = function(kb){ pushLimited(speedHistory, kb); update2DCharts(); };
-  window.__pushTF = function(ms){ pushLimited(tfHeat, ms); update2DCharts(); };
-
-  async function ensureChartJs(){ if(window.Chart) return window.Chart; await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); return window.Chart; }
-
-  let fpsChart=null, batteryNetChart=null, accelChart=null, heatmapChart=null, canvasCtx=null;
-  async function init2DCharts(){
-    if(window._chartsInited) return;
-    const Chart = await ensureChartJs();
-    const ctxF = document.getElementById('fpsChart').getContext('2d');
-    fpsChart = new Chart(ctxF, {
-      type:'line', data:{ labels:Array(maxPoints).fill(''), datasets:[ {label:'FPS', data: fpsHistory, borderColor:'#00ffc6', tension:0.25, fill:false}, {label:'Heap MB', data: heapHistory, borderColor:'#00c2ff', tension:0.25, fill:false, yAxisID:'y1'} ] },
-      options:{ animation:false, scales:{ y:{beginAtZero:true}, y1:{position:'right', beginAtZero:true} } }
-    });
-
-    const ctxB = document.getElementById('batteryNetChart').getContext('2d');
-    batteryNetChart = new Chart(ctxB, {
-      data:{ labels:Array(maxPoints).fill(''), datasets:[ {type:'line', label:'Battery %', data: batteryHistory, borderColor:'#6ef37b', fill:false, yAxisID:'batt'}, {type:'bar', label:'Speed KB/s', data: speedHistory, backgroundColor:'#00c2ff', yAxisID:'speed'} ] },
-      options:{ animation:false, scales:{ batt:{type:'linear', position:'left', beginAtZero:true, max:100}, speed:{type:'linear', position:'right', beginAtZero:true} } }
-    });
-
-    const ctxA = document.getElementById('accelChart').getContext('2d');
-    accelChart = new Chart(ctxA, { type:'radar', data:{ labels:['X','Y','Z'], datasets:[{label:'Accel', data:[0,0,0], backgroundColor:'rgba(0,194,255,0.12)', borderColor:'#00c2ff'}] }, options:{ animation:false, scales:{ r:{ beginAtZero:true } } } });
-
-    const c = document.getElementById('canvasMosaic'); canvasCtx = c.getContext('2d'); drawCanvasMosaic();
-
-    const ctxH = document.getElementById('heatmapChart').getContext('2d');
-    heatmapChart = new Chart(ctxH, { type:'bar', data:{ labels:Array(maxPoints).fill(''), datasets:[{label:'TF Inference (ms)', data: tfHeat, backgroundColor:'#ffb86b'}] }, options:{animation:false, scales:{y:{beginAtZero:true}}} });
-
-    window._chartsInited = true;
+// FPS sampler for 2D
+let frameCount = 0, lastTime = performance.now();
+function fpsSampler(now){
+  frameCount++;
+  if(now - lastTime >= 1000){
+    pushLimited(fps2D, frameCount);
+    frameCount = 0;
+    lastTime = now;
+    try{ if(performance?.memory) pushLimited(heap2D, performance.memory.usedJSHeapSize/1024/1024); else pushLimited(heap2D, null); }catch(e){ pushLimited(heap2D, null); }
     update2DCharts();
   }
+  requestAnimationFrame(fpsSampler);
+}
+requestAnimationFrame(fpsSampler);
 
-  function drawCanvasMosaic(){
-    try{
-      const canvas=document.getElementById('canvasMosaic'); const ctx=canvasCtx;
-      const w = canvas.width = canvas.clientWidth * devicePixelRatio; const h = canvas.height = canvas.clientHeight * devicePixelRatio;
-      ctx.clearRect(0,0,w,h);
-      const tmp=document.createElement('canvas'); tmp.width=240; tmp.height=90;
-      const t=tmp.getContext('2d'); t.fillStyle='#071018'; t.fillRect(0,0,tmp.width,tmp.height); t.fillStyle='#00ffc6'; t.font='22px Inter, Arial'; t.fillText('Handi Dev',14,40);
-      const img=new Image(); img.onload=()=>{ const cols=8, rows=3, cw=w/cols, ch=h/rows; for(let y=0;y<rows;y++) for(let x=0;x<cols;x++) ctx.drawImage(img, x*cw, y*ch, cw, ch); }; img.src=tmp.toDataURL();
-    }catch(e){}
+// battery watch
+(async function batteryWatch(){ try{ if('getBattery' in navigator){ const b = await navigator.getBattery(); function p(){ pushLimited(batt2D, Math.round(b.level*100)); update2DCharts(); } ['levelchange','chargingchange'].forEach(e=>b.addEventListener(e,p)); p(); } }catch(e){} })();
+
+window.__pushSpeed = function(kb){ pushLimited(speed2D, kb); update2DCharts(); };
+window.__pushTF = function(ms){ pushLimited(tf2D, ms); update2DCharts(); };
+
+async function ensureChartJs(){
+  if(window.Chart) return window.Chart;
+  await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+  return window.Chart;
+}
+
+let fpsChart, battChart, accelChart, heatChart, canvasCtx;
+async function init2DCharts(){
+  if(window._chartsInited) return;
+  const Chart = await ensureChartJs();
+  const ctxF = document.getElementById('fpsChart').getContext('2d');
+  fpsChart = new Chart(ctxF, {
+    type:'line',
+    data:{ labels:Array(MAX_POINTS).fill(''), datasets:[
+      {label:'FPS', data: fps2D, borderColor:'#00ffc6', tension:0.25, fill:false},
+      {label:'Heap MB', data: heap2D, borderColor:'#00c2ff', tension:0.25, fill:false, yAxisID:'y1'}
+    ]},
+    options:{ animation:false, scales:{ y:{beginAtZero:true}, y1:{position:'right', beginAtZero:true} } }
+  });
+
+  const ctxB = document.getElementById('batteryNetChart').getContext('2d');
+  battChart = new Chart(ctxB, {
+    data:{ labels:Array(MAX_POINTS).fill(''), datasets:[
+      {type:'line', label:'Battery %', data: batt2D, borderColor:'#6ef37b', fill:false, yAxisID:'batt'},
+      {type:'bar', label:'Speed KB/s', data: speed2D, backgroundColor:'#00c2ff', yAxisID:'speed'}
+    ]},
+    options:{ animation:false, scales:{ batt:{type:'linear', position:'left', beginAtZero:true, max:100}, speed:{type:'linear', position:'right', beginAtZero:true} } }
+  });
+
+  const ctxA = document.getElementById('accelChart').getContext('2d');
+  accelChart = new Chart(ctxA, { type:'radar', data:{ labels:['X','Y','Z'], datasets:[{label:'Accel', data:[0,0,0], backgroundColor:'rgba(0,194,255,0.12)', borderColor:'#00c2ff'}] }, options:{ animation:false, scales:{ r:{ beginAtZero:true } } } });
+
+  const c = document.getElementById('canvasMosaic'); canvasCtx = c.getContext('2d'); drawCanvasMosaic();
+
+  const ctxH = document.getElementById('heatmapChart').getContext('2d');
+  heatChart = new Chart(ctxH, { type:'bar', data:{ labels:Array(MAX_POINTS).fill(''), datasets:[{label:'TF Inference (ms)', data: tf2D, backgroundColor:'#ffb86b'}] }, options:{animation:false, scales:{y:{beginAtZero:true}}} });
+
+  window._chartsInited = true;
+  update2DCharts();
+}
+
+function drawCanvasMosaic(){
+  try{
+    const canvas = document.getElementById('canvasMosaic'); const ctx = canvasCtx;
+    const w = canvas.width = canvas.clientWidth * devicePixelRatio; const h = canvas.height = canvas.clientHeight * devicePixelRatio;
+    ctx.clearRect(0,0,w,h);
+    const tmp = document.createElement('canvas'); tmp.width=240; tmp.height=90;
+    const t = tmp.getContext('2d'); t.fillStyle='#071018'; t.fillRect(0,0,tmp.width,tmp.height); t.fillStyle='#00ffc6'; t.font='22px Inter, Arial'; t.fillText('Handi Dev',14,40);
+    const img = new Image(); img.onload = ()=>{ const cols=8, rows=3, cw=w/cols, ch=h/rows; for(let y=0;y<rows;y++) for(let x=0;x<cols;x++) ctx.drawImage(img, x*cw, y*ch, cw, ch); };
+    img.src = tmp.toDataURL();
+  }catch(e){}
+}
+
+function update2DCharts(){
+  if(fpsChart){ fpsChart.data.datasets[0].data = fps2D.slice(); fpsChart.data.datasets[1].data = heap2D.slice(); fpsChart.update('none'); }
+  if(battChart){ battChart.data.datasets[0].data = batt2D.slice(); battChart.data.datasets[1].data = speed2D.slice(); battChart.update('none'); }
+  if(heatChart){ heatChart.data.datasets[0].data = tf2D.slice(); heatChart.update('none'); }
+  if(accelChart){ const last = accelHistory[accelHistory.length-1] || {x:0,y:0,z:0}; accelChart.data.datasets[0].data = [Math.abs(last.x), Math.abs(last.y), Math.abs(last.z)]; accelChart.update('none'); }
+}
+
+/* Accel push */
+function pushAccelSample(s){ accelHistory.push(s); if(accelHistory.length>MAX_POINTS) accelHistory.shift(); update2DCharts(); }
+
+/* ============================
+   3D Scene & Hologram (Three.js lazy load)
+   ============================ */
+let threeReady = false;
+function detectDeviceType(){
+  const ua = navigator.userAgent;
+  const isMobile = /Mobi|Android|iPhone|iPad/.test(ua);
+  const isTablet = /Tablet|iPad/.test(ua);
+  const isWindows = /Windows NT/.test(ua);
+  const isMac = /Macintosh/.test(ua);
+  if(isMobile && !isTablet) return 'phone';
+  if(isTablet) return 'tablet';
+  if(isWindows || isMac){
+    const width = Math.max(window.innerWidth, screen.width);
+    if(width <= 1366) return 'laptop'; else return 'desktop';
   }
+  return isMobile ? 'phone' : 'desktop';
+}
 
-  function update2DCharts(){
-    if(fpsChart){ fpsChart.data.datasets[0].data = fpsHistory.slice(); fpsChart.data.datasets[1].data = heapHistory.slice(); fpsChart.update('none'); }
-    if(batteryNetChart){ batteryNetChart.data.datasets[0].data = batteryHistory.slice(); batteryNetChart.data.datasets[1].data = speedHistory.slice(); batteryNetChart.update('none'); }
-    if(heatmapChart){ heatmapChart.data.datasets[0].data = tfHeat.slice(); heatmapChart.update('none'); }
-    if(accelChart){ const last = accelHistory[accelHistory.length-1] || {x:0,y:0,z:0}; accelChart.data.datasets[0].data = [Math.abs(last.x), Math.abs(last.y), Math.abs(last.z)]; accelChart.update('none'); }
+/* simple flag renderer for Indonesia only */
+function drawFlagToCanvas(countryCode){
+  const c = document.getElementById('flagCanvas'); const ctx = c.getContext('2d');
+  ctx.clearRect(0,0,c.width,c.height);
+  if(countryCode === 'ID'){
+    ctx.fillStyle = '#ff0000'; ctx.fillRect(0,0,c.width,c.height/2);
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0,c.height/2,c.width,c.height/2);
+  } else {
+    ctx.fillStyle = '#0f1720'; ctx.fillRect(0,0,c.width,c.height);
+    ctx.fillStyle = '#888'; ctx.fillRect(32,32,c.width-64,c.height-64);
   }
+  return c.toDataURL();
+}
 
-  // ---------- 3D Scene (Three.js lazy load) ----------
-  let threeLoaded = false;
-  // store live histories for 3D
-  const fpsHistory = []; const heapHistory = []; const speedHistory = [];
+async function initThree(){
+  if(threeReady) return;
+  showOverlay('Loading 3D engine...');
+  await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+  await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/examples/js/controls/OrbitControls.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+  hideOverlay();
+  threeReady = true;
+  const THREE = window.THREE;
 
-  function detectDeviceType(){
-    const ua = navigator.userAgent;
-    const isMobile = /Mobi|Android|iPhone|iPad/.test(ua);
-    const isTablet = /Tablet|iPad/.test(ua);
-    const isWindows = /Windows NT/.test(ua);
-    const isMac = /Macintosh/.test(ua);
-    if(isMobile && !isTablet) return 'phone';
-    if(isTablet) return 'tablet';
-    if(isWindows || isMac) {
-      // differentiate laptop vs desktop by screen size heuristics
-      const width = Math.max(window.innerWidth, screen.width);
-      if(width <= 1366) return 'laptop'; else return 'desktop';
+  /* Scene setup */
+  const container = $('threeContainer'); container.innerHTML = '';
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:false});
+  renderer.setSize(container.clientWidth, container.clientHeight);
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+  container.appendChild(renderer.domElement);
+
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x071018);
+  const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 2000);
+  camera.position.set(0, 2.2, 6);
+
+  const pl = new THREE.PointLight(0xffffff, 1.1); pl.position.set(5,6,5); scene.add(pl);
+  scene.add(new THREE.AmbientLight(0x404040));
+
+  // ground
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(40,40), new THREE.MeshStandardMaterial({color:0x061018}));
+  ground.rotation.x = -Math.PI/2; ground.position.y = -1.0; scene.add(ground);
+
+  // indicator cube
+  const indicatorCube = new THREE.Mesh(new THREE.BoxGeometry(1.2,1.2,1.2), new THREE.MeshStandardMaterial({color:0x00ffc6, metalness:0.2, roughness:0.4}));
+  indicatorCube.position.set(-3.2, 0.4, 0); scene.add(indicatorCube);
+
+  // Handi Box
+  function createHandiBox(){
+    const size = 1.0;
+    const geo = new THREE.BoxGeometry(size,size,size);
+    const mats = [];
+    const facesText = ['Handi','Dev','HD+','Ultra','Insight',''];
+    for(let i=0;i<6;i++){
+      const c = document.createElement('canvas'); c.width=512; c.height=512;
+      const ctx = c.getContext('2d');
+      ctx.fillStyle = '#001316'; ctx.fillRect(0,0,c.width,c.height);
+      ctx.fillStyle = '#00ffc6'; ctx.fillRect(0,0,c.width,120);
+      ctx.fillStyle = '#001'; ctx.font='bold 72px Inter, Arial'; ctx.fillText(facesText[i]||'',40,220);
+      ctx.fillStyle = '#00c2ff'; ctx.font='18px Inter, Arial'; ctx.fillText('Handi Dev',40,260);
+      const tex = new THREE.CanvasTexture(c);
+      mats.push(new THREE.MeshStandardMaterial({map:tex}));
     }
-    // fallback
-    return isMobile ? 'phone' : 'desktop';
+    return new THREE.Mesh(geo, mats);
   }
+  const handiBox = createHandiBox(); handiBox.position.set(-1.6,0.5,0); scene.add(handiBox);
 
-  function drawFlagToCanvas(countryCode){
-    const c = document.getElementById('flagCanvas'); const ctx = c.getContext('2d');
-    ctx.clearRect(0,0,c.width,c.height);
-    // Simple mapping: only implement ID (Indonesia) here; otherwise neutral gray flag
-    if(countryCode === 'ID'){
-      // Merah putih
-      ctx.fillStyle='#ff0000'; ctx.fillRect(0,0,c.width,c.height/2);
-      ctx.fillStyle='#ffffff'; ctx.fillRect(0,c.height/2,c.width,c.height/2);
-    } else {
-      ctx.fillStyle='#0f1720'; ctx.fillRect(0,0,c.width,c.height);
-      ctx.fillStyle='#888'; ctx.fillRect(32,32,c.width-64,c.height-64);
-    }
-    return c.toDataURL();
+  // speed bars
+  const bars = [];
+  const barGroup = new THREE.Group();
+  const barCount = 16;
+  for(let i=0;i<barCount;i++){
+    const g = new THREE.BoxGeometry(0.28,0.28,0.28);
+    const m = new THREE.MeshStandardMaterial({color:0x00c2ff, metalness:0.2, roughness:0.5});
+    const mesh = new THREE.Mesh(g,m);
+    mesh.position.set(i*0.32 - (barCount*0.32)/2 + 2.4, 0.14, 0);
+    mesh.scale.y = 0.05;
+    barGroup.add(mesh); bars.push(mesh);
   }
+  scene.add(barGroup);
 
-  async function initThree(){
-    if(threeLoaded) return;
-    showOverlay('Loading 3D engine...');
-    // load three + controls
-    await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
-    await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/examples/js/controls/OrbitControls.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
-    hideOverlay();
-    threeLoaded = true;
-    const THREE = window.THREE;
+  // hologram shell
+  const holoShell = new THREE.Mesh(new THREE.BoxGeometry(3.4,2.0,3.4), new THREE.MeshPhysicalMaterial({color:0x00ffe0, transparent:true, opacity:0.06, transmission:0.4, roughness:0.05}));
+  holoShell.position.set(0,0.6,0); scene.add(holoShell);
 
-    // container
-    const container = $('threeContainer'); container.innerHTML = '';
-    const renderer = new THREE.WebGLRenderer({antialias:true});
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    container.appendChild(renderer.domElement);
+  // holo group
+  const holoGroup = new THREE.Group(); holoGroup.position.set(0,0.6,0); scene.add(holoGroup);
 
-    // scene & camera
-    const scene = new THREE.Scene(); scene.background = new THREE.Color(0x071018);
-    const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 2000);
-    camera.position.set(0,2.2,6);
+  // device meshes
+  function createPhone(){ const geom = new THREE.BoxGeometry(0.6,1.05,0.06); const mat = new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x00e6d0, transparent:true, opacity:0.9}); const mesh = new THREE.Mesh(geom, mat); return mesh; }
+  function createLaptop(){ const base = new THREE.Mesh(new THREE.BoxGeometry(1.4,0.08,0.9), new THREE.MeshStandardMaterial({color:0x00c2ff, emissive:0x004c6b, transparent:true, opacity:0.9})); const screen = new THREE.Mesh(new THREE.BoxGeometry(1.4,0.82,0.06), new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x003b4a, transparent:true, opacity:0.85})); screen.position.set(0,0.45,-0.35); screen.rotation.x = -0.35; const g = new THREE.Group(); g.add(base); g.add(screen); return g; }
+  function createDesktop(){ const monitor = new THREE.Mesh(new THREE.BoxGeometry(1.2,0.7,0.08), new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x003b4a, transparent:true, opacity:0.85})); const stand = new THREE.Mesh(new THREE.BoxGeometry(0.12,0.4,0.12), new THREE.MeshStandardMaterial({color:0x00c2ff})); stand.position.set(0,-0.6,0); const tower = new THREE.Mesh(new THREE.BoxGeometry(0.3,0.8,0.3), new THREE.MeshStandardMaterial({color:0xff66ff, emissive:0x5a005a, transparent:true, opacity:0.8})); tower.position.set(1.2,-0.1,0); const g = new THREE.Group(); monitor.position.set(0,0.2,0); g.add(monitor); g.add(stand); g.add(tower); return g; }
 
-    // lights
-    const pl = new THREE.PointLight(0xffffff, 1.1); pl.position.set(5,6,5); scene.add(pl);
-    scene.add(new THREE.AmbientLight(0x404040));
+  // choose device hologram
+  const devType = detectDeviceType();
+  let activeDeviceMesh = null;
+  function showHoloForDevice(type){
+    while(holoGroup.children.length) holoGroup.remove(holoGroup.children[0]);
+    let mesh;
+    if(type === 'phone') mesh = createPhone();
+    else if(type === 'laptop') mesh = createLaptop();
+    else if(type === 'desktop') mesh = createDesktop();
+    else mesh = createPhone();
+    mesh.position.set(0,0.05,0);
+    holoGroup.add(mesh); activeDeviceMesh = mesh;
+  }
+  showHoloForDevice(devType);
 
-    // ground
-    const ground = new THREE.Mesh(new THREE.PlaneGeometry(40,40), new THREE.MeshStandardMaterial({color:0x061018}));
-    ground.rotation.x = -Math.PI/2; ground.position.y = -1.0; scene.add(ground);
+  // flag plane (waving) using shader-like approach (modify positions)
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
+  const countryGuess = (tz.toLowerCase().includes('jakarta') || tz.toLowerCase().includes('indonesia')) ? 'ID' : null;
+  const flagData = drawFlagToCanvas(countryGuess);
+  const flagTex = new THREE.TextureLoader().load(flagData);
+  flagTex.wrapS = flagTex.wrapT = THREE.RepeatWrapping;
+  const flagGeo = new THREE.PlaneGeometry(2.6,1.2,32,12);
+  const flagMat = new THREE.MeshStandardMaterial({map:flagTex, side:THREE.DoubleSide, transparent:true});
+  const flagMesh = new THREE.Mesh(flagGeo, flagMat); flagMesh.position.set(3.0,0.6,0); flagMesh.rotation.y = -0.35; scene.add(flagMesh);
+
+  // 3D clock
+  const clockGroup = new THREE.Group(); clockGroup.position.set(0,1.1,-2.2); scene.add(clockGroup);
+  const face = new THREE.Mesh(new THREE.CircleGeometry(0.9,64), new THREE.MeshStandardMaterial({color:0x001316})); clockGroup.add(face);
+  for(let i=0;i<12;i++){
+    const mark = new THREE.Mesh(new THREE.BoxGeometry(0.04,0.14,0.03), new THREE.MeshStandardMaterial({color:0x00ffc6}));
+    const ang = (i/12)*Math.PI*2;
+    mark.position.set(Math.sin(ang)*0.76, Math.cos(ang)*0.76, 0.02);
+    mark.rotation.z = -ang;
+    clockGroup.add(mark);
+  }
+  const handHour = new THREE.Mesh(new THREE.BoxGeometry(0.06,0.38,0.03), new THREE.MeshStandardMaterial({color:0x00c2ff})); handHour.position.set(0,0.18,0.03); clockGroup.add(handHour);
+  const handMin = new THREE.Mesh(new THREE.BoxGeometry(0.04,0.58,0.03), new THREE.MeshStandardMaterial({color:0x00ffe0})); handMin.position.set(0,0.29,0.04); clockGroup.add(handMin);
+  const handSec = new THREE.Mesh(new THREE.BoxGeometry(0.02,0.78,0.02), new THREE.MeshStandardMaterial({color:0xff6b6b, emissive:0xff6b6b})); handSec.position.set(0,0.39,0.05); clockGroup.add(handSec);
+
+  // controls
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);
+  controls.enableDamping = true; controls.dampingFactor = 0.06;
+  controls.target.set(0,0.4,0);
+
+  // animate
+  let lastFrame = performance.now();
+  function animate(){
+    requestAnimationFrame(animate);
+    const now = performance.now();
+    const dt = (now-lastFrame)/1000; lastFrame = now;
 
     // indicator cube
-    const indicatorCube = new THREE.Mesh(new THREE.BoxGeometry(1.2,1.2,1.2), new THREE.MeshStandardMaterial({color:0x00ffc6, metalness:0.2, roughness:0.4}));
-    indicatorCube.position.set(-3.2, 0.4, 0); scene.add(indicatorCube);
+    const fpsVal = window._fpsMeta || 30;
+    const scaleTarget = 1 + (fpsVal/80);
+    indicatorCube.scale.lerp(new THREE.Vector3(scaleTarget,scaleTarget,scaleTarget), 0.08);
 
-    // Handi Dev box
-    function createHandiBox(){
-      const size = 1.0;
-      const geo = new THREE.BoxGeometry(size,size,size);
-      const mats = [];
-      const facesText = ['Handi','Dev','HD+','Ultra','Insight',''];
-      for(let i=0;i<6;i++){
-        const c = document.createElement('canvas'); c.width=512; c.height=512;
-        const ctx = c.getContext('2d');
-        ctx.fillStyle = '#001316'; ctx.fillRect(0,0,c.width,c.height);
-        ctx.fillStyle = '#00ffc6'; ctx.fillRect(0,0,c.width,120);
-        ctx.fillStyle = '#001'; ctx.font='bold 72px Inter, Arial'; ctx.fillText(facesText[i]||'',40,220);
-        ctx.fillStyle = '#00c2ff'; ctx.font='18px Inter, Arial'; ctx.fillText('Handi Dev',40,260);
-        const tex = new THREE.CanvasTexture(c);
-        mats.push(new THREE.MeshStandardMaterial({map:tex}));
-      }
-      const m = new THREE.Mesh(geo, mats);
-      return m;
+    // handiBox rotate float
+    handiBox.rotation.y += 0.6*dt;
+    handiBox.position.y = 0.5 + Math.sin(now/600)*0.04;
+
+    // holo rotate + float
+    holoGroup.rotation.y += 0.35 * dt;
+    if(activeDeviceMesh) activeDeviceMesh.position.y = 0.05 + Math.sin(now/700)*0.06;
+
+    // waving flag (update z positions)
+    const pos = flagMesh.geometry.attributes.position;
+    const arr = pos.array;
+    const time = now/400;
+    for(let i=0;i<arr.length;i+=3){
+      const x = arr[i], y = arr[i+1];
+      arr[i+2] = Math.sin((x*3) + time + (y*2)) * 0.06;
     }
-    const handiBox = createHandiBox(); handiBox.position.set(-1.6,0.5,0); scene.add(handiBox);
+    pos.needsUpdate = true;
+    flagMesh.geometry.computeVertexNormals();
 
-    // speed bars
-    const barsGroup = new THREE.Group(); const bars = [];
-    const barCount = 16;
-    for(let i=0;i<barCount;i++){
-      const g = new THREE.BoxGeometry(0.28,0.28,0.28);
-      const m = new THREE.MeshStandardMaterial({color:0x00c2ff, metalness:0.2, roughness:0.5});
-      const mesh = new THREE.Mesh(g,m);
-      mesh.position.set(i*0.32 - (barCount*0.32)/2 + 2.4, 0.14, 0);
-      mesh.scale.y = 0.05;
-      barsGroup.add(mesh); bars.push(mesh);
+    // update bars from global speed2D (last values)
+    for(let i=0;i<bars.length;i++){
+      const idx = speed2D.length - 1 - i;
+      const v = (idx>=0) ? (speed2D[idx] || 0) : 0;
+      const scaled = Math.max(0.05, Math.min(6, v/120));
+      bars[i].scale.y = THREE.MathUtils.lerp(bars[i].scale.y || 0.05, scaled, 0.08);
+      bars[i].position.y = (bars[i].scale.y)/2;
+      const hue = Math.max(0, 0.6 - (v/2000));
+      bars[i].material.color.setHSL(hue, 0.7, 0.5);
     }
-    scene.add(barsGroup);
 
-    // hologram shell (transparent box)
-    const holoShellGeo = new THREE.BoxGeometry(3.4,2.0,3.4);
-    const holoShell = new THREE.Mesh(holoShellGeo, new THREE.MeshPhysicalMaterial({color:0x00ffe0, transparent:true, opacity:0.06, transmission:0.5, roughness:0.05}));
-    holoShell.position.set(0,0.6,0); scene.add(holoShell);
+    // clock hands (smooth)
+    const d = new Date();
+    const ms = d.getMilliseconds();
+    const s = d.getSeconds() + ms/1000;
+    const m = d.getMinutes() + s/60;
+    const hVal = (d.getHours()%12) + m/60;
+    handHour.rotation.z = - hVal * (Math.PI*2/12);
+    handMin.rotation.z = - m * (Math.PI*2/60);
+    handSec.rotation.z = - s * (Math.PI*2/60);
 
-    // holoGroup dynamic (will show a single device mesh)
-    const holoGroup = new THREE.Group(); holoGroup.position.set(0,0.6,0); scene.add(holoGroup);
+    controls.update();
+    renderer.render(scene, camera);
+  }
+  animate();
 
-    // simple device meshes (phone, laptop, desktop)
-    function createPhone(){ const geom = new THREE.BoxGeometry(0.6,1.05,0.06); const mat = new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x00e6d0, transparent:true, opacity:0.7}); const mesh = new THREE.Mesh(geom, mat); return mesh; }
-    function createLaptop(){ const base = new THREE.Mesh(new THREE.BoxGeometry(1.4,0.08,0.9), new THREE.MeshStandardMaterial({color:0x00c2ff, emissive:0x004c6b, transparent:true, opacity:0.7})); const screen = new THREE.Mesh(new THREE.BoxGeometry(1.4,0.82,0.06), new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x003b4a, transparent:true, opacity:0.65})); screen.position.set(0,0.45,-0.35); screen.rotation.x = -0.35; const g = new THREE.Group(); g.add(base); g.add(screen); return g; }
-    function createDesktop(){ const monitor = new THREE.Mesh(new THREE.BoxGeometry(1.2,0.7,0.08), new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x003b4a, transparent:true, opacity:0.7})); const stand = new THREE.Mesh(new THREE.BoxGeometry(0.12,0.4,0.12), new THREE.MeshStandardMaterial({color:0x00c2ff})); stand.position.set(0,-0.6,0); const tower = new THREE.Mesh(new THREE.BoxGeometry(0.3,0.8,0.3), new THREE.MeshStandardMaterial({color:0xff66ff, emissive:0x5a005a, transparent:true, opacity:0.7})); tower.position.set(1.2,-0.1,0); const g = new THREE.Group(); monitor.position.set(0,0.2,0); g.add(monitor); g.add(stand); g.add(tower); return g; }
+  // responsive
+  window.addEventListener('resize', ()=>{ const w=container.clientWidth, h=container.clientHeight; renderer.setSize(w,h); camera.aspect = w/h; camera.updateProjectionMatrix(); });
 
-    // detect device type and add corresponding hologram
-    const devType = detectDeviceType();
-    let activeDeviceMesh = null;
-    function showHoloForDevice(type){
-      // clear
-      while(holoGroup.children.length) holoGroup.remove(holoGroup.children[0]);
-      let mesh;
-      if(type === 'phone') mesh = createPhone();
-      else if(type === 'laptop') mesh = createLaptop();
-      else if(type === 'desktop') mesh = createDesktop();
-      else mesh = createPhone();
-      mesh.position.set(0,0.05,0);
-      holoGroup.add(mesh); activeDeviceMesh = mesh;
-    }
-    showHoloForDevice(devType);
+  window._threeInited = true;
+}
 
-    // flag: render a waving plane with texture from canvas
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-    const countryGuess = (tz.toLowerCase().includes('jakarta') || tz.toLowerCase().includes('indonesia')) ? 'ID' : null;
-    const flagDataURL = drawFlagToCanvas(countryGuess);
-    const flagTex = new THREE.TextureLoader().load(flagDataURL);
-    flagTex.wrapS = flagTex.wrapT = THREE.RepeatWrapping;
-    const flagGeo = new THREE.PlaneGeometry(2.6,1.2,32,12);
-    const flagMat = new THREE.MeshStandardMaterial({map:flagTex, side:THREE.DoubleSide, transparent:true});
-    const flagMesh = new THREE.Mesh(flagGeo, flagMat); flagMesh.position.set(3.0,0.6,0); flagMesh.rotation.y = -0.35; scene.add(flagMesh);
+/* ============================
+   Speed & Ping integration
+   ============================ */
+$('pingBtn').addEventListener('click', async ()=>{
+  setText('netRes','Pinging...');
+  try{ const t0=performance.now(); await fetch('https://api.ipify.org?format=json', {cache:'no-store'}); const rtt=(performance.now()-t0).toFixed(1); setText('netRes', `RTT ~ ${rtt} ms`); window.__pushSpeed?.(Math.max(10, 1200 - Number(rtt))); }catch(e){ setText('netRes','Ping gagal'); }
+});
 
-    // 3D clock - face and 3 hands
-    const clockGroup = new THREE.Group(); clockGroup.position.set(0,1.1,-2.2); scene.add(clockGroup);
-    const face = new THREE.Mesh(new THREE.CircleGeometry(0.9,64), new THREE.MeshStandardMaterial({color:0x001316}));
-    clockGroup.add(face);
-    // hour marks
-    for(let i=0;i<12;i++){
-      const mark = new THREE.Mesh(new THREE.BoxGeometry(0.04,0.14,0.03), new THREE.MeshStandardMaterial({color:0x00ffc6}));
-      const ang = (i/12)*Math.PI*2;
-      mark.position.set(Math.sin(ang)*0.76, Math.cos(ang)*0.76, 0.02);
-      mark.rotation.z = -ang;
-      clockGroup.add(mark);
-    }
-    const handHour = new THREE.Mesh(new THREE.BoxGeometry(0.06,0.38,0.03), new THREE.MeshStandardMaterial({color:0x00c2ff}));
-    handHour.position.set(0,0.18,0.03); clockGroup.add(handHour);
-    const handMin = new THREE.Mesh(new THREE.BoxGeometry(0.04,0.58,0.03), new THREE.MeshStandardMaterial({color:0x00ffe0}));
-    handMin.position.set(0,0.29,0.04); clockGroup.add(handMin);
-    const handSec = new THREE.Mesh(new THREE.BoxGeometry(0.02,0.78,0.02), new THREE.MeshStandardMaterial({color:0xff6b6b, emissive:0xff6b6b}));
-    handSec.position.set(0,0.39,0.05); clockGroup.add(handSec);
+$('speedBtn').addEventListener('click', async ()=>{
+  showOverlay('Speed test...');
+  try{
+    const url='https://eu.httpbin.org/stream-bytes/300000?seed=0';
+    const t0=performance.now(); const r=await fetch(url);
+    if(!r.body){ setText('netRes','Gagal (stream not supported)'); hideOverlay(); return; }
+    const reader = r.body.getReader(); let rec=0;
+    while(true){ const {done, value} = await reader.read(); if(done) break; rec += value.length; }
+    const dur=(performance.now()-t0)/1000; const kb=rec/1024; const kbps = kb/dur;
+    setText('netRes', `${kbps.toFixed(0)} KB/s • ${(kbps/1024).toFixed(2)} MB/s`);
+    window.__pushSpeed?.(kbps);
+    hideOverlay();
+  }catch(e){ setText('netRes','Gagal speed test (CORS/Blocked)'); hideOverlay(); }
+});
 
-    // orbit controls
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; controls.dampingFactor = 0.06;
-    controls.target.set(0,0.4,0);
+/* ===============
+   Init: charts & 3D lazy preload
+   =============== */
+setTimeout(()=>{ init2DCharts().catch(()=>{}); initThree().catch(()=>{}); }, 800);
 
-    // store some arrays for animation
-    window._threeSceneState = { fpsHistory, heapHistory, speedHistory };
+/* ============================
+   Digital clock DOM
+   ============================ */
+(function clockTick(){
+  function tick(){
+    const now = new Date();
+    const hh = String(now.getHours()).padStart(2,'0'), mm = String(now.getMinutes()).padStart(2,'0'), ss = String(now.getSeconds()).padStart(2,'0');
+    setText('digitalClock', `${hh}:${mm}:${ss}`);
+    const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
+    const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
+    setText('calendarText', `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`);
+  }
+  setInterval(tick, 200); tick();
+})();
 
-    // animate / update
-    let lastFrameTime = performance.now();
-    function animate(){
-      requestAnimationFrame(animate);
-      const now = performance.now();
-      const dt = (now - lastFrameTime)/1000;
-      lastFrameTime = now;
+/* Export visual snapshot (chart) */
+$('exportVisualPNG').addEventListener('click', ()=>{
+  const c = document.querySelector('#fpsChart') || document.querySelector('#batteryNetChart');
+  if(c && c.toDataURL){ const a=document.createElement('a'); a.href = c.toDataURL('image/png'); a.download='handidev-chart.png'; a.click(); }
+  else alert('Chart belum siap atau tidak bisa diexport.');
+});
 
-      // update indicator cube scale/color based on fps/heap
-      const fpsNow = fpsHistory[fpsHistory.length-1] || 30;
-      const scaleTarget = 1 + (fpsNow/80);
-      indicatorCube.scale.lerp(new THREE.Vector3(scaleTarget,scaleTarget,scaleTarget), 0.08);
-      const lastHeap = heapHistory[heapHistory.length-1] || 0;
-      const t = Math.min(1, lastHeap/600);
-      const col = new THREE.Color().setHSL((1-t)*0.45, 0.8, 0.4);
-      indicatorCube.material.color.lerp(col, 0.06);
-
-      // handiBox rotation & float
-      handiBox.rotation.y += 0.6*dt;
-      handiBox.position.y = 0.5 + Math.sin(now/600)*0.04;
-
-      // holoGroup rotate + floating
-      holoGroup.rotation.y += 0.35 * dt;
-      if(activeDeviceMesh) activeDeviceMesh.position.y = 0.05 + Math.sin(now/700)*0.06;
-
-      // animate flag vertices for waving
-      flagMesh.geometry.verticesNeedUpdate = true;
-      const pos = flagMesh.geometry.attributes.position;
-      const arr = pos.array;
-      const time = now/400;
-      for(let i=0;i<arr.length;i+=3){
-        const x = arr[i], y = arr[i+1];
-        // adjust z for waving
-        arr[i+2] = Math.sin((x*3) + time + (y*2)) * 0.06;
-      }
-      pos.needsUpdate = true;
-
-      // update bars from speedHistory
-      for(let i=0;i<bars.length;i++){
-        const idx = speedHistory.length - 1 - i;
-        const v = (idx>=0) ? (speedHistory[idx] || 0) : 0;
-        const scaled = Math.max(0.05, Math.min(6, v/120));
-        bars[i].scale.y = THREE.MathUtils.lerp(bars[i].scale.y || 0.05, scaled, 0.08);
-        bars[i].position.y = (bars[i].scale.y)/2;
-        const hue = Math.max(0, 0.6 - (v/2000));
-        bars[i].material.color.setHSL(hue, 0.7, 0.5);
-      }
-
-      // update 3D clock hands from actual time (smooth)
-      const d = new Date();
-      const ms = d.getMilliseconds();
-      const s = d.getSeconds() + ms/1000;
-      const m = d.getMinutes() + s/60;
-      const h = (d.getHours()%12) + m/60;
-      handHour.rotation.z = - h * (Math.PI*2/12);
-      handMin.rotation.z = - m * (Math.PI*2/60);
-      handSec.rotation.z = - s * (Math.PI*2/60);
-
-      controls.update();
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    // responsive
-    window.addEventListener('resize', ()=>{ const w=container.clientWidth, h=container.clientHeight; renderer.setSize(w,h); camera.aspect = w/h; camera.updateProjectionMatrix(); });
-    window._threeInited = true;
-  } // end initThree
-
-  // ---------- small utilities: ping/speed ----------
-  $('pingBtn').addEventListener('click', async ()=>{
-    setText('netRes','Pinging...');
-    try{ const t0=performance.now(); await fetch('https://api.ipify.org?format=json', {cache:'no-store'}); const rtt=(performance.now()-t0).toFixed(1); setText('netRes', `RTT ~ ${rtt} ms`); window.__pushSpeed?.(Math.max(10, 1200 - Number(rtt))); }catch(e){ setText('netRes','Ping gagal') }
-  });
-
-  $('speedBtn').addEventListener('click', async ()=>{
-    showOverlay('Speed test...');
-    try{
-      const url='https://eu.httpbin.org/stream-bytes/300000?seed=0';
-      const t0=performance.now(); const r=await fetch(url);
-      if(!r.body){ setText('netRes','Gagal (stream not supported)'); hideOverlay(); return; }
-      const reader = r.body.getReader(); let rec=0;
-      while(true){ const {done,value} = await reader.read(); if(done) break; rec += value.length; }
-      const dur=(performance.now()-t0)/1000; const kb=rec/1024; const kbps = kb/dur;
-      setText('netRes', `${kbps.toFixed(0)} KB/s • ${(kbps/1024).toFixed(2)} MB/s`);
-      window.__pushSpeed?.(kbps); hideOverlay();
-    }catch(e){ setText('netRes','Gagal speed test (CORS/Blocked)'); hideOverlay(); }
-  });
-
-  // ---------- mini init: 2D charts and 3D preload ----------
-  setTimeout(()=>{ init2DCharts().catch(()=>{}); initThree().catch(()=>{}); }, 800);
-
-  // ---------- real-time digital clock + calendar DOM ----------
-  (function clockTick(){
-    function tick(){
-      const now = new Date();
-      const hh = String(now.getHours()).padStart(2,'0'), mm = String(now.getMinutes()).padStart(2,'0'), ss = String(now.getSeconds()).padStart(2,'0');
-      setText('digitalClock', `${hh}:${mm}:${ss}`);
-      const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-      const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-      setText('calendarText', `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`);
-    }
-    setInterval(tick, 200); tick();
-  })();
-
-  // ---------- export visual snapshot ----------
-  $('exportVisualPNG').addEventListener('click', ()=>{
-    const c = document.querySelector('#fpsChart') || document.querySelector('#batteryNetChart');
-    if(c && c.toDataURL){ const a=document.createElement('a'); a.href = c.toDataURL('image/png'); a.download='handidev-chart.png'; a.click(); }
-    else alert('Chart belum siap atau tidak bisa diexport.');
-  });
-
-  // done
-  console.log('Handi Dev Ultra+ initialized (partial).');
-  </script>
+console.log('Handi Dev Ultra+ script loaded.');
+</script>
 </body>
 </html>
