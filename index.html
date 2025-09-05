@@ -6,6 +6,10 @@
   <title>Handi Dev • Device Insight — Ultra+ (All-in-One)</title>
   <meta name="theme-color" content="#071018" />
   <style>
+    /* ============================
+       THEME & LAYOUT
+       Single-file, compact & responsive
+       ============================ */
     :root{
       --bg:#071018; --card:#0f1720; --text:#dff8f6; --muted:#9fbfc8;
       --accent:#00ffc6; --accent-2:#00c2ff;
@@ -33,7 +37,7 @@
     .loader{background:var(--card);padding:18px;border-radius:12px;display:flex;gap:12px;align-items:center}
     .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:blink 1s infinite}
     @keyframes blink{50%{opacity:0.25;transform:scale(.8)}}
-    /* bottom menu */
+    /* charts area */
     .charts-section{margin-top:20px;padding-top:16px;border-top:1px dashed rgba(255,255,255,0.04)}
     .tabs{display:flex;gap:8px;margin-bottom:12px}
     .tab{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.02);cursor:pointer}
@@ -43,28 +47,31 @@
     canvas{width:100%!important;height:220px!important}
     #three3d{width:100%;height:360px;border-radius:8px;display:block;background:#000}
     @media (max-width:920px){#three3d{height:240px}}
+    /* utility */
+    .muted{color:var(--muted);font-size:12px}
   </style>
 </head>
 <body data-theme="dark">
   <div class="wrap" id="app">
+    <!-- HEADER -->
     <header>
       <div class="brand">
         <div class="logo">HD+</div>
         <div>
-          <h1>Handi Dev • Device Insight — Ultra+ (All-in-One)</h1>
-          <div class="subtitle">Semua detect mendalam + menu grafik (2D & 3D) di bagian bawah</div>
+          <h1>Handi Dev • Device Insight — Ultra+</h1>
+          <div class="subtitle">Detect mendalam + grafik 2D & 3D — all-in-one</div>
         </div>
       </div>
 
       <div class="controls">
         <button class="btn" id="themeBtn">Toggle Theme</button>
         <button class="btn" id="copyAll">Copy All</button>
-        <button class="btn" id="exportAllJSON">Export All JSON</button>
+        <button class="btn" id="exportAllJSON">Export JSON</button>
         <button class="btn" id="toggleCharts">Open Charts</button>
       </div>
     </header>
 
-    <!-- TOP: basic info grid (device/network/battery/etc) -->
+    <!-- BASIC INFO GRID -->
     <div class="grid" id="infoGrid" style="margin-top:12px">
       <div class="card">
         <h3>Device & Browser</h3>
@@ -76,7 +83,11 @@
         <h3>Network & IP</h3>
         <div class="mono v" id="ip">—</div>
         <div class="small">Status: <span id="online">—</span> • Downlink: <span id="downlink">—</span></div>
-        <div style="margin-top:8px" class="row"><button class="btn" id="btn-ip">Refresh IP</button><button class="btn" id="pingBtn">Ping</button><button class="btn" id="speedBtn">Speed</button></div>
+        <div style="margin-top:8px" class="row">
+          <button class="btn" id="btn-ip">Refresh IP</button>
+          <button class="btn" id="pingBtn">Ping</button>
+          <button class="btn" id="speedBtn">Speed</button>
+        </div>
         <div class="small" id="netRes">—</div>
       </div>
 
@@ -105,13 +116,17 @@
       </div>
     </div>
 
-    <!-- MIDDLE: advanced detect (fingerprint, webgl, audio, fonts, etc) -->
+    <!-- ADVANCED DETECT -->
     <div class="grid" style="margin-top:18px">
       <div class="card">
         <h3>Deep Fingerprint</h3>
         <div class="mono v" id="fingerprint">—</div>
         <div class="small">Canvas • Audio • WebGL • Fonts • Timezone • UA</div>
-        <div style="margin-top:8px" class="row"><button class="btn" id="runCanvas">Canvas FP</button><button class="btn" id="runAudio">Audio FP</button><button class="btn" id="runAllFP">All FP</button></div>
+        <div style="margin-top:8px" class="row">
+          <button class="btn" id="runCanvas">Canvas FP</button>
+          <button class="btn" id="runAudio">Audio FP</button>
+          <button class="btn" id="runAllFP">All FP</button>
+        </div>
       </div>
 
       <div class="card">
@@ -145,7 +160,7 @@
       </div>
     </div>
 
-    <!-- BOTTOM: Charts section (hidden by default) -->
+    <!-- CHARTS SECTION (BOTTOM) -->
     <div class="charts-section" id="chartsSection" style="display:none">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div class="tabs" role="tablist">
@@ -158,25 +173,25 @@
         </div>
       </div>
 
-      <!-- 2D charts -->
+      <!-- 2D -->
       <div id="tab-2d">
         <div class="chart-grid" style="margin-top:12px">
           <div class="chart-card">
             <h4>FPS & JS Heap</h4>
             <canvas id="fpsChart"></canvas>
-            <div class="small">Line chart: FPS (kiri) & Heap MB (kanan).</div>
+            <div class="small">Line chart: FPS & Heap (MB).</div>
           </div>
 
           <div class="chart-card">
             <h4>Battery & Speed</h4>
             <canvas id="batteryNetChart"></canvas>
-            <div class="small">Battery history & recent download speed bars.</div>
+            <div class="small">Battery history & speed bars.</div>
           </div>
 
           <div class="chart-card">
             <h4>Acceleration (X/Y/Z)</h4>
             <canvas id="accelChart"></canvas>
-            <div class="small">Sensor accelerometer (radar).</div>
+            <div class="small">Accelerometer (radar).</div>
           </div>
 
           <div class="chart-card">
@@ -188,141 +203,81 @@
           <div class="chart-card">
             <h4>TF.js Inference Heatmap</h4>
             <canvas id="heatmapChart"></canvas>
-            <div class="small">Micro-benchmark results (ms).</div>
+            <div class="small">Micro-benchmark (ms).</div>
           </div>
         </div>
       </div>
 
       <!-- 3D -->
-      <!-- TAB GRAFIK 3D -->
-<div id="grafik3d" class="grafik-tab hidden">
-  <h2>🌀 Grafik 3D - Handi Dev</h2>
-  <canvas id="threeCanvas"></canvas>
-</div>
+      <div id="tab-3d" style="display:none; margin-top:12px">
+        <div class="chart-card">
+          <h4>3D Scene — Cube & Speed Bars</h4>
+          <div id="three3d"></div>
+          <div class="small">Klik & drag untuk rotate; zoom with wheel.</div>
+        </div>
+      </div>
+    </div>
 
-
-    <div class="footer">Catatan: beberapa fitur memerlukan izin (kamera, microphone, clipboard, bluetooth, filesystem). Data tetap di client kecuali di-export atau diizinkan upload.</div>
+    <div class="footer">Catatan: beberapa fitur memerlukan izin. Data disimpan lokal kecuali di-export.</div>
   </div>
 
+  <!-- OVERLAY -->
   <div class="overlay" id="overlay"><div class="loader"><div class="dot"></div><div><div id="overlayTxt">Loading…</div><div class="small">Mohon tunggu</div></div></div></div>
 
-  <script type="module">
-  // -------------------- Helpers --------------------
+  <!-- ============================
+       SCRIPT (all-in-one)
+       ============================ -->
+  <script>
+  /* ============================
+     Helpers & small utilities
+     ============================ */
   const $ = id => document.getElementById(id);
-  function pad(n){ return String(n).padStart(2,'0') }
-  function fmtDate(d){ const days=['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu']; const months=['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember']; return `${days[d.getDay()]}, ${d.getDate()} ${months[d.getMonth()]} ${d.getFullYear()}` }
+  function setText(id, v){ const el = $(id); if(el) el.textContent = v; }
+  function showOverlay(txt){ $('overlay').classList.add('show'); $('overlayTxt').textContent = txt || 'Loading…'; }
+  function hideOverlay(){ $('overlay').classList.remove('show'); }
 
-    // visual 3D
-    import * as THREE from "https://cdn.jsdelivr.net/npm/three@0.161.0/build/three.module.js";
-import { OrbitControls } from "https://cdn.jsdelivr.net/npm/three@0.161.0/examples/jsm/controls/OrbitControls.js";
+  /* ----------------------------
+     Basic UI wiring
+     ---------------------------- */
+  (function initUI(){
+    // theme toggle
+    $('themeBtn').addEventListener('click', ()=>{
+      const cur = document.documentElement.getAttribute('data-theme') || 'dark';
+      const nxt = cur === 'light' ? 'dark' : 'light';
+      document.documentElement.setAttribute('data-theme', nxt);
+    });
 
-// --- Setup dasar scene ---
-const scene = new THREE.Scene();
-scene.background = new THREE.Color("#111");
+    // copy & export
+    $('copyAll').addEventListener('click', async ()=>{
+      try{ await navigator.clipboard.writeText(JSON.stringify(collectSnapshot(), null, 2)); alert('Disalin ke clipboard'); }catch(e){ alert('Gagal salin: '+(e.message||e)); }
+    });
+    $('exportAllJSON').addEventListener('click', ()=>{ downloadJSON('handidev-all.json', collectSnapshot()); });
 
-const camera = new THREE.PerspectiveCamera(75, window.innerWidth / 400, 0.1, 1000);
-camera.position.set(0, 2, 6);
+    // charts toggles & tabs
+    $('toggleCharts').addEventListener('click', ()=>{ $('chartsSection').style.display='block'; document.querySelector('.tab[data-tab="2d"]').click(); window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'}); });
+    $('closeCharts').addEventListener('click', ()=>{ $('chartsSection').style.display='none'; });
+    document.querySelectorAll('.tab').forEach(t=>{
+      t.addEventListener('click', async ()=>{
+        document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
+        t.classList.add('active');
+        const tab = t.dataset.tab;
+        if(tab === '2d'){ $('tab-2d').style.display=''; $('tab-3d').style.display='none'; if(!window._fpsChartInited) await init2DCharts(); }
+        else { $('tab-2d').style.display='none'; $('tab-3d').style.display=''; if(!window._threeInited) await initThree(); }
+      });
+    });
 
-const renderer = new THREE.WebGLRenderer({ canvas: document.getElementById("threeCanvas"), antialias: true });
-renderer.setSize(window.innerWidth, 400);
-
-// --- Cahaya ---
-const light = new THREE.PointLight(0xffffff, 1.2);
-light.position.set(5, 5, 5);
-scene.add(light);
-scene.add(new THREE.AmbientLight(0x404040));
-
-// --- Cube indikator FPS/Heap ---
-const cubeGeo = new THREE.BoxGeometry(1, 1, 1);
-const cubeMat = new THREE.MeshStandardMaterial({ color: 0x00ffcc });
-const cube = new THREE.Mesh(cubeGeo, cubeMat);
-scene.add(cube);
-
-// --- Bars speed history ---
-const bars = [];
-const barGroup = new THREE.Group();
-scene.add(barGroup);
-for (let i = 0; i < 20; i++) {
-  const geo = new THREE.BoxGeometry(0.3, 1, 0.3);
-  const mat = new THREE.MeshStandardMaterial({ color: 0x0088ff });
-  const bar = new THREE.Mesh(geo, mat);
-  bar.position.x = (i - 10) * 0.35;
-  bar.scale.y = 0.1;
-  barGroup.add(bar);
-  bars.push(bar);
-}
-
-// --- Controls ---
-const controls = new OrbitControls(camera, renderer.domElement);
-controls.enableDamping = true;
-
-// --- Data update ---
-let speedHistory = [];
-window.__pushSpeed = (kb) => {
-  speedHistory.push(kb);
-  if (speedHistory.length > 20) speedHistory.shift();
-  speedHistory.forEach((s, i) => {
-    bars[i].scale.y = Math.max(0.1, s / 100); // skala bar
-    bars[i].material.color.setHSL(0.6 - Math.min(0.6, s / 500), 1, 0.5);
-  });
-};
-
-// FPS dummy test
-let lastTime = performance.now(), frames = 0, fps = 0;
-function calcFPS() {
-  frames++;
-  const now = performance.now();
-  if (now - lastTime >= 1000) {
-    fps = frames;
-    frames = 0;
-    lastTime = now;
-  }
-  return fps;
-}
-
-// --- Animasi loop ---
-function animate() {
-  requestAnimationFrame(animate);
-
-  // FPS & cube indikator
-  const fpsNow = calcFPS();
-  cube.rotation.x += 0.01;
-  cube.rotation.y += 0.01;
-  cube.scale.setScalar(1 + fpsNow / 60);
-  cube.material.color.setHSL(0.3 + Math.min(0.5, fpsNow / 120), 1, 0.5);
-
-  controls.update();
-  renderer.render(scene, camera);
-}
-animate();
-
-window.addEventListener("resize", () => {
-  camera.aspect = window.innerWidth / 400;
-  camera.updateProjectionMatrix();
-  renderer.setSize(window.innerWidth, 400);
-});
-    
-  // -------------------- Clocks & basic --------------------
-  (function clockInit(){
-    function tick(){
-      const now=new Date();
-      // header clocks (reuse existing if present)
-      // show UA / device basics
-      const wib = new Date(now.toLocaleString('en-US',{timeZone:'Asia/Jakarta'}));
-      // minimal: set internal small fields if exist
-    }
-    setInterval(tick,1000); tick();
+    $('exportVisualPNG').addEventListener('click', ()=>{
+      // export fpsChart if exists, else battery chart
+      const c = document.querySelector('#fpsChart') || document.querySelector('#batteryNetChart');
+      if(c && c.toDataURL){
+        const data = c.toDataURL('image/png'); const a=document.createElement('a'); a.href=data; a.download='handidev-chart.png'; a.click();
+      } else alert('Chart belum siap untuk diekspor.');
+    });
   })();
 
-  // theme toggle
-  const themeBtn = $('themeBtn');
-  themeBtn.addEventListener('click', ()=>{
-    const cur = document.documentElement.getAttribute('data-theme') || 'dark';
-    const nxt = cur === 'light' ? 'dark' : 'light';
-    document.documentElement.setAttribute('data-theme', nxt);
-  });
-
-  // copy all / export all
+  /* ----------------------------
+     Snapshot collector
+     ---------------------------- */
   function collectSnapshot(){
     return {
       ts: new Date().toISOString(),
@@ -332,23 +287,18 @@ window.addEventListener("resize", () => {
       ram: navigator.deviceMemory || null,
       timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
       fingerprint: $('fingerprint')?.textContent || null
-      // (you can extend to include more fields)
     };
   }
-  $('copyAll').addEventListener('click', async ()=>{
-    try{ await navigator.clipboard.writeText(JSON.stringify(collectSnapshot(), null, 2)); alert('Semua info disalin ke clipboard'); }catch(e){ alert('Gagal salin: '+e.message) }
-  });
-  $('exportAllJSON').addEventListener('click', ()=>{
-    const j=JSON.stringify(collectSnapshot(), null, 2);
-    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([j],{type:'application/json'})); a.download='handidev-all.json'; a.click();
-  });
+  function downloadJSON(filename, obj){ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'})); a.download = filename; a.click(); }
 
-  // -------------------- Existing features hookup (detection tasks) --------------------
-  // UA / device / cores / ram
-  $('ua').textContent = navigator.userAgent;
-  $('device').textContent = navigator.platform || '—';
-  $('cores').textContent = navigator.hardwareConcurrency || '—';
-  $('ram').textContent = navigator.deviceMemory || '—';
+  /* ============================
+     Basic detection hooks
+     ============================ */
+  // UA / device
+  setText('ua', navigator.userAgent);
+  setText('device', navigator.platform || '—');
+  setText('cores', navigator.hardwareConcurrency || '—');
+  setText('ram', navigator.deviceMemory || '—');
 
   // battery
   (async function batteryInit(){
@@ -356,100 +306,83 @@ window.addEventListener("resize", () => {
       if('getBattery' in navigator){
         const b = await navigator.getBattery();
         function paint(){
-          $('battery-level').textContent = Math.round(b.level*100)+'%';
-          $('battery-status').textContent = b.charging? 'Charging' : 'Discharging';
+          setText('battery-level', Math.round(b.level*100)+'%');
+          setText('battery-status', b.charging ? 'Charging' : 'Discharging');
         }
         ['levelchange','chargingchange'].forEach(e=>b.addEventListener(e,paint));
         paint();
-      } else {
-        $('battery-level').textContent = '—';
-        $('battery-status').textContent = 'Not supported';
-      }
-    }catch(e){ $('battery-level').textContent='—'; $('battery-status').textContent='Error' }
+      } else { setText('battery-level','—'); setText('battery-status','Not supported'); }
+    }catch(e){ setText('battery-level','—'); setText('battery-status','Error'); }
   })();
 
-  // network & IP
+  // network ip
   async function fetchIP(){
     try{
-      $('overlay').classList.add('show'); $('overlayTxt').textContent='Mengambil IP...';
+      showOverlay('Mengambil IP publik...');
       const r = await fetch('https://api.ipify.org?format=json'); const j = await r.json();
-      $('ip').textContent = j.ip || '—';
-    }catch(e){ $('ip').textContent='Gagal ambil IP' } finally { $('overlay').classList.remove('show') }
+      setText('ip', j.ip || '—');
+    }catch(e){ setText('ip','Gagal ambil IP'); } finally { hideOverlay(); }
   }
   $('btn-ip').addEventListener('click', fetchIP);
   fetchIP();
 
-  // navigator.connection
+  // connection status
   function paintNet(){
     const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection;
-    $('online').textContent = navigator.onLine? 'online' : 'offline';
-    $('downlink').textContent = c?.downlink ?? '—';
+    setText('online', navigator.onLine? 'online' : 'offline');
+    setText('downlink', c?.downlink ?? '—');
   }
   paintNet();
   (navigator.connection||{}).addEventListener?.('change', paintNet);
   window.addEventListener('online', paintNet);
   window.addEventListener('offline', paintNet);
 
-  // heap usage
-  async function paintHeap(){
-    try{ if(performance?.memory){ $('heap').textContent = (performance.memory.usedJSHeapSize/1024/1024).toFixed(1) + ' MB'; } else { $('heap').textContent = 'N/A' } }catch(e){ $('heap').textContent='—' }
-  }
+  // heap
+  async function paintHeap(){ try{ if(performance?.memory){ setText('heap', (performance.memory.usedJSHeapSize/1024/1024).toFixed(1) + ' MB'); } else setText('heap','N/A'); }catch(e){ setText('heap','—'); } }
   setInterval(paintHeap,1500); paintHeap();
 
-  // sensors: devicemotion / orientation
+  // sensors
+  const accelBuffer = [];
+  function pushAccelSample(s){ accelBuffer.push(s); if(accelBuffer.length>60) accelBuffer.shift(); }
   if('DeviceMotionEvent' in window){
     window.addEventListener('devicemotion', e=>{
       const a = e.accelerationIncludingGravity || e.acceleration || {x:0,y:0,z:0};
-      $('sensorVal').textContent = `X:${(a.x||0).toFixed(2)} Y:${(a.y||0).toFixed(2)} Z:${(a.z||0).toFixed(2)}`;
+      setText('sensorVal', `X:${(a.x||0).toFixed(2)} Y:${(a.y||0).toFixed(2)} Z:${(a.z||0).toFixed(2)}`);
       pushAccelSample({x:a.x||0,y:a.y||0,z:a.z||0});
     });
   }
-  if('DeviceOrientationEvent' in window){
-    window.addEventListener('deviceorientation', e=>{
-      // optionally show orientation
-    });
-  }
 
-  // incognito heuristic (best-effort)
+  // incognito heuristic
   (async function incognitoCheck(){
     try{
-      let fs = window.RequestFileSystem || window.webkitRequestFileSystem;
+      const fs = window.RequestFileSystem || window.webkitRequestFileSystem;
       if(!fs){
         const key = 'handi_test';
-        try{ localStorage.setItem(key,'1'); localStorage.removeItem(key); $('incognito').textContent='Normal (localStorage OK)'; return; }
-        catch(err){ $('incognito').textContent='Private/Restricted (localStorage failure)'; return; }
+        try{ localStorage.setItem(key,'1'); localStorage.removeItem(key); setText('incognito','Normal (localStorage OK)'); return; }
+        catch(err){ setText('incognito','Private/Restricted (localStorage failure)'); return; }
       }
-      fs(window.TEMPORARY,100, ()=>{$('incognito').textContent='Normal'}, ()=>{$('incognito').textContent='Incognito/Private'});
-    }catch(e){ $('incognito').textContent='Tidak pasti' }
+      fs(window.TEMPORARY,100, ()=>setText('incognito','Normal'), ()=>setText('incognito','Incognito/Private'));
+    }catch(e){ setText('incognito','Tidak pasti') }
   })();
 
-  // AI insight (simple heuristics)
-  function aiAnalysis(){
-    const cores = navigator.hardwareConcurrency||2; const ram = navigator.deviceMemory||2;
-    const heap = (performance?.memory?.usedJSHeapSize||0)/1024/1024;
-    const notes = [];
-    if(ram < 2) notes.push('RAM terbatas');
-    else if(ram >= 8) notes.push('RAM besar');
-    if(cores <= 2) notes.push('CPU sedikit');
-    else notes.push('CPU cukup');
-    if(heap > 300) notes.push('Heap tinggi');
-    $('aiInsight').textContent = notes.join(' • ') || 'Normal';
-  }
+  // AI heuristics
+  function aiAnalysis(){ const cores = navigator.hardwareConcurrency||2; const ram = navigator.deviceMemory||2; const heap = (performance?.memory?.usedJSHeapSize||0)/1024/1024; const notes=[]; if(ram<2) notes.push('RAM terbatas'); else if(ram>=8) notes.push('RAM besar'); if(cores<=2) notes.push('CPU sedikit'); else notes.push('CPU cukup'); if(heap>300) notes.push('Heap tinggi'); setText('aiInsight', notes.join(' • ') || 'Normal'); }
   aiAnalysis(); setInterval(aiAnalysis,10000);
 
-  // -------------------- Deep FP functions (canvas/audio/fonts/webgl) --------------------
+  /* ============================
+     Deep fingerprint utilities
+     ============================ */
   function canvasFingerprint(){
     try{
       const c = document.createElement('canvas'); c.width=512; c.height=200;
       const ctx = c.getContext('2d');
-      ctx.textBaseline = 'top';
-      ctx.font = "16px Arial";
-      ctx.fillStyle = '#f60'; ctx.fillRect(125,1,62,20);
-      ctx.fillStyle = '#069'; ctx.fillText('Handi Dev — Canvas FP', 2, 15);
-      ctx.fillStyle = 'rgba(102,200,0,0.7)'; ctx.fillText('✓ 測試 — 𝓕𝓟', 4, 45);
-      const data = c.toDataURL();
-      return data.slice(-120);
-    }catch(e){ return null }
+      ctx.textBaseline='top';
+      ctx.font="16px Arial";
+      ctx.fillStyle='#f60'; ctx.fillRect(125,1,62,20);
+      ctx.fillStyle='#069'; ctx.fillText('Handi Dev — Canvas FP', 2, 15);
+      ctx.fillStyle='rgba(102,200,0,0.7)'; ctx.fillText('✓ 測試 — 𝓕𝓟', 4, 45);
+      return c.toDataURL().slice(-120);
+    }catch(e){ return null; }
   }
 
   function getWebGLInfo(){
@@ -460,8 +393,8 @@ window.addEventListener("resize", () => {
       const dbg = gl.getExtension('WEBGL_debug_renderer_info');
       const vendor = dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR);
       const renderer = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER);
-      return {vendor,renderer};
-    }catch(e){ return null }
+      return {vendor, renderer};
+    }catch(e){ return null; }
   }
 
   async function audioFingerprint(){
@@ -469,25 +402,17 @@ window.addEventListener("resize", () => {
       const ac = new (window.AudioContext||window.webkitAudioContext)();
       const osc = ac.createOscillator();
       const node = ac.createAnalyser();
-      osc.type = 'sine';
-      osc.frequency.value = 440 + (Math.random()*100);
-      osc.connect(node);
-      node.connect(ac.destination);
-      osc.start();
+      osc.type='sine'; osc.frequency.value = 440 + (Math.random()*100);
+      osc.connect(node); node.connect(ac.destination); osc.start();
       const arr = new Uint8Array(node.frequencyBinCount);
-      node.getByteFrequencyData(arr);
-      osc.stop();
-      await ac.close?.();
-      const sample = Array.from(arr.slice(0,20)).join(',');
-      return sample.slice(0,80);
-    }catch(e){ return null }
+      node.getByteFrequencyData(arr); osc.stop(); await ac.close?.();
+      return Array.from(arr.slice(0,20)).join(',').slice(0,80);
+    }catch(e){ return null; }
   }
 
   function detectFont(font){
     const base = document.createElement('span');
-    base.style.fontFamily='monospace';
-    base.style.fontSize='72px';
-    base.innerText='mmmmmmmmmlli';
+    base.style.fontFamily='monospace'; base.style.fontSize='72px'; base.innerText='mmmmmmmmmlli';
     base.style.position='absolute'; base.style.left='-9999px';
     document.body.appendChild(base);
     const defaultWidth = base.offsetWidth;
@@ -498,84 +423,52 @@ window.addEventListener("resize", () => {
   }
   function detectFontsList(){
     const fonts = ['Arial','Roboto','Segoe UI','Times New Roman','Courier New','Noto Sans','Inter'];
-    const found = fonts.filter(f=>detectFont(f));
-    return found;
+    try{ return fonts.filter(f=>detectFont(f)); }catch(e){ return []; }
   }
 
+  // FP UI buttons
   $('runCanvas').addEventListener('click', ()=>{
-    const c = canvasFingerprint();
-    $('canvasHash') ? $('canvasHash').textContent = c || 'Gagal' : null;
-    try{
-      const gl = document.createElement('canvas').getContext('webgl') || document.createElement('canvas').getContext('experimental-webgl');
-      const dbg = gl && gl.getExtension('WEBGL_debug_renderer_info');
-      const highp = gl && (gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision > 0);
-      $('shaderPrec').textContent = highp ? 'highp' : 'mediump/lowp';
-    }catch(e){ $('shaderPrec').textContent = '—' }
+    const c = canvasFingerprint(); if(c) setText('fingerprint', c.slice(0,28)); else setText('fingerprint','Gagal');
+    try{ const gl = document.createElement('canvas').getContext('webgl') || document.createElement('canvas').getContext('experimental-webgl'); const highp = gl && (gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision > 0); setText('shaderPrec', highp ? 'highp' : 'mediump/lowp'); }catch(e){ setText('shaderPrec','—'); }
   });
 
   $('runAudio').addEventListener('click', async ()=>{
-    $('audioFP') ? $('audioFP').textContent = 'Running...' : null;
-    const a = await audioFingerprint();
-    $('audioFP') ? $('audioFP').textContent = a || 'Gagal' : null;
+    setText('audioFP','Running...');
+    const a = await audioFingerprint(); setText('audioFP', a || 'Gagal');
   });
 
   $('runAllFP').addEventListener('click', async ()=>{
-    $('fingerprint').textContent = 'Running...';
-    const webgl = getWebGLInfo();
-    const canvas = canvasFingerprint();
-    const audio = await audioFingerprint();
-    const fonts = detectFontsList();
+    setText('fingerprint','Running...');
+    const webgl = getWebGLInfo(); const canvas = canvasFingerprint(); const audio = await audioFingerprint(); const fonts = detectFontsList();
     const base = navigator.userAgent + '|' + navigator.language + '|' + JSON.stringify(webgl) + '|' + (canvas||'') + '|' + (audio||'') + '|' + fonts.join(',');
     const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(base));
     const hex = Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');
-    $('fingerprint').textContent = hex.slice(0,28);
-    $('fonts').textContent = fonts.join(', ') || '—';
-    $('canvasHash') ? $('canvasHash').textContent = canvas || '—' : null;
-    $('audioFP') ? $('audioFP').textContent = audio || '—' : null;
+    setText('fingerprint', hex.slice(0,28));
+    setText('fonts', fonts.join(', ') || '—');
+    setText('canvasHash', canvas || '—');
+    setText('audioFP', audio || '—');
   });
 
-  // webgl GPU summary
+  // webgl summary initial
   (function setWebGLSummary(){
     const w = getWebGLInfo();
-    if(w){ $('gpu').textContent = `${w.renderer||'—'} (${w.vendor||'—'})`; }
-    else { $('gpu').textContent = 'Not available' }
-    try{ const glTest = document.createElement('canvas').getContext('webgl') || document.createElement('canvas').getContext('experimental-webgl'); if(glTest){ const p = glTest.getShaderPrecisionFormat(glTest.FRAGMENT_SHADER, glTest.HIGH_FLOAT); $('shaderPrec').textContent = (p && p.precision>0) ? 'highp' : 'mediump/lowp'; } }catch(e){}
+    if(w) setText('gpu', `${w.renderer||'—'} (${w.vendor||'—'})`); else setText('gpu','Not available');
+    try{ const glTest = document.createElement('canvas').getContext('webgl') || document.createElement('canvas').getContext('experimental-webgl'); if(glTest){ const p = glTest.getShaderPrecisionFormat(glTest.FRAGMENT_SHADER, glTest.HIGH_FLOAT); setText('shaderPrec', (p && p.precision>0) ? 'highp' : 'mediump/lowp'); } }catch(e){}
   })();
 
-  // fonts initial
-  try{ $('fonts').textContent = detectFontsList().join(', ') || '—'; }catch(e){ $('fonts').textContent='—' }
-
-  // webauthn & webxr
+  // webauthn & webxr checks
   (async function checkWebAPIs(){
-    $('webauthn').textContent = !!window.PublicKeyCredential ? 'Supported' : 'Not supported';
-    try{ if(navigator.xr && navigator.xr.isSessionSupported){ const sup = await navigator.xr.isSessionSupported('immersive-vr'); $('webxr').textContent = sup ? 'VR Supported' : 'No VR'; } else $('webxr').textContent = 'No WebXR' }catch(e){ $('webxr').textContent='Error' }
+    setText('webauthn', !!window.PublicKeyCredential ? 'Supported' : 'Not supported');
+    try{ if(navigator.xr && navigator.xr.isSessionSupported){ const sup = await navigator.xr.isSessionSupported('immersive-vr'); setText('webxr', sup ? 'VR Supported' : 'No VR'); } else setText('webxr','No WebXR') }catch(e){ setText('webxr','Error') }
   })();
 
-  // -------------------- Thermal throttle quick test --------------------
-  async function thermalCheck(){
-    $('throttleRes').textContent = 'Running...';
-    const start = performance.now();
-    let c=0; for(let i=0;i<1e7;i++){ c += (i%3); }
-    const dur1 = performance.now() - start;
-    await new Promise(r=>setTimeout(r,2000));
-    const start2 = performance.now();
-    let c2=0; for(let i=0;i<1e7;i++){ c2 += (i%3); }
-    const dur2 = performance.now() - start2;
-    const ratio = (dur2/dur1).toFixed(2);
-    $('throttleRes').textContent = `t1:${dur1.toFixed(0)} t2:${dur2.toFixed(0)} ratio:${ratio}`;
-  }
-  // attach thermo button (if not visible, created earlier)
-  (function attachTherm(){
-    // button was created earlier in other versions; ensure click handler available by UI (not shown here)
-  })();
+  /* ============================
+     Visualization: 2D & 3D
+     - Chart.js & Three.js are loaded on-demand
+     - Expose window.__pushSpeed and window.__pushTF to feed data
+     ============================ */
 
-  // -------------------- EXPORT helpers reused --------------------
-  function downloadJSON(name, obj){
-    const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(obj,null,2)],{type:'application/json'})); a.download = name; a.click();
-  }
-
-  // -------------------- Visualization: 2D & 3D --------------------
-  // Data buffers
+  // data buffers
   const maxPoints = 60;
   const fpsHistory = Array(maxPoints).fill(null);
   const heapHistory = Array(maxPoints).fill(null);
@@ -586,7 +479,7 @@ window.addEventListener("resize", () => {
 
   function pushLimited(arr, v){ arr.push(v); if(arr.length>maxPoints) arr.shift(); }
 
-  // FPS sampler
+  // fps sampler & heap sampling
   let frames = 0, lastT = performance.now();
   function fpsLoop(now){
     frames++;
@@ -594,7 +487,7 @@ window.addEventListener("resize", () => {
       pushLimited(fpsHistory, frames);
       frames = 0;
       lastT = now;
-      try{ if(performance?.memory) pushLimited(heapHistory, performance.memory.usedJSHeapSize/1024/1024); else pushLimited(heapHistory, null); }catch(e){ pushLimited(heapHistory, null) }
+      try{ if(performance?.memory) pushLimited(heapHistory, performance.memory.usedJSHeapSize/1024/1024); else pushLimited(heapHistory, null); }catch(e){ pushLimited(heapHistory, null); }
       update2DCharts();
       updateThreeVisual();
     }
@@ -608,22 +501,21 @@ window.addEventListener("resize", () => {
       if('getBattery' in navigator){
         const b = await navigator.getBattery();
         function p(){ pushLimited(batteryHistory, Math.round(b.level*100)); update2DCharts(); }
-        ['levelchange','chargingchange'].forEach(e=>b.addEventListener(e,p));
-        p();
+        ['levelchange','chargingchange'].forEach(e=>b.addEventListener(e,p)); p();
       }
     }catch(e){}
   })();
 
-  // speed helper - call this after you measure KB/s (from existing speed test)
+  // speed connector
   window.__pushSpeed = function(kb){ pushLimited(speedHistory, kb); update2DCharts(); };
 
-  // accel push (called by devicemotion earlier)
-  function pushAccelSample(sample){ pushLimited(accelHistory, sample); updateAccel(); }
+  // accel push from sensor
+  function pushAccelSample(sample){ pushLimited(accelHistory, sample); updateAccelChart(); }
 
   // TF push
   window.__pushTF = function(ms){ pushLimited(tfHeat, ms); update2DCharts(); };
 
-  // Chart.js lazy loader + inits
+  /* ---- Chart.js (lazy load) ---- */
   let ChartJS = null, fpsChart=null, batteryNetChart=null, accelChart=null, heatmapChart=null, canvasCtx=null;
   async function ensureChartJs(){
     if(window.Chart) return window.Chart;
@@ -632,31 +524,26 @@ window.addEventListener("resize", () => {
   }
 
   async function init2DCharts(){
+    if(window._fpsChartInited) return;
     ChartJS = await ensureChartJs();
     // FPS chart
     const ctxF = document.getElementById('fpsChart').getContext('2d');
     fpsChart = new ChartJS(ctxF, {
       type:'line',
-      data:{
-        labels: Array(maxPoints).fill(''),
-        datasets:[
-          {label:'FPS', data: fpsHistory, borderColor:'#00ffc6', tension:0.25, fill:false},
-          {label:'Heap MB', data: heapHistory, borderColor:'#00c2ff', tension:0.25, fill:false, yAxisID:'y1'}
-        ]
-      },
+      data:{ labels: Array(maxPoints).fill(''), datasets:[
+        {label:'FPS', data: fpsHistory, borderColor:'#00ffc6', tension:0.25, fill:false},
+        {label:'Heap MB', data: heapHistory, borderColor:'#00c2ff', tension:0.25, fill:false, yAxisID:'y1'}
+      ]},
       options:{animation:false, scales:{y:{beginAtZero:true}, y1:{position:'right', beginAtZero:true}}}
     });
 
-    // Battery & speed mixed
+    // Battery & speed
     const ctxB = document.getElementById('batteryNetChart').getContext('2d');
     batteryNetChart = new ChartJS(ctxB, {
-      data:{
-        labels: Array(maxPoints).fill(''),
-        datasets:[
-          {type:'line', label:'Battery %', data: batteryHistory, borderColor:'#6ef37b', fill:false, yAxisID:'batt'},
-          {type:'bar', label:'Speed KB/s', data: speedHistory, backgroundColor:'#00c2ff', yAxisID:'speed'}
-        ]
-      },
+      data:{ labels: Array(maxPoints).fill(''), datasets:[
+        {type:'line', label:'Battery %', data: batteryHistory, borderColor:'#6ef37b', fill:false, yAxisID:'batt'},
+        {type:'bar', label:'Speed KB/s', data: speedHistory, backgroundColor:'#00c2ff', yAxisID:'speed'}
+      ]},
       options:{animation:false, scales:{batt:{type:'linear', position:'left', beginAtZero:true, max:100}, speed:{type:'linear', position:'right', beginAtZero:true}}}
     });
 
@@ -668,24 +555,26 @@ window.addEventListener("resize", () => {
       options:{animation:false, scales:{r:{beginAtZero:true}}}
     });
 
-    // Canvas mosaic (draw)
+    // canvas mosaic prepare
     const c = document.getElementById('canvasMosaic');
     canvasCtx = c.getContext('2d');
     drawCanvasMosaic();
 
-    // heatmap as bar chart
+    // heatmap simple (bar chart)
     const ctxH = document.getElementById('heatmapChart').getContext('2d');
     heatmapChart = new ChartJS(ctxH, {
       type:'bar',
       data:{ labels:Array(maxPoints).fill(''), datasets:[{label:'TF Inference (ms)', data: tfHeat, backgroundColor:'#ffb86b'}] },
       options:{animation:false, scales:{y:{beginAtZero:true}}}
     });
+
+    window._fpsChartInited = true;
+    update2DCharts();
   }
 
   function drawCanvasMosaic(){
     try{
-      const canvas = document.getElementById('canvasMosaic');
-      const ctx = canvasCtx;
+      const canvas = document.getElementById('canvasMosaic'); const ctx = canvasCtx;
       const w = canvas.width = canvas.clientWidth * devicePixelRatio;
       const h = canvas.height = canvas.clientHeight * devicePixelRatio;
       ctx.clearRect(0,0,w,h);
@@ -693,7 +582,7 @@ window.addEventListener("resize", () => {
       const t = tmp.getContext('2d'); t.fillStyle='#071018'; t.fillRect(0,0,tmp.width,tmp.height);
       t.fillStyle='#00ffc6'; t.font='20px Arial'; t.fillText('HD Ultra+',10,30);
       const img = new Image();
-      img.onload = ()=>{ const cols = 8, rows = 3; const cw = w/cols, ch = h/rows; for(let y=0;y<rows;y++) for(let x=0;x<cols;x++) ctx.drawImage(img, x*cw, y*ch, cw, ch); };
+      img.onload = ()=>{ const cols=8, rows=3, cw=w/cols, ch=h/rows; for(let y=0;y<rows;y++) for(let x=0;x<cols;x++) ctx.drawImage(img, x*cw, y*ch, cw, ch); };
       img.src = tmp.toDataURL();
     }catch(e){}
   }
@@ -702,10 +591,10 @@ window.addEventListener("resize", () => {
     if(fpsChart){ fpsChart.data.datasets[0].data = fpsHistory.slice(); fpsChart.data.datasets[1].data = heapHistory.slice(); fpsChart.update('none'); }
     if(batteryNetChart){ batteryNetChart.data.datasets[0].data = batteryHistory.slice(); batteryNetChart.data.datasets[1].data = speedHistory.slice(); batteryNetChart.update('none'); }
     if(heatmapChart){ heatmapChart.data.datasets[0].data = tfHeat.slice(); heatmapChart.update('none'); }
-    updateAccel();
+    updateAccelChart();
   }
 
-  function updateAccel(){
+  function updateAccelChart(){
     if(accelChart){
       const last = accelHistory[accelHistory.length-1] || {x:0,y:0,z:0};
       accelChart.data.datasets[0].data = [Math.abs(last.x), Math.abs(last.y), Math.abs(last.z)];
@@ -713,33 +602,37 @@ window.addEventListener("resize", () => {
     }
   }
 
-  // -------------------- Three.js 3D scene (lazy load) --------------------
-  let threeReady = false, THREElib=null;
-  let scene, camera, renderer, cube, barsGroup = [], controls=null;
+  /* ---- Three.js 3D (lazy) ---- */
+  let threeReady=false, THREElib=null;
+  let scene, camera, renderer, cube, barsGroup = [];
   async function initThree(){
     if(threeReady) return;
+    showOverlay('Loading 3D engine...');
     await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
     await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/examples/js/controls/OrbitControls.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
-    THREElib = window.THREE;
-    threeReady = true;
+    THREElib = window.THREE; threeReady = true;
+    hideOverlay();
+
     const container = document.getElementById('three3d');
     renderer = new THREElib.WebGLRenderer({antialias:true, alpha:true});
     renderer.setSize(container.clientWidth, container.clientHeight);
     renderer.setPixelRatio(window.devicePixelRatio);
-    container.appendChild(renderer.domElement);
+    container.innerHTML = ''; container.appendChild(renderer.domElement);
+
     scene = new THREElib.Scene();
-    camera = new THREElib.PerspectiveCamera(45, container.clientWidth/container.clientHeight, 0.1, 1000);
+    camera = new THREElib.PerspectiveCamera(45, container.clientWidth / container.clientHeight, 0.1, 1000);
     camera.position.set(0,2,6);
+
     const light = new THREElib.DirectionalLight(0xffffff, 1);
     light.position.set(5,10,7);
     scene.add(light);
     scene.add(new THREElib.AmbientLight(0x404040));
-    // cube
+
     const geometry = new THREElib.BoxGeometry(1.4,1.4,1.4);
     const material = new THREElib.MeshStandardMaterial({color:0x00ffc6, metalness:0.3, roughness:0.6});
     cube = new THREElib.Mesh(geometry, material);
-    cube.position.set(-2,0,0);
-    scene.add(cube);
+    cube.position.set(-2,0,0); scene.add(cube);
+
     // bars
     const barCount = 12;
     const barGroup = new THREElib.Group();
@@ -751,13 +644,15 @@ window.addEventListener("resize", () => {
       barGroup.add(mesh); barsGroup.push(mesh);
     }
     scene.add(barGroup);
+
     const ground = new THREElib.Mesh(new THREElib.PlaneGeometry(20,20), new THREElib.MeshStandardMaterial({color:0x061018}));
     ground.rotation.x = -Math.PI/2; ground.position.y = -0.8; scene.add(ground);
-    controls = new THREElib.OrbitControls(camera, renderer.domElement); controls.enableDamping = true;
+
+    const controls = new THREElib.OrbitControls(camera, renderer.domElement); controls.enableDamping = true;
+
     function animate(){
       requestAnimationFrame(animate);
       cube.rotation.x += 0.004; cube.rotation.y += 0.006;
-      // update bars based on speedHistory
       for(let i=0;i<barsGroup.length;i++){
         const v = speedHistory[speedHistory.length - 1 - i] || 0;
         const h = Math.max(0.05, Math.min(6, (v/200)));
@@ -770,10 +665,16 @@ window.addEventListener("resize", () => {
       renderer.render(scene, camera);
     }
     animate();
-    window.addEventListener('resize', ()=>{ const w = container.clientWidth; const h = container.clientHeight; renderer.setSize(w,h); camera.aspect = w/h; camera.updateProjectionMatrix(); });
+
+    window.addEventListener('resize', ()=>{
+      const w = container.clientWidth; const h = container.clientHeight;
+      renderer.setSize(w,h); camera.aspect = w/h; camera.updateProjectionMatrix();
+    });
+
+    window._threeInited = true;
+    updateThreeVisual();
   }
 
-  // update cube color from heap usage heuristic
   function updateThreeVisual(){
     if(!threeReady || !cube) return;
     const lastHeap = heapHistory[heapHistory.length-1] || 0;
@@ -782,50 +683,25 @@ window.addEventListener("resize", () => {
     cube.material.color.copy(col);
   }
 
-  // -------------------- UI: show/hide charts and tabs --------------------
-  const chartsSection = $('chartsSection'), toggleChartsBtn = $('toggleCharts'), closeChartsBtn = $('closeCharts');
-  toggleChartsBtn.addEventListener('click', ()=>{ chartsSection.style.display = 'block'; document.querySelector('.tab[data-tab="2d"]').click(); window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'}); });
-  closeChartsBtn.addEventListener('click', ()=>{ chartsSection.style.display = 'none'; });
-
-  // tabbing
-  document.querySelectorAll('.tab').forEach(t=>{
-    t.addEventListener('click', async ()=>{
-      document.querySelectorAll('.tab').forEach(x=>x.classList.remove('active'));
-      t.classList.add('active');
-      const tab = t.getAttribute('data-tab');
-      if(tab === '2d'){ $('tab-2d').style.display = ''; $('tab-3d').style.display = 'none'; if(!fpsChart) await init2DCharts(); }
-      else { $('tab-2d').style.display = 'none'; $('tab-3d').style.display = ''; if(!threeReady) await initThree(); }
-    });
-  });
-
-  // export snapshot: export charts as image (png) - naive approach (canvas-based)
-  $('exportVisualPNG').addEventListener('click', ()=>{
-    // capture fpsChart if available else whole page screenshot not possible without server - do best-effort: export fpsChart or battery chart
-    const c = document.querySelector('#fpsChart') || document.querySelector('#batteryNetChart');
-    if(c && c.toDataURL){
-      const data = c.toDataURL('image/png');
-      const a = document.createElement('a'); a.href = data; a.download = 'handidev-chart.png'; a.click();
-    } else alert('Chart belum siap atau tidak bisa diexport.');
-  });
-
-  // -------------------- Speed & Ping quick integration --------------------
+  /* ============================
+     Speed & Ping helpers
+     ============================ */
   $('pingBtn').addEventListener('click', async ()=>{
-    $('netRes').textContent = 'Pinging...';
+    setText('netRes','Pinging...');
     try{
       const t0 = performance.now(); await fetch('https://api.ipify.org?format=json', {cache:'no-store'}); const rtt = (performance.now()-t0).toFixed(1);
-      $('netRes').textContent = `RTT ~ ${rtt} ms`;
-      // push some approximation to speedHistory as a synthetic KB/s inverse
+      setText('netRes', `RTT ~ ${rtt} ms`);
       const kbEst = Math.max(0, 1000 - Number(rtt)); window.__pushSpeed(kbEst);
-    }catch(e){ $('netRes').textContent = 'Ping gagal' }
+    }catch(e){ setText('netRes','Ping gagal'); }
   });
 
   $('speedBtn').addEventListener('click', async ()=>{
-    $('overlay').classList.add('show'); $('overlayTxt').textContent = 'Speed test...';
+    showOverlay('Speed test...');
     try{
-      const url = 'https://eu.httpbin.org/stream-bytes/300000?seed=0'; // ~300KB
+      const url = 'https://eu.httpbin.org/stream-bytes/300000?seed=0';
       const t0 = performance.now();
       const r = await fetch(url);
-      if(!r.body){ $('netRes').textContent = 'Gagal (stream not supported)'; return; }
+      if(!r.body){ setText('netRes','Gagal (stream not supported)'); hideOverlay(); return; }
       const reader = r.body.getReader(); let rec=0;
       while(true){
         const {done,value} = await reader.read();
@@ -834,26 +710,24 @@ window.addEventListener("resize", () => {
       }
       const dur = (performance.now()-t0)/1000;
       const kb = rec/1024; const kbps = kb/dur;
-      $('netRes').textContent = `${kbps.toFixed(0)} KB/s • ${(kbps/1024).toFixed(2)} MB/s`;
+      setText('netRes', `${kbps.toFixed(0)} KB/s • ${(kbps/1024).toFixed(2)} MB/s`);
       window.__pushSpeed(kbps);
-    }catch(e){
-      $('netRes').textContent = 'Gagal speed test (CORS/Blocked)';
-    } finally { $('overlay').classList.remove('show'); }
+    }catch(e){ setText('netRes','Gagal speed test (CORS/Blocked)'); }
+    hideOverlay();
   });
 
-  // -------------------- Init minimal helpers --------------------
-  // draw initial canvas mosaic early
-  setTimeout(()=>{ try{ drawCanvasMosaic(); }catch(e){} }, 200);
+  /* ============================
+     Small init & preloads
+     ============================ */
+  // draw initial mosaic
+  setTimeout(()=>{ try{ if(window._fpsChartInited){} else drawCanvasMosaic(); }catch(e){} }, 200);
 
-  // auto-init 2D+3D after short delay to improve UX (but still user can toggle)
-  setTimeout(()=>{
-    // pre-init charts & 3D so toggling feels fast (optional)
-    init2DCharts().catch(()=>{});
-    initThree().catch(()=>{});
-  }, 800);
+  // eager but safe init to make UI responsive (optional)
+  setTimeout(()=>{ init2DCharts().catch(()=>{}); /* don't force 3D until user opens tab */ }, 900);
 
-  // expose snapshot API
+  // expose simple push APIs
   window.HandiDevSnapshot = collectSnapshot;
+  // __pushSpeed and __pushTF already defined above
 
   </script>
 </body>
