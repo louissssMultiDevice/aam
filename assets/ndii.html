@@ -133,10 +133,8 @@ canvas.chart{width:100%!important;height:220px!important}
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/FontLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/geometries/TextGeometry.js"></script>
 
-<script type="module">
-    import * as THREE from 'three';
+<script>
 const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,"0");
-
 /* === THEME === */
 $("themeBtn").onclick=()=>{document.body.dataset.theme=document.body.dataset.theme==="dark"?"light":"dark";};
 
