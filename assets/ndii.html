@@ -6,38 +6,36 @@
 <title>Handi Ultra+ Hologram</title>
 <meta name="theme-color" content="#071018"/>
 <style>
-:root{
-  --bg:#071018;--card:#0f1720;--text:#dff8f6;--muted:#9fbfc8;
-  --accent:#00ffc6;--accent2:#00c2ff;--danger:#ff5d7a;--ok:#6ef37b;
-}
+:root{--bg:#071018;--card:#0f1720;--text:#dff8f6;--muted:#9fbfc8;--accent:#00ffc6;--accent2:#00c2ff;--danger:#ff5d7a;--ok:#6ef37b;}
 body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(180deg,var(--bg),#060b13);color:var(--text)}
 .wrap{max-width:1280px;margin:18px auto;padding:18px}
 header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
 .logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#001;box-shadow:0 0 14px var(--accent),0 0 28px var(--accent2)}
-h1{margin:0;font-size:18px}.subtitle{color:var(--muted);font-size:13px}
+h1{margin:0;font-size:18px}
+.subtitle{color:var(--muted);font-size:13px}
 .btn{background:linear-gradient(90deg,var(--accent2),var(--accent));border:none;padding:9px 12px;border-radius:10px;color:#001;font-weight:800;cursor:pointer;transition:.3s;box-shadow:0 0 8px var(--accent2)}
 .btn:hover{transform:translateY(-2px) scale(1.05);box-shadow:0 0 14px var(--accent2),0 0 28px var(--accent)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:16px}
-.card{background:var(--card);padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,.05);transition:.3s;position:relative;overflow:hidden}
+.card{background:var(--card);padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,.05);transition:.3s}
 .card:hover{box-shadow:0 0 20px rgba(0,255,198,.35)}
-.small{font-size:12px;color:var(--muted)}.mono{font-family:monospace}
+.small{font-size:12px;color:var(--muted)}
+.mono{font-family:monospace}
 .tabs{display:flex;gap:8px;margin-bottom:8px}
 .tab{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.06);cursor:pointer;transition:.2s}
 .tab.active{background:linear-gradient(90deg,var(--accent2),var(--accent));color:#001;box-shadow:0 0 12px var(--accent2)}
 #threeClock,#threeGlobe,#threeWeb,#threeDevice{width:100%;height:280px;border-radius:12px;background:#000}
-.neon-glow{animation:glow 2s ease-in-out infinite alternate}
-@keyframes glow{from{text-shadow:0 0 8px var(--accent2),0 0 16px var(--accent)}to{text-shadow:0 0 16px var(--accent),0 0 32px var(--accent2)}}
 </style>
 </head>
 <body data-theme="dark">
 <div class="wrap">
   <header>
     <div class="logo">HD+</div>
-    <div><h1 class="neon-glow">Handi Ultra+ Hologram</h1>
+    <div><h1>Handi Ultra+ Hologram</h1>
       <div class="subtitle">Jam Globe • IP Geo • Device Holo • Charts</div></div>
     <div><button class="btn" id="themeBtn">Theme</button></div>
   </header>
 
+  <!-- CLOCK + KALENDER -->
   <div class="grid">
     <div class="card"><h3>Jam 3D Globe</h3>
       <div style="display:flex;justify-content:space-between"><div id="tzBadge">—</div><div id="digitalClock">--:--:--</div></div>
@@ -47,6 +45,7 @@ h1{margin:0;font-size:18px}.subtitle{color:var(--muted);font-size:13px}
     <div class="card"><h3>Kalender</h3><div id="calendar"></div><div class="small">Hari ini: <span id="todayStr">—</span></div></div>
   </div>
 
+  <!-- IP + Globe -->
   <div class="grid">
     <div class="card"><h3>Network & Lokasi</h3>
       <div>IP: <span id="ip">—</span></div>
@@ -57,6 +56,7 @@ h1{margin:0;font-size:18px}.subtitle{color:var(--muted);font-size:13px}
     <div class="card"><h3>Globe</h3><div id="threeGlobe"></div></div>
   </div>
 
+  <!-- Charts -->
   <div class="tabs">
     <div class="tab active" data-tab="charts">Charts</div>
     <div class="tab" data-tab="holo">3D Icons</div>
@@ -64,6 +64,7 @@ h1{margin:0;font-size:18px}.subtitle{color:var(--muted);font-size:13px}
   <div id="tab-charts"><div class="grid">
     <div class="card"><h4>FPS</h4><canvas id="fpsChart"></canvas></div>
     <div class="card"><h4>CPU</h4><canvas id="cpuChart"></canvas></div>
+    <div class="card"><h4>Battery</h4><canvas id="batChart"></canvas></div>
   </div></div>
   <div id="tab-holo" style="display:none"><div class="grid">
     <div class="card"><h3>Web Icon</h3><div id="threeWeb"></div></div>
@@ -111,10 +112,17 @@ async function fetchIP(){try{const r=await fetch("https://ipapi.co/json/");const
 $("btnIp").onclick=fetchIP;
 
 /* === Charts === */
-const fpsArr=[],cpuArr=[];let fpsChart,cpuChart;
+const fpsArr=[],cpuArr=[],batArr=[];let fpsChart,cpuChart,batChart;
 function push(arr,v){arr.push(v);if(arr.length>120)arr.shift();}
-function initCharts(){fpsChart=new Chart($("fpsChart"),{type:"line",data:{labels:Array(120).fill(""),datasets:[{label:"FPS",data:fpsArr,borderColor:"#00ffc6"}]},options:{animation:false,scales:{y:{beginAtZero:true,max:120}}}});cpuChart=new Chart($("cpuChart"),{type:"line",data:{labels:Array(120).fill(""),datasets:[{label:"CPU proxy",data:cpuArr,borderColor:"#00c2ff"}]},options:{animation:false}});}
-let frames=0,last=performance.now();function loopFPS(now){frames++;if(now-last>=1000){push(fpsArr,frames);frames=0;last=now;fpsChart.update("none");}requestAnimationFrame(loopFPS);}setInterval(()=>{const t0=performance.now();for(let i=0;i<100000;i++){Math.sqrt(i);}push(cpuArr,(performance.now()-t0).toFixed(2));cpuChart.update("none");},1000);
+function gradient(ctx,color1,color2){const g=ctx.createLinearGradient(0,0,0,220);g.addColorStop(0,color1);g.addColorStop(1,color2);return g;}
+function initCharts(){
+  fpsChart=new Chart($("fpsChart"),{type:"line",data:{labels:Array(120).fill(""),datasets:[{label:"FPS",data:fpsArr,borderColor:"#00ffc6",backgroundColor:"rgba(0,255,198,.2)",fill:true,tension:.25}]},options:{animation:false,scales:{y:{beginAtZero:true,max:120}}}});
+  cpuChart=new Chart($("cpuChart"),{type:"line",data:{labels:Array(120).fill(""),datasets:[{label:"CPU proxy",data:cpuArr,borderColor:"#00c2ff",backgroundColor:"rgba(0,194,255,.2)",fill:true,tension:.25}]},options:{animation:false}});
+  batChart=new Chart($("batChart"),{type:"line",data:{labels:Array(120).fill(""),datasets:[{label:"Battery %",data:batArr,borderColor:"#6ef37b",backgroundColor:"rgba(110,243,123,.2)",fill:true,tension:.25}]},options:{animation:false,scales:{y:{beginAtZero:true,max:100}}}});
+}
+let frames=0,last=performance.now();function loopFPS(now){frames++;if(now-last>=1000){push(fpsArr,frames);frames=0;last=now;fpsChart.update("none");}requestAnimationFrame(loopFPS);}
+setInterval(()=>{const t0=performance.now();for(let i=0;i<100000;i++){Math.sqrt(i);}push(cpuArr,(performance.now()-t0).toFixed(2));cpuChart.update("none");},1000);
+navigator.getBattery?.().then(b=>{const paint=()=>{push(batArr,Math.round(b.level*100));batChart.update("none");};b.addEventListener("levelchange",paint);paint();});
 
 /* === Neon Icons === */
 function neonScene(elId,builder){const el=$(elId),w=el.clientWidth,h=el.clientHeight;const scene=new THREE.Scene();const cam=new THREE.PerspectiveCamera(45,w/h,.1,100);cam.position.z=6;const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setSize(w,h);el.innerHTML="";el.appendChild(renderer.domElement);const obj=builder();scene.add(obj);scene.add(new THREE.AmbientLight(0x224455,1.5));(function anim(){requestAnimationFrame(anim);obj.rotation.y+=.01;obj.scale.setScalar(1+0.05*Math.sin(Date.now()/400));renderer.render(scene,cam)})();}
