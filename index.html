@@ -1,50 +1,51 @@
 <!doctype html>
 <html lang="id">
 <head>
-<meta charset="utf-8" />
-<meta name="viewport" content="width=device-width,initial-scale=1" />
-<title>Handi Dev • Device Insight — Final Ultra+</title>
-<meta name="theme-color" content="#071018" />
-<style>
-  :root{
-    --bg:#071018; --card:#0f1720; --text:#dff8f6; --muted:#9fbfc8;
-    --accent:#00ffc6; --accent-2:#00c2ff;
-  }
-  [data-theme='light']{--bg:#f6fbff;--card:#fff;--text:#032027;--muted:#4b6b74}
-  *{box-sizing:border-box}
-  html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#071018);color:var(--text)}
-  .wrap{max-width:1280px;margin:18px auto;padding:18px}
-  header{display:flex;align-items:center;justify-content:space-between;gap:12px}
-  .brand{display:flex;gap:12px;align-items:center}
-  .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#001}
-  h1{margin:0;font-size:18px}
-  .subtitle{color:var(--muted);font-size:13px}
-  .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
-  .btn{background:linear-gradient(90deg,var(--accent-2),var(--accent));border:none;padding:8px 10px;border-radius:8px;color:#001;font-weight:700;cursor:pointer}
-  .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:16px}
-  .card{background:var(--card);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);min-height:84px}
-  .small{font-size:12px;color:var(--muted);margin-top:6px}
-  .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace}
-  .row{display:flex;gap:8px;flex-wrap:wrap}
-  .footer{margin:22px 0;color:var(--muted);font-size:13px}
-  .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:9999;backdrop-filter:blur(4px);visibility:hidden;opacity:0;transition:all .18s}
-  .overlay.show{visibility:visible;opacity:1}
-  .loader{background:var(--card);padding:18px;border-radius:12px;display:flex;gap:12px;align-items:center}
-  .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:blink 1s infinite}
-  @keyframes blink{50%{opacity:0.25;transform:scale(.8)}}
-  .charts-section{margin-top:20px;padding-top:16px;border-top:1px dashed rgba(255,255,255,0.04)}
-  .tabs{display:flex;gap:8px;margin-bottom:12px}
-  .tab{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.02);cursor:pointer}
-  .tab.active{background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#001}
-  .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
-  .chart-card{background:var(--card);padding:12px;border-radius:8px;min-height:200px;border:1px solid rgba(255,255,255,0.03)}
-  canvas{width:100%!important;height:220px!important}
-  #threeContainer{width:100%;height:520px;border-radius:8px;display:block;background:#000;overflow:hidden}
-  .clock-panel{display:flex;gap:12px;align-items:center}
-  .calendar{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px}
-  #flagCanvas{display:none}
-  @media (max-width:920px){#threeContainer{height:360px}}
-</style>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>Handi Dev • Device Insight — Ultra+ (Hologram)</title>
+  <meta name="theme-color" content="#071018" />
+  <style>
+    :root{
+      --bg:#071018; --card:#0f1720; --text:#dff8f6; --muted:#9fbfc8;
+      --accent:#00ffc6; --accent-2:#00c2ff;
+    }
+    [data-theme='light']{--bg:#f6fbff;--card:#fff;--text:#032027;--muted:#4b6b74}
+    *{box-sizing:border-box}
+    html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#071018);color:var(--text)}
+    .wrap{max-width:1280px;margin:18px auto;padding:18px}
+    header{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .brand{display:flex;gap:12px;align-items:center}
+    .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#001}
+    h1{margin:0;font-size:18px}
+    .subtitle{color:var(--muted);font-size:13px}
+    .controls{display:flex;gap:8px;align-items:center;flex-wrap:wrap}
+    .btn{background:linear-gradient(90deg,var(--accent-2),var(--accent));border:none;padding:8px 10px;border-radius:8px;color:#001;font-weight:700;cursor:pointer}
+    .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:16px}
+    .card{background:var(--card);padding:12px;border-radius:10px;border:1px solid rgba(255,255,255,0.03);min-height:84px}
+    .small{font-size:12px;color:var(--muted);margin-top:6px}
+    .mono{font-family:ui-monospace,SFMono-Regular,Menlo,Monaco,monospace}
+    .row{display:flex;gap:8px;flex-wrap:wrap}
+    .footer{margin:22px 0;color:var(--muted);font-size:13px}
+    .overlay{position:fixed;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0.45);z-index:9999;backdrop-filter:blur(4px);visibility:hidden;opacity:0;transition:all .18s}
+    .overlay.show{visibility:visible;opacity:1}
+    .loader{background:var(--card);padding:18px;border-radius:12px;display:flex;gap:12px;align-items:center}
+    .dot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:blink 1s infinite}
+    @keyframes blink{50%{opacity:0.25;transform:scale(.8)}}
+    .charts-section{margin-top:20px;padding-top:16px;border-top:1px dashed rgba(255,255,255,0.04)}
+    .tabs{display:flex;gap:8px;margin-bottom:12px}
+    .tab{padding:8px 12px;border-radius:8px;background:rgba(255,255,255,0.02);cursor:pointer}
+    .tab.active{background:linear-gradient(90deg,var(--accent-2),var(--accent));color:#001}
+    .chart-grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(320px,1fr));gap:14px}
+    .chart-card{background:var(--card);padding:12px;border-radius:8px;min-height:200px;border:1px solid rgba(255,255,255,0.03)}
+    canvas{width:100%!important;height:220px!important}
+    #three3d{width:100%;height:420px;border-radius:8px;display:block;background:#000;overflow:hidden}
+    @media (max-width:920px){#three3d{height:320px}}
+    .muted{color:var(--muted);font-size:12px}
+    .tag{display:inline-block;background:rgba(255,255,255,0.03);padding:4px 8px;border-radius:999px;font-size:12px}
+    pre{background:rgba(255,255,255,0.02);padding:8px;border-radius:8px;overflow:auto}
+    a {color:var(--accent-2)}
+  </style>
 </head>
 <body data-theme="dark">
   <div class="wrap" id="app">
@@ -52,19 +53,19 @@
       <div class="brand">
         <div class="logo">HD+</div>
         <div>
-          <h1>Handi Dev • Device Insight — Final Ultra+</h1>
-          <div class="subtitle">All-in-one: detect, charts, 3D hologram device (dynamic), 3D clock, calendar, flag</div>
+          <h1>Handi Dev • Device Insight — Ultra+ (Hologram)</h1>
+          <div class="subtitle">Detect lengkap • grafik 2D & 3D interaktif • hologram device</div>
         </div>
       </div>
       <div class="controls">
         <button class="btn" id="themeBtn">Theme</button>
-        <button class="btn" id="copyAll">Copy</button>
-        <button class="btn" id="exportJSON">Export JSON</button>
+        <button class="btn" id="copyAll">Copy All</button>
+        <button class="btn" id="exportAllJSON">Export JSON</button>
         <button class="btn" id="toggleCharts">Open Charts</button>
       </div>
     </header>
 
-    <!-- BASICS -->
+    <!-- TOP: basics -->
     <div class="grid" id="infoGrid" style="margin-top:12px">
       <div class="card">
         <h3>Device & Browser</h3>
@@ -84,7 +85,7 @@
         <h3>Camera & Microphone</h3>
         <div class="v" id="camInfo">—</div>
         <div class="small">Jumlah input & label (butuh permission)</div>
-        <div style="margin-top:8px" class="row"><button class="btn" id="btn-getDevices">Detect Devices</button><button class="btn" id="btn-previewCam">Preview Camera</button></div>
+        <div style="margin-top:8px" class="row"><button class="btn" id="btn-getDevices">Detect Devices</button><button class="btn" id="btn-permMedia">Request Permission</button><button class="btn" id="btn-previewCam">Preview Camera</button></div>
         <div id="camPreview" style="margin-top:8px"></div>
       </div>
 
@@ -92,7 +93,7 @@
         <h3>Contacts & Gmail</h3>
         <div class="v" id="contactsInfo">Contacts API: —</div>
         <div class="small" id="gmailInfo">Gmail hint: —</div>
-        <div style="margin-top:8px" class="row"><button class="btn" id="btn-checkContacts">Check Contacts</button><button class="btn" id="btn-pickContact">Pick Contact</button><button class="btn" id="btn-checkGmail">Check Gmail</button></div>
+        <div style="margin-top:8px" class="row"><button class="btn" id="btn-checkContacts">Check Contact Picker</button><button class="btn" id="btn-pickContact">Pick Contact</button><button class="btn" id="btn-checkGmail">Check Gmail</button></div>
       </div>
 
       <div class="card">
@@ -108,7 +109,7 @@
       </div>
     </div>
 
-    <!-- ADVANCED -->
+    <!-- MIDDLE: advanced -->
     <div class="grid" style="margin-top:18px">
       <div class="card">
         <h3>Deep Fingerprint</h3>
@@ -136,7 +137,7 @@
       </div>
     </div>
 
-    <!-- CHARTS & 3D -->
+    <!-- BOTTOM: Charts section -->
     <div class="charts-section" id="chartsSection" style="display:none">
       <div style="display:flex;justify-content:space-between;align-items:center">
         <div class="tabs" role="tablist">
@@ -187,32 +188,23 @@
       <!-- 3D -->
       <div id="tab-3d" style="display:none; margin-top:12px">
         <div class="chart-card">
-          <h4>3D Scene — Hologram Device (dynamic) + Handi Box + Cube + Speed Bars + 3D Clock + Flag</h4>
-          <div id="threeContainer"></div>
-          <div class="small">Drag untuk ubah sudut • Scroll zoom • Hologram menunjukkan perangkat kamu</div>
-          <div class="row" style="margin-top:10px">
-            <div class="clock-panel">
-              <div class="calendar">
-                <div id="digitalClock" style="font-weight:800;font-size:16px">--:--:--</div>
-                <div id="calendarText" style="font-size:13px;margin-top:6px">—</div>
-              </div>
-            </div>
-          </div>
+          <h4>3D Scene — Handi Dev Icon, Cube, Speed Bars & Hologram</h4>
+          <div id="three3d"></div>
+          <div class="small">Drag untuk mengubah sudut, scroll untuk zoom.</div>
         </div>
       </div>
     </div>
 
-    <div class="footer">Catatan: fitur kontak/camera/getUserMedia/contact picker & credential API memerlukan HTTPS dan izin pengguna. Data tidak dikirim kecuali kamu mengekspor.</div>
+    <div class="footer">Catatan: beberapa fitur memerlukan izin (kamera, microphone, contacts). Data tetap di client kecuali di-export.</div>
   </div>
 
   <div class="overlay" id="overlay"><div class="loader"><div class="dot"></div><div><div id="overlayTxt">Loading…</div><div class="small">Mohon tunggu</div></div></div></div>
 
-  <!-- helper canvas for flags -->
-  <canvas id="flagCanvas" width="512" height="320"></canvas>
-
+  <!-- load Chart.js (UMD) and Three.js (non-module) dynamically inside script -->
   <script>
-  // ---------- small helpers ----------
+  // -------------------- Helpers --------------------
   const $ = id => document.getElementById(id);
+  function pad(n){return String(n).padStart(2,'0')}
   function setText(id, txt){ const e=$(id); if(e) e.textContent = txt; }
   function showOverlay(txt='Loading…'){ $('overlay').classList.add('show'); $('overlayTxt').textContent = txt; }
   function hideOverlay(){ $('overlay').classList.remove('show'); }
@@ -226,19 +218,19 @@
   // copy/export
   function collectSnapshot(){
     return {
-      ts:new Date().toISOString(),
-      ua:navigator.userAgent,
-      platform:navigator.platform,
-      cores:navigator.hardwareConcurrency||null,
-      ram:navigator.deviceMemory||null,
-      timezone:Intl.DateTimeFormat().resolvedOptions().timeZone,
-      fingerprint:$('fingerprint')?.textContent || null
+      ts: new Date().toISOString(),
+      ua: navigator.userAgent,
+      platform: navigator.platform,
+      cores: navigator.hardwareConcurrency || null,
+      ram: navigator.deviceMemory || null,
+      timezone: Intl.DateTimeFormat().resolvedOptions().timeZone,
+      fingerprint: $('fingerprint')?.textContent || null
     };
   }
   $('copyAll').addEventListener('click', async ()=>{ try{ await navigator.clipboard.writeText(JSON.stringify(collectSnapshot(),null,2)); alert('Disalin ke clipboard') }catch(e){alert('Gagal: '+e.message)}});
-  $('exportJSON').addEventListener('click', ()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(collectSnapshot(),null,2)],{type:'application/json'})); a.download='handidev-all.json'; a.click(); });
+  $('exportAllJSON').addEventListener('click', ()=>{ const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([JSON.stringify(collectSnapshot(),null,2)],{type:'application/json'})); a.download='handidev-ultra-plus.json'; a.click(); });
 
-  // show/hide charts
+  // charts show/hide
   $('toggleCharts').addEventListener('click', ()=>{ $('chartsSection').style.display='block'; document.querySelector('.tab[data-tab="2d"]').click(); window.scrollTo({top:document.body.scrollHeight, behavior:'smooth'}); });
   $('closeCharts').addEventListener('click', ()=>{ $('chartsSection').style.display='none'; });
 
@@ -252,10 +244,11 @@
     });
   });
 
-  // ---------- basic fills ----------
+  // -------------------- Basic fills --------------------
   setText('ua', navigator.userAgent);
   setText('device', navigator.platform || '—');
-  setText('online', navigator.onLine? 'online':'offline');
+  setText('cores', navigator.hardwareConcurrency || '—');
+  setText('ram', navigator.deviceMemory || '—');
 
   // battery
   (async function batteryInit(){
@@ -269,68 +262,47 @@
     }catch(e){ setText('battery-level','—'); setText('battery-status','Error') }
   })();
 
-  // fetch IP
-  async function fetchIP(){ try{ showOverlay('Mengambil IP...'); const r = await fetch('https://api.ipify.org?format=json'); const j = await r.json(); setText('ip', j.ip || '—'); }catch(e){ setText('ip','Gagal ambil IP') } finally{ hideOverlay(); } }
+  // IP
+  async function fetchIP(){ try{ showOverlay('Mengambil IP...'); const r=await fetch('https://api.ipify.org?format=json'); const j=await r.json(); setText('ip', j.ip || '—'); }catch(e){ setText('ip','Gagal ambil IP') } finally{ hideOverlay(); } }
   $('btn-ip').addEventListener('click', fetchIP); fetchIP();
 
   // connection paint
-  function paintNet(){ const c = navigator.connection || navigator.mozConnection || navigator.webkitConnection; setText('downlink', c?.downlink ?? '—'); setText('online', navigator.onLine? 'online':'offline'); }
+  function paintNet(){ const c=navigator.connection||navigator.mozConnection||navigator.webkitConnection; setText('online', navigator.onLine? 'online' : 'offline'); setText('downlink', c?.downlink ?? '—'); }
   paintNet(); (navigator.connection||{}).addEventListener?.('change', paintNet); window.addEventListener('online', paintNet); window.addEventListener('offline', paintNet);
 
-  // sensors / devicemotion
+  // heap sampling
+  async function paintHeap(){ try{ if(performance?.memory) setText('heap', (performance.memory.usedJSHeapSize/1024/1024).toFixed(1) + ' MB'); else setText('heap','N/A') }catch(e){ setText('heap','—') } }
+  setInterval(paintHeap,1500); paintHeap();
+
+  // sensors devicemotion
   const accelHistory = [];
-  function pushAccelSample(s){ accelHistory.push(s); if(accelHistory.length>60) accelHistory.shift(); }
+  function pushAccelSample(sample){ accelHistory.push(sample); if(accelHistory.length>60) accelHistory.shift(); }
   if('DeviceMotionEvent' in window){
     window.addEventListener('devicemotion', e=>{
       const a = e.accelerationIncludingGravity || e.acceleration || {x:0,y:0,z:0};
+      setText('sensorVal', `X:${(a.x||0).toFixed(2)} Y:${(a.y||0).toFixed(2)} Z:${(a.z||0).toFixed(2)}`);
       pushAccelSample({x:a.x||0,y:a.y||0,z:a.z||0});
     });
   }
 
-  // contacts & gmail hints
-  $('btn-checkContacts').addEventListener('click', ()=>{ setText('contactsInfo', ('contacts' in navigator || 'ContactsManager' in window) ? 'Contact Picker supported' : 'Contact Picker NOT supported') });
-  $('btn-pickContact').addEventListener('click', async ()=>{
-    if(!('contacts' in navigator) && !('ContactsManager' in window)){ alert('Contact Picker not available'); return; }
+  // incognito check (best-effort)
+  (async function incognitoCheck(){
     try{
-      const props=['name','tel','email','icon'];
-      const contacts = await navigator.contacts.select(props, {multiple:false});
-      if(contacts && contacts.length>0){ const c=contacts[0]; setText('contactsInfo', `Picked: ${ (c.name && c.name[0]) || (c.email && c.email[0]) || 'Contact' }`); } else setText('contactsInfo','No contact selected');
-    }catch(e){ setText('contactsInfo','Canceled / blocked') }
-  });
-  $('btn-checkGmail').addEventListener('click', async ()=>{
-    setText('gmailInfo','Checking...');
-    if(!('credentials' in navigator)){ setText('gmailInfo','Credential API not supported'); return; }
-    try{
-      const cred = await navigator.credentials.get?.({federated:{providers:['https://accounts.google.com']}, mediation:'silent'});
-      setText('gmailInfo', cred ? 'Google federated credential available (hint)' : 'No silent Google credential (or blocked)');
-    }catch(e){ setText('gmailInfo','Credential API exists but silent get failed/blocked') }
-  });
+      let fs = window.RequestFileSystem || window.webkitRequestFileSystem;
+      if(!fs){
+        const key='handi_test';
+        try{ localStorage.setItem(key,'1'); localStorage.removeItem(key); setText('incognito','Normal (localStorage OK)'); return; }
+        catch(err){ setText('incognito','Private/Restricted (localStorage failure)'); return; }
+      }
+      fs(window.TEMPORARY,100, ()=>setText('incognito','Normal'), ()=>setText('incognito','Incognito/Private'));
+    }catch(e){ setText('incognito','Tidak pasti') }
+  })();
 
-  // camera devices detection & preview
-  async function detectMediaDevices(){
-    try{
-      if(!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices){ setText('camInfo','MediaDevices not supported'); return null; }
-      const devices = await navigator.mediaDevices.enumerateDevices();
-      const cams = devices.filter(d=>d.kind==='videoinput'); const mics = devices.filter(d=>d.kind==='audioinput');
-      const labelsVisible = cams.concat(mics).some(d=>d.label && d.label.length>0);
-      setText('camInfo', `Cameras: ${cams.length}, Mics: ${mics.length} • labels: ${labelsVisible? 'visible':'hidden'}`);
-      return {cams,mics,labelsVisible};
-    }catch(e){ setText('camInfo','Detect devices failed'); return null; }
-  }
-  $('btn-getDevices').addEventListener('click', detectMediaDevices);
-  $('btn-previewCam').addEventListener('click', async ()=>{
-    try{
-      if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return alert('getUserMedia not supported');
-      showOverlay('Opening camera preview...');
-      const stream = await navigator.mediaDevices.getUserMedia({video:true, audio:false});
-      const wrap = $('camPreview'); wrap.innerHTML = '';
-      const v = document.createElement('video'); v.autoplay=true; v.playsInline=true; v.muted=true; v.srcObject=stream; v.style.width='240px'; v.style.borderRadius='8px'; wrap.appendChild(v);
-      // stop preview after 12s for privacy
-      setTimeout(()=>{ stream.getTracks().forEach(t=>t.stop()); wrap.innerHTML=''; hideOverlay(); }, 12000);
-    }catch(e){ hideOverlay(); alert('Preview failed: '+(e.message||e)); }
-  });
+  // ai insight
+  function aiAnalysis(){ const cores=navigator.hardwareConcurrency||2; const ram=navigator.deviceMemory||2; const heap=(performance?.memory?.usedJSHeapSize||0)/1024/1024; const notes=[]; if(ram<2) notes.push('RAM terbatas'); else if(ram>=8) notes.push('RAM besar'); if(cores<=2) notes.push('CPU sedikit'); else notes.push('CPU cukup'); if(heap>300) notes.push('Heap tinggi'); setText('aiInsight', notes.join(' • ') || 'Normal'); }
+  aiAnalysis(); setInterval(aiAnalysis,10000);
 
-  // ---------- Fingerprint utilities ----------
+  // -------------------- Fingerprint (canvas/audio/webgl/fonts) --------------------
   function canvasFingerprint(){
     try{
       const c=document.createElement('canvas'); c.width=512; c.height=200;
@@ -344,8 +316,8 @@
   }
   function getWebGLInfo(){
     try{
-      const c=document.createElement('canvas'); const gl=c.getContext('webgl')||c.getContext('experimental-webgl'); if(!gl) return null;
-      const dbg=gl.getExtension('WEBGL_debug_renderer_info'); const vendor = dbg? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR); const renderer = dbg? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); return {vendor, renderer};
+      const c=document.createElement('canvas'); const gl=c.getContext('webgl') || c.getContext('experimental-webgl'); if(!gl) return null;
+      const dbg=gl.getExtension('WEBGL_debug_renderer_info'); const vendor=dbg? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR); const renderer = dbg? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); return {vendor, renderer};
     }catch(e){ return null; }
   }
   async function audioFingerprint(){
@@ -353,351 +325,81 @@
       const ac=new (window.AudioContext||window.webkitAudioContext)(); const osc=ac.createOscillator(); const node=ac.createAnalyser(); osc.type='sine'; osc.frequency.value = 440 + (Math.random()*100); osc.connect(node); node.connect(ac.destination); osc.start();
       const arr=new Uint8Array(node.frequencyBinCount); node.getByteFrequencyData(arr); osc.stop(); await ac.close?.();
       return Array.from(arr.slice(0,20)).join(',').slice(0,80);
-    }catch(e){ return null; }
+    }catch(e){ return null;}
   }
-  function detectFont(font){
-    try{
-      const base=document.createElement('span'); base.style.fontFamily='monospace'; base.style.fontSize='72px'; base.innerText='mmmmmmmmmlli'; base.style.position='absolute'; base.style.left='-9999px'; document.body.appendChild(base);
-      const defaultWidth = base.offsetWidth; base.style.fontFamily = font + ', monospace'; const matched = base.offsetWidth !== defaultWidth; base.remove(); return matched;
-    }catch(e){ return false; }
-  }
+  function detectFont(font){ try{ const base=document.createElement('span'); base.style.fontFamily='monospace'; base.style.fontSize='72px'; base.innerText='mmmmmmmmmlli'; base.style.position='absolute'; base.style.left='-9999px'; document.body.appendChild(base); const defaultWidth = base.offsetWidth; base.style.fontFamily = font + ', monospace'; const matched = base.offsetWidth !== defaultWidth; base.remove(); return matched; }catch(e){return false} }
   function detectFontsList(){ const fonts=['Arial','Roboto','Segoe UI','Times New Roman','Courier New','Noto Sans','Inter']; return fonts.filter(f=>detectFont(f)); }
 
-  $('runCanvas').addEventListener('click', ()=>{ const c=canvasFingerprint(); setText('fingerprint', c? c.slice(0,28) : 'Gagal'); try{ const gl = document.createElement('canvas').getContext('webgl')||document.createElement('canvas').getContext('experimental-webgl'); const highp = gl && (gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision>0); setText('shaderPrec', highp? 'highp':'mediump/lowp'); }catch(e){ setText('shaderPrec','—') } });
+  $('runCanvas').addEventListener('click', ()=>{
+    const c = canvasFingerprint(); setText('fingerprint', c ? c.slice(0,28) : 'Gagal');
+    try{ const gl = document.createElement('canvas').getContext('webgl') || document.createElement('canvas').getContext('experimental-webgl'); const highp = gl && (gl.getShaderPrecisionFormat(gl.FRAGMENT_SHADER, gl.HIGH_FLOAT).precision>0); setText('shaderPrec', highp? 'highp':'mediump/lowp'); }catch(e){ setText('shaderPrec','—') }
+  });
   $('runAudio').addEventListener('click', async ()=>{ setText('audioFP','Running...'); const a = await audioFingerprint(); setText('audioFP', a || 'Gagal'); });
   $('runAllFP').addEventListener('click', async ()=>{
     setText('fingerprint','Running...');
-    const webgl=getWebGLInfo(); const canvas=canvasFingerprint(); const audio=await audioFingerprint(); const fonts=detectFontsList();
+    const webgl = getWebGLInfo(); const canvas = canvasFingerprint(); const audio = await audioFingerprint(); const fonts = detectFontsList();
     const base = navigator.userAgent + '|' + navigator.language + '|' + JSON.stringify(webgl) + '|' + (canvas||'') + '|' + (audio||'') + '|' + fonts.join(',');
     const h = await crypto.subtle.digest('SHA-256', new TextEncoder().encode(base)); const hex = Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join('');
-    setText('fingerprint', hex.slice(0,28)); setText('fonts', fonts.join(', ')||'—'); setText('canvasHash', canvas||'—'); setText('audioFP', audio||'—');
+    setText('fingerprint', hex.slice(0,28)); setText('fonts', fonts.join(', ') || '—'); setText('canvasHash', canvas || '—'); setText('audioFP', audio || '—');
   });
 
-  // webauthn/webxr summary
+  // webgl summary
+  (function setWebGLSummary(){ const w=getWebGLInfo(); if(w) setText('gpu', `${w.renderer||'—'} (${w.vendor||'—'})`); else setText('gpu','Not available'); try{ const glTest = document.createElement('canvas').getContext('webgl') || document.createElement('canvas').getContext('experimental-webgl'); if(glTest){ const p = glTest.getShaderPrecisionFormat(glTest.FRAGMENT_SHADER, glTest.HIGH_FLOAT); setText('shaderPrec', (p && p.precision>0) ? 'highp' : 'mediump/lowp'); } }catch(e){} })();
+
+  // webauthn/webxr checks
   (async function checkWebAPIs(){ setText('webauthn', !!window.PublicKeyCredential ? 'Supported' : 'Not supported'); try{ if(navigator.xr && navigator.xr.isSessionSupported){ const sup = await navigator.xr.isSessionSupported('immersive-vr'); setText('webxr', sup ? 'VR Supported' : 'No VR'); } else setText('webxr','No WebXR') }catch(e){ setText('webxr','Error') } })();
 
-  // ---------- Charts 2D (Chart.js lazy load) ----------
-  const maxPoints = 60;
-  const fpsHistory = Array(maxPoints).fill(null);
-  const heapHistory = Array(maxPoints).fill(null);
-  const batteryHistory = Array(maxPoints).fill(null);
-  const speedHistory = Array(maxPoints).fill(0);
-  const tfHeat = Array(maxPoints).fill(null);
-  const accelSamples = [];
-  function pushLimited(arr,v){ arr.push(v); if(arr.length>maxPoints) arr.shift(); }
-
-  // FPS sampler
-  let frames = 0, last = performance.now();
-  function fpsSampler(now){
-    frames++;
-    if(now - last >= 1000){
-      pushLimited(fpsHistory, frames);
-      frames = 0;
-      last = now;
-      try{ if(performance?.memory) pushLimited(heapHistory, performance.memory.usedJSHeapSize/1024/1024); else pushLimited(heapHistory, null); }catch(e){ pushLimited(heapHistory, null); }
-      update2DCharts();
-    }
-    requestAnimationFrame(fpsSampler);
-  }
-  requestAnimationFrame(fpsSampler);
-
-  // battery watch
-  (async function batteryWatch(){ try{ if('getBattery' in navigator){ const b = await navigator.getBattery(); function p(){ pushLimited(batteryHistory, Math.round(b.level*100)); update2DCharts(); } ['levelchange','chargingchange'].forEach(e=>b.addEventListener(e,p)); p(); } }catch(e){} })();
-
-  window.__pushSpeed = function(kb){ pushLimited(speedHistory, kb); update2DCharts(); };
-  window.__pushTF = function(ms){ pushLimited(tfHeat, ms); update2DCharts(); };
-
-  async function ensureChartJs(){ if(window.Chart) return window.Chart; await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); return window.Chart; }
-
-  let fpsChart=null, batteryNetChart=null, accelChart=null, heatmapChart=null, canvasCtx=null;
-  async function init2DCharts(){
-    if(window._chartsInited) return;
-    const Chart = await ensureChartJs();
-    const ctxF = document.getElementById('fpsChart').getContext('2d');
-    fpsChart = new Chart(ctxF, {
-      type:'line', data:{ labels:Array(maxPoints).fill(''), datasets:[ {label:'FPS', data: fpsHistory, borderColor:'#00ffc6', tension:0.25, fill:false}, {label:'Heap MB', data: heapHistory, borderColor:'#00c2ff', tension:0.25, fill:false, yAxisID:'y1'} ] },
-      options:{ animation:false, scales:{ y:{beginAtZero:true}, y1:{position:'right', beginAtZero:true} } }
-    });
-
-    const ctxB = document.getElementById('batteryNetChart').getContext('2d');
-    batteryNetChart = new Chart(ctxB, {
-      data:{ labels:Array(maxPoints).fill(''), datasets:[ {type:'line', label:'Battery %', data: batteryHistory, borderColor:'#6ef37b', fill:false, yAxisID:'batt'}, {type:'bar', label:'Speed KB/s', data: speedHistory, backgroundColor:'#00c2ff', yAxisID:'speed'} ] },
-      options:{ animation:false, scales:{ batt:{type:'linear', position:'left', beginAtZero:true, max:100}, speed:{type:'linear', position:'right', beginAtZero:true} } }
-    });
-
-    const ctxA = document.getElementById('accelChart').getContext('2d');
-    accelChart = new Chart(ctxA, { type:'radar', data:{ labels:['X','Y','Z'], datasets:[{label:'Accel', data:[0,0,0], backgroundColor:'rgba(0,194,255,0.12)', borderColor:'#00c2ff'}] }, options:{ animation:false, scales:{ r:{ beginAtZero:true } } } });
-
-    const c = document.getElementById('canvasMosaic'); canvasCtx = c.getContext('2d'); drawCanvasMosaic();
-
-    const ctxH = document.getElementById('heatmapChart').getContext('2d');
-    heatmapChart = new Chart(ctxH, { type:'bar', data:{ labels:Array(maxPoints).fill(''), datasets:[{label:'TF Inference (ms)', data: tfHeat, backgroundColor:'#ffb86b'}] }, options:{animation:false, scales:{y:{beginAtZero:true}}} });
-
-    window._chartsInited = true;
-    update2DCharts();
-  }
-
-  function drawCanvasMosaic(){
+  // -------------------- Camera / Contacts / Gmail hint --------------------
+  async function detectMediaDevices(){
     try{
-      const canvas=document.getElementById('canvasMosaic'); const ctx=canvasCtx;
-      const w = canvas.width = canvas.clientWidth * devicePixelRatio; const h = canvas.height = canvas.clientHeight * devicePixelRatio;
-      ctx.clearRect(0,0,w,h);
-      const tmp=document.createElement('canvas'); tmp.width=240; tmp.height=90;
-      const t=tmp.getContext('2d'); t.fillStyle='#071018'; t.fillRect(0,0,tmp.width,tmp.height); t.fillStyle='#00ffc6'; t.font='22px Inter, Arial'; t.fillText('Handi Dev',14,40);
-      const img=new Image(); img.onload=()=>{ const cols=8, rows=3, cw=w/cols, ch=h/rows; for(let y=0;y<rows;y++) for(let x=0;x<cols;x++) ctx.drawImage(img, x*cw, y*ch, cw, ch); }; img.src=tmp.toDataURL();
-    }catch(e){}
+      if(!navigator.mediaDevices || !navigator.mediaDevices.enumerateDevices){ setText('camInfo','MediaDevices not supported'); return null; }
+      const devices = await navigator.mediaDevices.enumerateDevices();
+      const cams = devices.filter(d=>d.kind==='videoinput'); const mics = devices.filter(d=>d.kind==='audioinput');
+      const labelsVisible = cams.concat(mics).some(d=>d.label && d.label.length>0);
+      setText('camInfo', `Cameras: ${cams.length}, Mics: ${mics.length} • labels: ${labelsVisible? 'visible':'hidden'}`);
+      return {cams,mics,labelsVisible};
+    }catch(e){ setText('camInfo','Detect devices failed'); return null; }
   }
+  $('btn-getDevices').addEventListener('click', detectMediaDevices);
+  $('btn-permMedia').addEventListener('click', async ()=>{
+    try{ showOverlay('Requesting camera/mic permission...'); const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:true}); await detectMediaDevices(); stream.getTracks().forEach(t=>t.stop()); }catch(e){ alert('Permission denied or error: ' + (e.message||e)); } finally { hideOverlay(); }
+  });
+  $('btn-previewCam').addEventListener('click', async ()=>{
+    try{
+      if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return alert('getUserMedia not supported');
+      showOverlay('Opening camera preview...');
+      const stream = await navigator.mediaDevices.getUserMedia({video:true, audio:false});
+      const wrap = $('camPreview'); wrap.innerHTML = '';
+      const v = document.createElement('video'); v.autoplay=true; v.playsInline=true; v.muted=true; v.srcObject=stream; v.style.width='220px'; v.style.borderRadius='8px'; wrap.appendChild(v);
+      setTimeout(()=>{ stream.getTracks().forEach(t=>t.stop()); wrap.innerHTML=''; hideOverlay(); }, 12000);
+    }catch(e){ hideOverlay(); alert('Preview failed: '+(e.message||e)); }
+  });
 
-  function update2DCharts(){
-    if(fpsChart){ fpsChart.data.datasets[0].data = fpsHistory.slice(); fpsChart.data.datasets[1].data = heapHistory.slice(); fpsChart.update('none'); }
-    if(batteryNetChart){ batteryNetChart.data.datasets[0].data = batteryHistory.slice(); batteryNetChart.data.datasets[1].data = speedHistory.slice(); batteryNetChart.update('none'); }
-    if(heatmapChart){ heatmapChart.data.datasets[0].data = tfHeat.slice(); heatmapChart.update('none'); }
-    if(accelChart){ const last = accelHistory[accelHistory.length-1] || {x:0,y:0,z:0}; accelChart.data.datasets[0].data = [Math.abs(last.x), Math.abs(last.y), Math.abs(last.z)]; accelChart.update('none'); }
-  }
+  $('btn-checkContacts').addEventListener('click', ()=>{ if('contacts' in navigator || 'ContactsManager' in window) setText('contactsInfo','Contact Picker API supported'); else setText('contactsInfo','Contact Picker NOT supported'); });
 
-  // ---------- 3D Scene (Three.js lazy load) ----------
-  let threeLoaded = false;
-  // store live histories for 3D
-  const fpsHistory = []; const heapHistory = []; const speedHistory = [];
+  $('btn-pickContact').addEventListener('click', async ()=>{
+    if(!('contacts' in navigator) && !('ContactsManager' in window)){ alert('Contact Picker API not available'); return; }
+    try{
+      const props=['name','tel','email','icon'];
+      const contacts = await navigator.contacts.select(props, {multiple:false});
+      if(contacts && contacts.length>0){ const c=contacts[0]; setText('contactsInfo', `Picked: ${ (c.name && c.name[0]) || (c.email && c.email[0]) || 'Contact' }`); } else setText('contactsInfo','No contact selected');
+    }catch(e){ setText('contactsInfo','Contact pick canceled/blocked'); }
+  });
 
-  function detectDeviceType(){
-    const ua = navigator.userAgent;
-    const isMobile = /Mobi|Android|iPhone|iPad/.test(ua);
-    const isTablet = /Tablet|iPad/.test(ua);
-    const isWindows = /Windows NT/.test(ua);
-    const isMac = /Macintosh/.test(ua);
-    if(isMobile && !isTablet) return 'phone';
-    if(isTablet) return 'tablet';
-    if(isWindows || isMac) {
-      // differentiate laptop vs desktop by screen size heuristics
-      const width = Math.max(window.innerWidth, screen.width);
-      if(width <= 1366) return 'laptop'; else return 'desktop';
-    }
-    // fallback
-    return isMobile ? 'phone' : 'desktop';
-  }
+  $('btn-checkGmail').addEventListener('click', async ()=>{
+    setText('gmailInfo','Checking...');
+    if(!('credentials' in navigator)){ setText('gmailInfo','Credential API not supported'); return; }
+    try{
+      // federated silent get may be blocked; this is a hint only
+      const cred = await navigator.credentials.get?.({federated:{providers:['https://accounts.google.com']}, mediation:'silent'});
+      if(cred) setText('gmailInfo','Google federated credential available (hint)'); else setText('gmailInfo','No silent Google credential (or not allowed)');
+    }catch(e){ setText('gmailInfo','Credential API exists but silent get failed/blocked'); }
+  });
 
-  function drawFlagToCanvas(countryCode){
-    const c = document.getElementById('flagCanvas'); const ctx = c.getContext('2d');
-    ctx.clearRect(0,0,c.width,c.height);
-    // Simple mapping: only implement ID (Indonesia) here; otherwise neutral gray flag
-    if(countryCode === 'ID'){
-      // Merah putih
-      ctx.fillStyle='#ff0000'; ctx.fillRect(0,0,c.width,c.height/2);
-      ctx.fillStyle='#ffffff'; ctx.fillRect(0,c.height/2,c.width,c.height/2);
-    } else {
-      ctx.fillStyle='#0f1720'; ctx.fillRect(0,0,c.width,c.height);
-      ctx.fillStyle='#888'; ctx.fillRect(32,32,c.width-64,c.height-64);
-    }
-    return c.toDataURL();
-  }
-
-  async function initThree(){
-    if(threeLoaded) return;
-    showOverlay('Loading 3D engine...');
-    // load three + controls
-    await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
-    await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/examples/js/controls/OrbitControls.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
-    hideOverlay();
-    threeLoaded = true;
-    const THREE = window.THREE;
-
-    // container
-    const container = $('threeContainer'); container.innerHTML = '';
-    const renderer = new THREE.WebGLRenderer({antialias:true});
-    renderer.setSize(container.clientWidth, container.clientHeight);
-    renderer.setPixelRatio(window.devicePixelRatio);
-    container.appendChild(renderer.domElement);
-
-    // scene & camera
-    const scene = new THREE.Scene(); scene.background = new THREE.Color(0x071018);
-    const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 2000);
-    camera.position.set(0,2.2,6);
-
-    // lights
-    const pl = new THREE.PointLight(0xffffff, 1.1); pl.position.set(5,6,5); scene.add(pl);
-    scene.add(new THREE.AmbientLight(0x404040));
-
-    // ground
-    const ground = new THREE.Mesh(new THREE.PlaneGeometry(40,40), new THREE.MeshStandardMaterial({color:0x061018}));
-    ground.rotation.x = -Math.PI/2; ground.position.y = -1.0; scene.add(ground);
-
-    // indicator cube
-    const indicatorCube = new THREE.Mesh(new THREE.BoxGeometry(1.2,1.2,1.2), new THREE.MeshStandardMaterial({color:0x00ffc6, metalness:0.2, roughness:0.4}));
-    indicatorCube.position.set(-3.2, 0.4, 0); scene.add(indicatorCube);
-
-    // Handi Dev box
-    function createHandiBox(){
-      const size = 1.0;
-      const geo = new THREE.BoxGeometry(size,size,size);
-      const mats = [];
-      const facesText = ['Handi','Dev','HD+','Ultra','Insight',''];
-      for(let i=0;i<6;i++){
-        const c = document.createElement('canvas'); c.width=512; c.height=512;
-        const ctx = c.getContext('2d');
-        ctx.fillStyle = '#001316'; ctx.fillRect(0,0,c.width,c.height);
-        ctx.fillStyle = '#00ffc6'; ctx.fillRect(0,0,c.width,120);
-        ctx.fillStyle = '#001'; ctx.font='bold 72px Inter, Arial'; ctx.fillText(facesText[i]||'',40,220);
-        ctx.fillStyle = '#00c2ff'; ctx.font='18px Inter, Arial'; ctx.fillText('Handi Dev',40,260);
-        const tex = new THREE.CanvasTexture(c);
-        mats.push(new THREE.MeshStandardMaterial({map:tex}));
-      }
-      const m = new THREE.Mesh(geo, mats);
-      return m;
-    }
-    const handiBox = createHandiBox(); handiBox.position.set(-1.6,0.5,0); scene.add(handiBox);
-
-    // speed bars
-    const barsGroup = new THREE.Group(); const bars = [];
-    const barCount = 16;
-    for(let i=0;i<barCount;i++){
-      const g = new THREE.BoxGeometry(0.28,0.28,0.28);
-      const m = new THREE.MeshStandardMaterial({color:0x00c2ff, metalness:0.2, roughness:0.5});
-      const mesh = new THREE.Mesh(g,m);
-      mesh.position.set(i*0.32 - (barCount*0.32)/2 + 2.4, 0.14, 0);
-      mesh.scale.y = 0.05;
-      barsGroup.add(mesh); bars.push(mesh);
-    }
-    scene.add(barsGroup);
-
-    // hologram shell (transparent box)
-    const holoShellGeo = new THREE.BoxGeometry(3.4,2.0,3.4);
-    const holoShell = new THREE.Mesh(holoShellGeo, new THREE.MeshPhysicalMaterial({color:0x00ffe0, transparent:true, opacity:0.06, transmission:0.5, roughness:0.05}));
-    holoShell.position.set(0,0.6,0); scene.add(holoShell);
-
-    // holoGroup dynamic (will show a single device mesh)
-    const holoGroup = new THREE.Group(); holoGroup.position.set(0,0.6,0); scene.add(holoGroup);
-
-    // simple device meshes (phone, laptop, desktop)
-    function createPhone(){ const geom = new THREE.BoxGeometry(0.6,1.05,0.06); const mat = new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x00e6d0, transparent:true, opacity:0.7}); const mesh = new THREE.Mesh(geom, mat); return mesh; }
-    function createLaptop(){ const base = new THREE.Mesh(new THREE.BoxGeometry(1.4,0.08,0.9), new THREE.MeshStandardMaterial({color:0x00c2ff, emissive:0x004c6b, transparent:true, opacity:0.7})); const screen = new THREE.Mesh(new THREE.BoxGeometry(1.4,0.82,0.06), new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x003b4a, transparent:true, opacity:0.65})); screen.position.set(0,0.45,-0.35); screen.rotation.x = -0.35; const g = new THREE.Group(); g.add(base); g.add(screen); return g; }
-    function createDesktop(){ const monitor = new THREE.Mesh(new THREE.BoxGeometry(1.2,0.7,0.08), new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x003b4a, transparent:true, opacity:0.7})); const stand = new THREE.Mesh(new THREE.BoxGeometry(0.12,0.4,0.12), new THREE.MeshStandardMaterial({color:0x00c2ff})); stand.position.set(0,-0.6,0); const tower = new THREE.Mesh(new THREE.BoxGeometry(0.3,0.8,0.3), new THREE.MeshStandardMaterial({color:0xff66ff, emissive:0x5a005a, transparent:true, opacity:0.7})); tower.position.set(1.2,-0.1,0); const g = new THREE.Group(); monitor.position.set(0,0.2,0); g.add(monitor); g.add(stand); g.add(tower); return g; }
-
-    // detect device type and add corresponding hologram
-    const devType = detectDeviceType();
-    let activeDeviceMesh = null;
-    function showHoloForDevice(type){
-      // clear
-      while(holoGroup.children.length) holoGroup.remove(holoGroup.children[0]);
-      let mesh;
-      if(type === 'phone') mesh = createPhone();
-      else if(type === 'laptop') mesh = createLaptop();
-      else if(type === 'desktop') mesh = createDesktop();
-      else mesh = createPhone();
-      mesh.position.set(0,0.05,0);
-      holoGroup.add(mesh); activeDeviceMesh = mesh;
-    }
-    showHoloForDevice(devType);
-
-    // flag: render a waving plane with texture from canvas
-    const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-    const countryGuess = (tz.toLowerCase().includes('jakarta') || tz.toLowerCase().includes('indonesia')) ? 'ID' : null;
-    const flagDataURL = drawFlagToCanvas(countryGuess);
-    const flagTex = new THREE.TextureLoader().load(flagDataURL);
-    flagTex.wrapS = flagTex.wrapT = THREE.RepeatWrapping;
-    const flagGeo = new THREE.PlaneGeometry(2.6,1.2,32,12);
-    const flagMat = new THREE.MeshStandardMaterial({map:flagTex, side:THREE.DoubleSide, transparent:true});
-    const flagMesh = new THREE.Mesh(flagGeo, flagMat); flagMesh.position.set(3.0,0.6,0); flagMesh.rotation.y = -0.35; scene.add(flagMesh);
-
-    // 3D clock - face and 3 hands
-    const clockGroup = new THREE.Group(); clockGroup.position.set(0,1.1,-2.2); scene.add(clockGroup);
-    const face = new THREE.Mesh(new THREE.CircleGeometry(0.9,64), new THREE.MeshStandardMaterial({color:0x001316}));
-    clockGroup.add(face);
-    // hour marks
-    for(let i=0;i<12;i++){
-      const mark = new THREE.Mesh(new THREE.BoxGeometry(0.04,0.14,0.03), new THREE.MeshStandardMaterial({color:0x00ffc6}));
-      const ang = (i/12)*Math.PI*2;
-      mark.position.set(Math.sin(ang)*0.76, Math.cos(ang)*0.76, 0.02);
-      mark.rotation.z = -ang;
-      clockGroup.add(mark);
-    }
-    const handHour = new THREE.Mesh(new THREE.BoxGeometry(0.06,0.38,0.03), new THREE.MeshStandardMaterial({color:0x00c2ff}));
-    handHour.position.set(0,0.18,0.03); clockGroup.add(handHour);
-    const handMin = new THREE.Mesh(new THREE.BoxGeometry(0.04,0.58,0.03), new THREE.MeshStandardMaterial({color:0x00ffe0}));
-    handMin.position.set(0,0.29,0.04); clockGroup.add(handMin);
-    const handSec = new THREE.Mesh(new THREE.BoxGeometry(0.02,0.78,0.02), new THREE.MeshStandardMaterial({color:0xff6b6b, emissive:0xff6b6b}));
-    handSec.position.set(0,0.39,0.05); clockGroup.add(handSec);
-
-    // orbit controls
-    const controls = new THREE.OrbitControls(camera, renderer.domElement);
-    controls.enableDamping = true; controls.dampingFactor = 0.06;
-    controls.target.set(0,0.4,0);
-
-    // store some arrays for animation
-    window._threeSceneState = { fpsHistory, heapHistory, speedHistory };
-
-    // animate / update
-    let lastFrameTime = performance.now();
-    function animate(){
-      requestAnimationFrame(animate);
-      const now = performance.now();
-      const dt = (now - lastFrameTime)/1000;
-      lastFrameTime = now;
-
-      // update indicator cube scale/color based on fps/heap
-      const fpsNow = fpsHistory[fpsHistory.length-1] || 30;
-      const scaleTarget = 1 + (fpsNow/80);
-      indicatorCube.scale.lerp(new THREE.Vector3(scaleTarget,scaleTarget,scaleTarget), 0.08);
-      const lastHeap = heapHistory[heapHistory.length-1] || 0;
-      const t = Math.min(1, lastHeap/600);
-      const col = new THREE.Color().setHSL((1-t)*0.45, 0.8, 0.4);
-      indicatorCube.material.color.lerp(col, 0.06);
-
-      // handiBox rotation & float
-      handiBox.rotation.y += 0.6*dt;
-      handiBox.position.y = 0.5 + Math.sin(now/600)*0.04;
-
-      // holoGroup rotate + floating
-      holoGroup.rotation.y += 0.35 * dt;
-      if(activeDeviceMesh) activeDeviceMesh.position.y = 0.05 + Math.sin(now/700)*0.06;
-
-      // animate flag vertices for waving
-      flagMesh.geometry.verticesNeedUpdate = true;
-      const pos = flagMesh.geometry.attributes.position;
-      const arr = pos.array;
-      const time = now/400;
-      for(let i=0;i<arr.length;i+=3){
-        const x = arr[i], y = arr[i+1];
-        // adjust z for waving
-        arr[i+2] = Math.sin((x*3) + time + (y*2)) * 0.06;
-      }
-      pos.needsUpdate = true;
-
-      // update bars from speedHistory
-      for(let i=0;i<bars.length;i++){
-        const idx = speedHistory.length - 1 - i;
-        const v = (idx>=0) ? (speedHistory[idx] || 0) : 0;
-        const scaled = Math.max(0.05, Math.min(6, v/120));
-        bars[i].scale.y = THREE.MathUtils.lerp(bars[i].scale.y || 0.05, scaled, 0.08);
-        bars[i].position.y = (bars[i].scale.y)/2;
-        const hue = Math.max(0, 0.6 - (v/2000));
-        bars[i].material.color.setHSL(hue, 0.7, 0.5);
-      }
-
-      // update 3D clock hands from actual time (smooth)
-      const d = new Date();
-      const ms = d.getMilliseconds();
-      const s = d.getSeconds() + ms/1000;
-      const m = d.getMinutes() + s/60;
-      const h = (d.getHours()%12) + m/60;
-      handHour.rotation.z = - h * (Math.PI*2/12);
-      handMin.rotation.z = - m * (Math.PI*2/60);
-      handSec.rotation.z = - s * (Math.PI*2/60);
-
-      controls.update();
-      renderer.render(scene, camera);
-    }
-    animate();
-
-    // responsive
-    window.addEventListener('resize', ()=>{ const w=container.clientWidth, h=container.clientHeight; renderer.setSize(w,h); camera.aspect = w/h; camera.updateProjectionMatrix(); });
-    window._threeInited = true;
-  } // end initThree
-
-  // ---------- small utilities: ping/speed ----------
+  // -------------------- Speed / Ping --------------------
   $('pingBtn').addEventListener('click', async ()=>{
     setText('netRes','Pinging...');
-    try{ const t0=performance.now(); await fetch('https://api.ipify.org?format=json', {cache:'no-store'}); const rtt=(performance.now()-t0).toFixed(1); setText('netRes', `RTT ~ ${rtt} ms`); window.__pushSpeed?.(Math.max(10, 1200 - Number(rtt))); }catch(e){ setText('netRes','Ping gagal') }
+    try{ const t0=performance.now(); await fetch('https://api.ipify.org?format=json', {cache:'no-store'}); const rtt=(performance.now()-t0).toFixed(1); setText('netRes', `RTT ~ ${rtt} ms`); const kbEst = Math.max(0, 1000 - Number(rtt)); window.__pushSpeed?.(kbEst); }catch(e){ setText('netRes','Ping gagal') }
   });
 
   $('speedBtn').addEventListener('click', async ()=>{
@@ -710,35 +412,267 @@
       while(true){ const {done,value} = await reader.read(); if(done) break; rec += value.length; }
       const dur=(performance.now()-t0)/1000; const kb=rec/1024; const kbps = kb/dur;
       setText('netRes', `${kbps.toFixed(0)} KB/s • ${(kbps/1024).toFixed(2)} MB/s`);
-      window.__pushSpeed?.(kbps); hideOverlay();
-    }catch(e){ setText('netRes','Gagal speed test (CORS/Blocked)'); hideOverlay(); }
+      window.__pushSpeed?.(kbps);
+    }catch(e){ setText('netRes','Gagal speed test (CORS/Blocked)') } finally{ hideOverlay(); }
   });
 
-  // ---------- mini init: 2D charts and 3D preload ----------
-  setTimeout(()=>{ init2DCharts().catch(()=>{}); initThree().catch(()=>{}); }, 800);
+  // -------------------- Charts 2D (Chart.js lazy) --------------------
+  const maxPoints = 60;
+  const fpsHistory = Array(maxPoints).fill(null);
+  const heapHistory = Array(maxPoints).fill(null);
+  const batteryHistory = Array(maxPoints).fill(null);
+  const speedHistory = Array(maxPoints).fill(0);
+  const tfHeat = Array(maxPoints).fill(null);
+  let ChartJS = null, fpsChart=null, batteryNetChart=null, accelChart=null, heatmapChart=null, canvasCtx=null;
+  function pushLimited(arr, v){ arr.push(v); if(arr.length>maxPoints) arr.shift(); }
 
-  // ---------- real-time digital clock + calendar DOM ----------
-  (function clockTick(){
-    function tick(){
-      const now = new Date();
-      const hh = String(now.getHours()).padStart(2,'0'), mm = String(now.getMinutes()).padStart(2,'0'), ss = String(now.getSeconds()).padStart(2,'0');
-      setText('digitalClock', `${hh}:${mm}:${ss}`);
-      const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-      const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-      setText('calendarText', `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`);
+  // FPS sampler
+  let frames = 0, last = performance.now();
+  function fpsSampler(now){
+    frames++;
+    if(now - last >= 1000){ pushLimited(fpsHistory, frames); frames=0; last=now; try{ if(performance?.memory) pushLimited(heapHistory, performance.memory.usedJSHeapSize/1024/1024); else pushLimited(heapHistory, null); }catch(e){ pushLimited(heapHistory, null); } update2DCharts(); updateThreeVisual(); }
+    requestAnimationFrame(fpsSampler);
+  }
+  requestAnimationFrame(fpsSampler);
+
+  // battery watch
+  (async function batteryWatch(){ try{ if('getBattery' in navigator){ const b = await navigator.getBattery(); function p(){ pushLimited(batteryHistory, Math.round(b.level*100)); update2DCharts(); } ['levelchange','chargingchange'].forEach(e=>b.addEventListener(e,p)); p(); } }catch(e){} })();
+
+  window.__pushSpeed = function(kb){ pushLimited(speedHistory, kb); update2DCharts(); };
+  window.__pushTF = function(ms){ pushLimited(tfHeat, ms); update2DCharts(); };
+
+  async function ensureChartJs(){
+    if(window.Chart) return window.Chart;
+    await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+    return window.Chart;
+  }
+
+  async function init2DCharts(){
+    if(window._chartsInited) return;
+    ChartJS = await ensureChartJs();
+    // FPS chart
+    const ctxF = document.getElementById('fpsChart').getContext('2d');
+    fpsChart = new ChartJS(ctxF, { type:'line', data:{ labels:Array(maxPoints).fill(''), datasets:[ {label:'FPS', data: fpsHistory, borderColor:'#00ffc6', tension:0.25, fill:false}, {label:'Heap MB', data: heapHistory, borderColor:'#00c2ff', tension:0.25, fill:false, yAxisID:'y1'} ] }, options:{ animation:false, scales:{ y:{beginAtZero:true}, y1:{position:'right', beginAtZero:true} } } });
+
+    // Battery & Speed
+    const ctxB = document.getElementById('batteryNetChart').getContext('2d');
+    batteryNetChart = new ChartJS(ctxB, { data:{ labels:Array(maxPoints).fill(''), datasets:[ {type:'line', label:'Battery %', data: batteryHistory, borderColor:'#6ef37b', fill:false, yAxisID:'batt'}, {type:'bar', label:'Speed KB/s', data: speedHistory, backgroundColor:'#00c2ff', yAxisID:'speed'} ] }, options:{ animation:false, scales:{ batt:{type:'linear', position:'left', beginAtZero:true, max:100}, speed:{type:'linear', position:'right', beginAtZero:true} } } });
+
+    // Accel radar
+    const ctxA = document.getElementById('accelChart').getContext('2d');
+    accelChart = new ChartJS(ctxA, { type:'radar', data:{ labels:['X','Y','Z'], datasets:[{label:'Accel', data:[0,0,0], backgroundColor:'rgba(0,194,255,0.12)', borderColor:'#00c2ff'}] }, options:{ animation:false, scales:{ r:{ beginAtZero:true } } } });
+
+    // mosaic
+    const c = document.getElementById('canvasMosaic'); canvasCtx = c.getContext('2d'); drawCanvasMosaic();
+
+    // heatmap
+    const ctxH = document.getElementById('heatmapChart').getContext('2d');
+    heatmapChart = new ChartJS(ctxH, { type:'bar', data:{ labels:Array(maxPoints).fill(''), datasets:[{label:'TF Inference (ms)', data: tfHeat, backgroundColor:'#ffb86b'}] }, options:{animation:false, scales:{y:{beginAtZero:true}}} });
+
+    window._chartsInited = true;
+    update2DCharts();
+  }
+
+  function drawCanvasMosaic(){
+    try{
+      const canvas = document.getElementById('canvasMosaic'); const ctx = canvasCtx;
+      const w = canvas.width = canvas.clientWidth * devicePixelRatio; const h = canvas.height = canvas.clientHeight * devicePixelRatio;
+      ctx.clearRect(0,0,w,h);
+      const tmp = document.createElement('canvas'); tmp.width=240; tmp.height=90;
+      const t=tmp.getContext('2d'); t.fillStyle='#071018'; t.fillRect(0,0,tmp.width,tmp.height); t.fillStyle='#00ffc6'; t.font='22px Inter, Arial'; t.fillText('Handi Dev',14,40);
+      const img=new Image(); img.onload = ()=>{ const cols=8, rows=3, cw=w/cols, ch=h/rows; for(let y=0;y<rows;y++) for(let x=0;x<cols;x++) ctx.drawImage(img, x*cw, y*ch, cw, ch); }; img.src=tmp.toDataURL();
+    }catch(e){}
+  }
+
+  function update2DCharts(){
+    if(fpsChart){ fpsChart.data.datasets[0].data = fpsHistory.slice(); fpsChart.data.datasets[1].data = heapHistory.slice(); fpsChart.update('none'); }
+    if(batteryNetChart){ batteryNetChart.data.datasets[0].data = batteryHistory.slice(); batteryNetChart.data.datasets[1].data = speedHistory.slice(); batteryNetChart.update('none'); }
+    if(heatmapChart){ heatmapChart.data.datasets[0].data = tfHeat.slice(); heatmapChart.update('none'); }
+    if(accelChart){ const last = accelHistory[accelHistory.length-1] || {x:0,y:0,z:0}; accelChart.data.datasets[0].data = [Math.abs(last.x), Math.abs(last.y), Math.abs(last.z)]; accelChart.update('none'); }
+  }
+
+  // -------------------- THREE.JS 3D + Hologram (lazy load) --------------------
+  let threeReady = false;
+  async function initThree(){
+    if(threeReady) return;
+    showOverlay('Loading 3D engine...');
+    // load three + OrbitControls
+    await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+    await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/examples/js/controls/OrbitControls.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
+    hideOverlay();
+    const THREE = window.THREE;
+    threeReady = true;
+    // container
+    const container = $('three3d');
+    container.innerHTML = '';
+    const renderer = new THREE.WebGLRenderer({antialias:true, alpha:false});
+    renderer.setSize(container.clientWidth, container.clientHeight);
+    renderer.setPixelRatio(window.devicePixelRatio);
+    container.appendChild(renderer.domElement);
+
+    const scene = new THREE.Scene();
+    scene.background = new THREE.Color(0x071018);
+
+    const camera = new THREE.PerspectiveCamera(50, container.clientWidth / container.clientHeight, 0.1, 2000);
+    camera.position.set(0, 2.0, 6);
+
+    // lights
+    const pl = new THREE.PointLight(0xffffff, 1.0);
+    pl.position.set(5, 6, 5); scene.add(pl);
+    scene.add(new THREE.AmbientLight(0x404040));
+
+    // ground subtle
+    const ground = new THREE.Mesh(new THREE.PlaneGeometry(40,40), new THREE.MeshStandardMaterial({color:0x061018}));
+    ground.rotation.x = -Math.PI/2; ground.position.y = -1.0; scene.add(ground);
+
+    // indicator cube
+    const indicatorCube = new THREE.Mesh(new THREE.BoxGeometry(1.2,1.2,1.2), new THREE.MeshStandardMaterial({color:0x00ffc6, metalness:0.2, roughness:0.4}));
+    indicatorCube.position.set(-2.6, 0.2, 0); scene.add(indicatorCube);
+
+    // Handi Dev box with canvas textures on faces
+    function createHandiBox(){
+      const size = 1.2;
+      const geo = new THREE.BoxGeometry(size,size,size);
+      const mats = [];
+      const faces = ['Handi','Dev','HD+','Ultra','Insight',''];
+      for(let i=0;i<6;i++){
+        const c = document.createElement('canvas'); c.width=512; c.height=512;
+        const ctx = c.getContext('2d');
+        ctx.fillStyle = '#001316'; ctx.fillRect(0,0,c.width,c.height);
+        ctx.fillStyle = '#00ffc6'; ctx.fillRect(0,0,c.width,120);
+        ctx.fillStyle = '#001'; ctx.font='bold 72px Inter, Arial'; ctx.fillText(faces[i]||'',40,220);
+        ctx.fillStyle = '#00c2ff'; ctx.font='18px Inter, Arial'; ctx.fillText('Handi Dev',40,260);
+        const tex = new THREE.CanvasTexture(c);
+        mats.push(new THREE.MeshStandardMaterial({map:tex}));
+      }
+      const mesh = new THREE.Mesh(geo, mats);
+      mesh.castShadow = true;
+      mesh.position.set(0,0.4,0);
+      return mesh;
     }
-    setInterval(tick, 200); tick();
-  })();
+    const handiBox = createHandiBox();
+    handiBox.position.set(-0.6,0.4,0);
+    scene.add(handiBox);
 
-  // ---------- export visual snapshot ----------
+    // Speed bars
+    const barsGroup = new THREE.Group(); const bars = [];
+    const barCount = 16;
+    for(let i=0;i<barCount;i++){
+      const g = new THREE.BoxGeometry(0.28,0.28,0.28);
+      const m = new THREE.MeshStandardMaterial({color:0x00c2ff, metalness:0.2, roughness:0.5});
+      const mesh = new THREE.Mesh(g,m);
+      mesh.position.set(i*0.32 - (barCount*0.32)/2 + 2.4, 0.14, 0);
+      mesh.scale.y = 0.05;
+      barsGroup.add(mesh); bars.push(mesh);
+    }
+    scene.add(barsGroup);
+
+    // Hologram box (glass)
+    const holoBoxGeo = new THREE.BoxGeometry(3.6,2.2,3.6);
+    const holoMat = new THREE.MeshPhysicalMaterial({color:0x00ffe0, metalness:0.0, roughness:0.1, transparent:true, opacity:0.08, transmission:0.5, side: THREE.BackSide});
+    const holoShell = new THREE.Mesh(holoBoxGeo, holoMat); holoShell.position.set(0,0.6,0); scene.add(holoShell);
+
+    // Hologram devices group
+    const holoGroup = new THREE.Group(); holoGroup.position.set(0,0.6,0); scene.add(holoGroup);
+
+    // helper to create stylized hologram device (flat)
+    function makeHoloDevice(color, w, h, d){
+      const geom = new THREE.BoxGeometry(w,h,d);
+      const mat = new THREE.MeshStandardMaterial({color: color, emissive: color, emissiveIntensity: 0.7, transparent:true, opacity:0.6, metalness:0.1, roughness:0.3});
+      const mesh = new THREE.Mesh(geom, mat);
+      return mesh;
+    }
+
+    const phone = makeHoloDevice(0x00ffe0, 0.6, 1.0, 0.06); phone.position.set(-1.0, 0.0, 0.0); holoGroup.add(phone);
+    const laptop = makeHoloDevice(0x00c2ff, 1.2, 0.7, 0.08); laptop.position.set(1.0, -0.05, 0.1); laptop.rotation.x = -0.2; holoGroup.add(laptop);
+    const desktop = makeHoloDevice(0xff66ff, 0.9, 0.8, 0.12); desktop.position.set(0.0, 0.05, -1.0); holoGroup.add(desktop);
+
+    // add subtle neon ring under holo devices
+    const ringGeo = new THREE.RingGeometry(0.5, 1.2, 64);
+    const ringMat = new THREE.MeshBasicMaterial({color:0x00ffe0, side:THREE.DoubleSide, transparent:true, opacity:0.08});
+    const ring = new THREE.Mesh(ringGeo, ringMat); ring.rotation.x = -Math.PI/2; ring.position.y = -0.2; holoGroup.add(ring);
+
+    // orbit controls
+    const controls = new THREE.OrbitControls(camera, renderer.domElement);
+    controls.enableDamping = true; controls.dampingFactor = 0.06;
+    controls.target.set(0, 0.3, 0);
+
+    // animation loop
+    function updateBarsFromSpeed(){
+      for(let i=0;i<bars.length;i++){
+        const idx = speedHistory.length - 1 - i;
+        const v = (idx>=0) ? (speedHistory[idx] || 0) : 0;
+        const scaled = Math.max(0.05, Math.min(6, v/120));
+        bars[i].scale.y = THREE.MathUtils.lerp(bars[i].scale.y || 0.05, scaled, 0.08);
+        bars[i].position.y = (bars[i].scale.y)/2;
+        const hue = Math.max(0, 0.6 - (v/2000));
+        bars[i].material.color.setHSL(hue, 0.7, 0.5);
+      }
+    }
+
+    let lastFrameTime = performance.now();
+    function animate(){
+      requestAnimationFrame(animate);
+      const now = performance.now();
+      const dt = (now - lastFrameTime)/1000;
+      lastFrameTime = now;
+
+      // rotate & float handiBox
+      handiBox.rotation.y += 0.6 * dt;
+      handiBox.position.y = 0.4 + Math.sin(now/600)*0.05;
+
+      // indicator cube reacts to FPS/heap
+      const fpsNow = fpsHistory[fpsHistory.length-1] || 30;
+      const scale = 1 + (fpsNow/80);
+      indicatorCube.scale.lerp(new THREE.Vector3(scale,scale,scale), 0.06);
+      // color by heap
+      const lastHeap = heapHistory[heapHistory.length-1] || 0;
+      const t = Math.min(1, lastHeap/600);
+      const col = new THREE.Color().setHSL((1-t)*0.45, 0.8, 0.4);
+      indicatorCube.material.color.lerp(col, 0.06);
+
+      // holoGroup rotation + floating of each device
+      holoGroup.rotation.y += 0.25 * dt;
+      const tS = now/600;
+      phone.position.y = Math.sin(tS)*0.08;
+      laptop.position.y = Math.sin(tS + 0.9)*0.06;
+      desktop.position.y = Math.sin(tS + 1.6)*0.07;
+
+      // pulse emissive intensity for hologram
+      [phone,laptop,desktop].forEach((m, i) => {
+        const s = 0.6 + 0.4*Math.sin(tS*2 + i);
+        m.material.emissiveIntensity = THREE.MathUtils.lerp(m.material.emissiveIntensity || 0.7, s, 0.06);
+      });
+
+      updateBarsFromSpeed();
+      controls.update();
+      renderer.render(scene, camera);
+    }
+    animate();
+
+    window.addEventListener('resize', ()=>{ const w = container.clientWidth, h = container.clientHeight; renderer.setSize(w,h); camera.aspect = w/h; camera.updateProjectionMatrix(); });
+    window._threeInited = true;
+    // store refs for update function
+    window._three_scene = { scene, camera, renderer };
+  }
+
+  function updateThreeVisual(){
+    // visuals update handled inside three animation loop, so nothing needed here.
+  }
+
+  // auto-init charts & 3D on demand (preload a bit)
+  setTimeout(()=>{ init2DCharts().catch(()=>{}); initThree().catch(()=>{}); }, 900);
+
+  // export snapshot (chart canvas)
   $('exportVisualPNG').addEventListener('click', ()=>{
     const c = document.querySelector('#fpsChart') || document.querySelector('#batteryNetChart');
     if(c && c.toDataURL){ const a=document.createElement('a'); a.href = c.toDataURL('image/png'); a.download='handidev-chart.png'; a.click(); }
     else alert('Chart belum siap atau tidak bisa diexport.');
   });
 
-  // done
-  console.log('Handi Dev Ultra+ initialized (partial).');
+  // small initial mosaic
+  setTimeout(()=>{ try{ drawCanvasMosaic(); }catch(e){} }, 400);
+
   </script>
 </body>
 </html>
