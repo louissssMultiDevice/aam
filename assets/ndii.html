@@ -3,128 +3,72 @@
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Handi Device Insight — Ultra+ Hologram</title>
+<title>Handi Ultra+ Hologram</title>
 <meta name="theme-color" content="#071018"/>
 <style>
-:root{--bg:#071018;--card:#0f1720;--text:#dff8f6;--muted:#9fbfc8;--accent:#00ffc6;--accent2:#00c2ff;--danger:#ff5d7a;--ok:#6ef37b;}
-[data-theme="light"]{--bg:#f6fbff;--card:#fff;--text:#05212a;--muted:#5f7f88;}
-*{box-sizing:border-box}
+:root{
+  --bg:#071018;--card:#0f1720;--text:#dff8f6;--muted:#9fbfc8;
+  --accent:#00ffc6;--accent2:#00c2ff;--danger:#ff5d7a;--ok:#6ef37b;
+}
 body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(180deg,var(--bg),#060b13);color:var(--text)}
 .wrap{max-width:1280px;margin:18px auto;padding:18px}
 header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.brand{display:flex;gap:12px;align-items:center}
-.logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#001;box-shadow:0 0 12px var(--accent)}
+.logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#001;box-shadow:0 0 14px var(--accent),0 0 28px var(--accent2)}
 h1{margin:0;font-size:18px}.subtitle{color:var(--muted);font-size:13px}
-.controls{display:flex;gap:8px;flex-wrap:wrap}
-.btn{background:linear-gradient(90deg,var(--accent2),var(--accent));border:none;padding:9px 12px;border-radius:10px;color:#001;font-weight:800;cursor:pointer;transition:.2s}
-.btn:hover{transform:translateY(-1px) scale(1.03)}
-.badge{display:inline-block;padding:3px 8px;border-radius:999px;font-size:12px;background:rgba(255,255,255,.06)}
+.btn{background:linear-gradient(90deg,var(--accent2),var(--accent));border:none;padding:9px 12px;border-radius:10px;color:#001;font-weight:800;cursor:pointer;transition:.3s;box-shadow:0 0 8px var(--accent2)}
+.btn:hover{transform:translateY(-2px) scale(1.05);box-shadow:0 0 14px var(--accent2),0 0 28px var(--accent)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:16px}
-.card{background:var(--card);padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,.05);transition:.2s}
-.card:hover{box-shadow:0 0 14px rgba(0,255,198,.25)}
+.card{background:var(--card);padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,.05);transition:.3s;position:relative;overflow:hidden}
+.card:hover{box-shadow:0 0 20px rgba(0,255,198,.35)}
 .small{font-size:12px;color:var(--muted)}.mono{font-family:monospace}
-.row{display:flex;gap:8px;flex-wrap:wrap}
-.footer{margin:22px 0;color:var(--muted);font-size:12px;text-align:center}
-.kv{display:grid;grid-template-columns:120px 1fr;gap:6px;font-size:13px}
-canvas.chart{width:100%!important;height:220px!important}
 .tabs{display:flex;gap:8px;margin-bottom:8px}
-.tab{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.06);cursor:pointer}
-.tab.active{background:linear-gradient(90deg,var(--accent2),var(--accent));color:#001}
+.tab{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.06);cursor:pointer;transition:.2s}
+.tab.active{background:linear-gradient(90deg,var(--accent2),var(--accent));color:#001;box-shadow:0 0 12px var(--accent2)}
 #threeClock,#threeGlobe,#threeWeb,#threeDevice{width:100%;height:280px;border-radius:12px;background:#000}
-.overlay{position:fixed;inset:0;background:rgba(0,0,0,.45);display:flex;align-items:center;justify-content:center;backdrop-filter:blur(4px);opacity:0;visibility:hidden;transition:.2s;z-index:9999}
-.overlay.show{opacity:1;visibility:visible}
-.loader{background:var(--card);padding:16px 18px;border-radius:12px;display:flex;gap:10px;align-items:center;box-shadow:0 0 12px var(--accent)}
-.dot{width:10px;height:10px;border-radius:50%;background:var(--accent);animation:blink 1s infinite}
-@keyframes blink{50%{opacity:.3;transform:scale(.8)}}
-.tag{background:rgba(255,255,255,.06);padding:3px 6px;border-radius:8px;font-size:12px;margin-right:6px}
+.neon-glow{animation:glow 2s ease-in-out infinite alternate}
+@keyframes glow{from{text-shadow:0 0 8px var(--accent2),0 0 16px var(--accent)}to{text-shadow:0 0 16px var(--accent),0 0 32px var(--accent2)}}
 </style>
 </head>
 <body data-theme="dark">
 <div class="wrap">
   <header>
-    <div class="brand">
-      <div class="logo">HD+</div>
-      <div><h1>Handi Device Insight — Ultra+ (Hologram)</h1>
-        <div class="subtitle">Jam Globe • Web HD • Device Holo • IP/Geo • Sensor • Charts</div></div>
-    </div>
-    <div class="controls"><button class="btn" id="themeBtn">Theme</button><button class="btn" id="copyAll">Copy All</button><button class="btn" id="exportJSON">Export JSON</button></div>
+    <div class="logo">HD+</div>
+    <div><h1 class="neon-glow">Handi Ultra+ Hologram</h1>
+      <div class="subtitle">Jam Globe • IP Geo • Device Holo • Charts</div></div>
+    <div><button class="btn" id="themeBtn">Theme</button></div>
   </header>
 
-  <!-- TIME & CALENDAR -->
   <div class="grid">
     <div class="card"><h3>Jam 3D Globe</h3>
-      <div class="row" style="justify-content:space-between"><div class="badge" id="tzBadge">—</div><div class="badge" id="digitalClock">--:--:--</div></div>
-      <div id="threeClock"></div><div class="small">Timezone: <span id="tzName">—</span> • Offset: <span id="tzOffset">—</span></div>
+      <div style="display:flex;justify-content:space-between"><div id="tzBadge">—</div><div id="digitalClock">--:--:--</div></div>
+      <div id="threeClock"></div>
+      <div class="small">Timezone: <span id="tzName">—</span> • Offset: <span id="tzOffset">—</span></div>
     </div>
     <div class="card"><h3>Kalender</h3><div id="calendar"></div><div class="small">Hari ini: <span id="todayStr">—</span></div></div>
   </div>
 
-  <!-- IP & GLOBE -->
   <div class="grid">
-    <div class="card"><h3>Network & Lokasi (IP)</h3>
-      <div class="kv">
-        <div>Public IP</div><div class="mono" id="ip">—</div>
-        <div>ISP</div><div id="isp">—</div>
-        <div>Lokasi</div><div id="loc">—</div>
-      </div>
-      <div class="row" style="margin-top:8px"><button class="btn" id="btnIp">Refresh IP</button></div>
+    <div class="card"><h3>Network & Lokasi</h3>
+      <div>IP: <span id="ip">—</span></div>
+      <div>ISP: <span id="isp">—</span></div>
+      <div>Lokasi: <span id="loc">—</span></div>
+      <button class="btn" id="btnIp">Refresh IP</button>
     </div>
-    <div class="card"><h3>3D Globe Marker</h3><div id="threeGlobe"></div></div>
+    <div class="card"><h3>Globe</h3><div id="threeGlobe"></div></div>
   </div>
 
-  <!-- DEVICE -->
-  <div class="grid">
-    <div class="card"><h3>Device & Browser</h3><div class="kv">
-      <div>Tipe</div><div id="devType">—</div>
-      <div>Merek/Model</div><div id="devBrand">—</div>
-      <div>OS • Browser</div><div id="osBrowser">—</div>
-      <div>CPU Cores</div><div id="cores">—</div>
-      <div>RAM (est.)</div><div id="ram">—</div>
-      <div>GPU</div><div id="gpu">—</div>
-    </div></div>
-    <div class="card"><h3>Benchmark & Fingerprint</h3><div class="kv">
-      <div>Benchmark</div><div id="bench">—</div>
-      <div>Fingerprint</div><div class="mono" id="fp">—</div>
-    </div>
-    <div class="row" style="margin-top:8px"><button class="btn" id="btnBench">Run Benchmark</button><button class="btn" id="btnFP">Re-FP</button></div></div>
+  <div class="tabs">
+    <div class="tab active" data-tab="charts">Charts</div>
+    <div class="tab" data-tab="holo">3D Icons</div>
   </div>
-
-  <!-- SENSOR & CAMERA -->
-  <div class="grid">
-    <div class="card"><h3>Sensors</h3><div class="kv">
-      <div>Accel</div><div id="accel">—</div>
-      <div>Orient</div><div id="orient">—</div>
-    </div><button class="btn" id="permMotion">Request Motion</button></div>
-    <div class="card"><h3>Camera</h3>
-      <button class="btn" id="btnCam">Start Camera</button>
-      <video id="vid" playsinline autoplay muted style="width:100%;border-radius:10px;margin-top:8px;max-height:200px;background:#000"></video>
-      <canvas id="snap" style="display:none"></canvas>
-      <canvas id="camChart" class="chart"></canvas>
-    </div>
-  </div>
-
-  <!-- CHARTS -->
-  <section class="charts">
-    <div class="tabs">
-      <div class="tab active" data-tab="charts">Charts</div>
-      <div class="tab" data-tab="holo">3D Icons</div>
-    </div>
-    <div id="tab-charts">
-      <div class="grid">
-        <div class="card"><h4>FPS</h4><canvas id="fpsChart" class="chart"></canvas></div>
-        <div class="card"><h4>CPU Load</h4><canvas id="cpuChart" class="chart"></canvas></div>
-        <div class="card"><h4>Battery</h4><div class="small">Level: <span id="batLvl">—</span></div><canvas id="batChart" class="chart"></canvas></div>
-      </div>
-    </div>
-    <div id="tab-holo" style="display:none">
-      <div class="grid">
-        <div class="card"><h3>Web Icon</h3><div id="threeWeb"></div></div>
-        <div class="card"><h3>Device Icon</h3><div id="threeDevice"></div></div>
-      </div>
-    </div>
-  </section>
-
-  <div class="footer">© Handi Ultra+</div>
+  <div id="tab-charts"><div class="grid">
+    <div class="card"><h4>FPS</h4><canvas id="fpsChart"></canvas></div>
+    <div class="card"><h4>CPU</h4><canvas id="cpuChart"></canvas></div>
+  </div></div>
+  <div id="tab-holo" style="display:none"><div class="grid">
+    <div class="card"><h3>Web Icon</h3><div id="threeWeb"></div></div>
+    <div class="card"><h3>Device Icon</h3><div id="threeDevice"></div></div>
+  </div></div>
 </div>
 
 <!-- libs -->
@@ -132,217 +76,57 @@ canvas.chart{width:100%!important;height:220px!important}
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/FontLoader.js"></script>
 <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/geometries/TextGeometry.js"></script>
-
 <script>
 const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,"0");
-/* === THEME === */
+
+/* === Theme toggle === */
 $("themeBtn").onclick=()=>{document.body.dataset.theme=document.body.dataset.theme==="dark"?"light":"dark";};
 
-/* === CLOCK GLOBE === */
+/* === CLOCK Globe === */
 let clockScene,clockRenderer,clockCam,clockHands={};
 function initThreeClock(){
   const el=$("threeClock"),w=el.clientWidth,h=el.clientHeight;
   clockScene=new THREE.Scene();clockCam=new THREE.PerspectiveCamera(45,w/h,.1,100);clockCam.position.z=7;
   clockRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true});clockRenderer.setSize(w,h);el.innerHTML="";el.appendChild(clockRenderer.domElement);
+
   const globe=new THREE.Mesh(new THREE.SphereGeometry(2.3,32,32),new THREE.MeshPhongMaterial({color:0x00c2ff,wireframe:true,opacity:0.4}));clockScene.add(globe);
-  const ring=new THREE.Mesh(new THREE.TorusGeometry(2.6,.03,16,100),new THREE.MeshBasicMaterial({color:0x00ffc6}));clockScene.add(ring);
   new THREE.FontLoader().load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json",f=>{
-    for(let i=1;i<=12;i++){const g=new THREE.TextGeometry(i.toString(),{font:f,size:.35,height:.05});const m=new THREE.MeshBasicMaterial({color:0xffffff});const mesh=new THREE.Mesh(g,m);const a=i/12*Math.PI*2;mesh.position.set(Math.cos(a)*2,Math.sin(a)*2,.1);mesh.lookAt(0,0,0);clockScene.add(mesh);}
+    for(let i=1;i<=12;i++){const g=new THREE.TextGeometry(i.toString(),{font:f,size:.35,height:.05});const m=new THREE.MeshBasicMaterial({color:0xffffff});const mesh=new THREE.Mesh(g,m);const a=i/12*Math.PI*2;mesh.position.set(Math.cos(a)*2,Math.sin(a)*2,.2);mesh.lookAt(0,0,0);clockScene.add(mesh);}
   });
-  clockHands.hour=new THREE.Mesh(new THREE.BoxGeometry(.1,1.3,.1),new THREE.MeshBasicMaterial({color:0xffffff}));
-  clockHands.min=new THREE.Mesh(new THREE.BoxGeometry(.07,1.8,.07),new THREE.MeshBasicMaterial({color:0x00c2ff}));
+  clockHands.hour=new THREE.Mesh(new THREE.BoxGeometry(.1,1.2,.1),new THREE.MeshBasicMaterial({color:0xffffff}));
+  clockHands.min=new THREE.Mesh(new THREE.BoxGeometry(.07,1.8,.07),new THREE.MeshBasicMaterial({color:0x00ffc6}));
   clockHands.sec=new THREE.Mesh(new THREE.BoxGeometry(.04,2.2,.04),new THREE.MeshBasicMaterial({color:0xff5d7a}));
   [clockHands.hour,clockHands.min,clockHands.sec].forEach(m=>{m.position.z=.2;clockScene.add(m)});
-  clockScene.add(new THREE.AmbientLight(0x334466,1.2));const p=new THREE.PointLight(0x00ffc6,1.5);p.position.set(3,3,6);clockScene.add(p);
-  (function anim(){requestAnimationFrame(anim);ring.rotation.z+=.002;clockRenderer.render(clockScene,clockCam)})(); }
-function updateThreeClock(n){if(!clockScene)return;const s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=n.getHours()%12+m/60;clockHands.sec.rotation.z=-s*2*Math.PI/60;clockHands.min.rotation.z=-m*2*Math.PI/60;clockHands.hour.rotation.z=-h*2*Math.PI/12;}
+  clockScene.add(new THREE.AmbientLight(0x334466,1.2));
+  (function anim(){requestAnimationFrame(anim);globe.rotation.y+=.002;clockRenderer.render(clockScene,clockCam)})(); }
+function updateThreeClock(n){const s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=n.getHours()%12+m/60;clockHands.sec.rotation.z=-s*2*Math.PI/60;clockHands.min.rotation.z=-m*2*Math.PI/60;clockHands.hour.rotation.z=-h*2*Math.PI/12;}
 function tick(){const n=new Date();$("digitalClock").textContent=`${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;$("tzBadge").textContent=Intl.DateTimeFormat().resolvedOptions().timeZone;$("tzName").textContent=Intl.DateTimeFormat().resolvedOptions().timeZone;const o=-n.getTimezoneOffset(),sign=o>=0?"+":"-",hh=Math.floor(Math.abs(o)/60),mm=Math.abs(o)%60;$("tzOffset").textContent=`${sign}${pad(hh)}:${pad(mm)}`;$("todayStr").textContent=n.toDateString();updateThreeClock(n);requestAnimationFrame(tick);}
-function renderCalendar(){const n=new Date(),y=n.getFullYear(),m=n.getMonth(),f=new Date(y,m,1).getDay(),d=new Date(y,m+1,0).getDate();let html='<table style="width:100%;font-size:13px;text-align:center"><tr>'; "SMTWTFS".split("").forEach(x=>html+=`<th style="color:var(--muted)">${x}</th>`);html+="</tr><tr>";for(let i=0;i<f;i++)html+="<td></td>";for(let day=1;day<=d;day++){const t=day===n.getDate();html+=`<td style="padding:4px;${t?'background:var(--accent);color:#001;border-radius:6px;':''}">${day}</td>`;if((day+f)%7===0&&day!==d)html+="</tr><tr>"}html+="</tr></table>";$("calendar").innerHTML=html;}
+function renderCalendar(){const n=new Date(),y=n.getFullYear(),m=n.getMonth(),f=new Date(y,m,1).getDay(),d=new Date(y,m+1,0).getDate();let html='<table style="width:100%;font-size:13px;text-align:center"><tr>'; "SMTWTFS".split("").forEach(x=>html+=`<th>${x}</th>`);html+="</tr><tr>";for(let i=0;i<f;i++)html+="<td></td>";for(let day=1;day<=d;day++){const t=day===n.getDate();html+=`<td style="padding:4px;${t?'background:linear-gradient(90deg,var(--accent2),var(--accent));color:#001;border-radius:6px;':''}">${day}</td>`;if((day+f)%7===0&&day!==d)html+="</tr><tr>"}html+="</tr></table>";$("calendar").innerHTML=html;}
 
-/* === IP & GLOBE === */
-let globeScene,globeCam,globeRenderer,globeMarker;
-function initGlobe(){
-  const el=$("threeGlobe"),w=el.clientWidth,h=el.clientHeight;
-  globeScene=new THREE.Scene();
-  globeCam=new THREE.PerspectiveCamera(45,w/h,.1,100);
-  globeCam.position.z=4;
-  globeRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true});
-  globeRenderer.setSize(w,h);
-  el.innerHTML="";
-  el.appendChild(globeRenderer.domElement);
-  const s=new THREE.Mesh(
-    new THREE.SphereGeometry(1.3,32,32),
-    new THREE.MeshPhongMaterial({color:0x00c2ff,wireframe:true})
-  );
-  globeScene.add(s);
-  globeMarker=new THREE.Mesh(
-    new THREE.SphereGeometry(.06,16,16),
-    new THREE.MeshBasicMaterial({color:0xff5d7a})
-  );
-  globeScene.add(globeMarker);
-  (function anim(){
-    requestAnimationFrame(anim);
-    s.rotation.y+=.002;
-    globeRenderer.render(globeScene,globeCam);
-  })();
-}
-function placeGlobeMarker(g){
-  if(!globeMarker)return;
-  const lat=g.lat*Math.PI/180,lon=g.lon*Math.PI/180,r=1.3;
-  globeMarker.position.set(
-    r*Math.cos(lat)*Math.sin(lon),
-    r*Math.sin(lat),
-    r*Math.cos(lat)*Math.cos(lon)
-  );
-}
-async function fetchIP(){
-  try{
-    const r=await fetch("https://ipapi.co/json/");
-    const j=await r.json();
-    $("ip").textContent=j.ip;
-    $("isp").textContent=j.org||"";
-    $("loc").textContent=`${j.city}, ${j.country_name}`;
-    placeGlobeMarker({lat:j.latitude,lon:j.longitude});
-  }catch(e){
-    $("ip").textContent="Err";
-  }
-}
+/* === Globe IP === */
+let globeScene,globeRenderer,globeCam,globeMarker;
+function initGlobe(){const el=$("threeGlobe"),w=el.clientWidth,h=el.clientHeight;globeScene=new THREE.Scene();globeCam=new THREE.PerspectiveCamera(45,w/h,.1,100);globeCam.position.z=4;globeRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true});globeRenderer.setSize(w,h);el.innerHTML="";el.appendChild(globeRenderer.domElement);const s=new THREE.Mesh(new THREE.SphereGeometry(1.3,32,32),new THREE.MeshPhongMaterial({color:0x00c2ff,wireframe:true}));globeScene.add(s);globeMarker=new THREE.Mesh(new THREE.SphereGeometry(.08,16,16),new THREE.MeshBasicMaterial({color:0xff5d7a}));globeScene.add(globeMarker);(function anim(){requestAnimationFrame(anim);s.rotation.y+=.002;globeMarker.material.opacity=Math.abs(Math.sin(Date.now()/500));globeMarker.material.transparent=true;globeRenderer.render(globeScene,globeCam)})(); }
+function placeGlobeMarker(g){if(!globeMarker)return;const lat=g.lat*Math.PI/180,lon=g.lon*Math.PI/180,r=1.3;globeMarker.position.set(r*Math.cos(lat)*Math.sin(lon),r*Math.sin(lat),r*Math.cos(lat)*Math.cos(lon));}
+async function fetchIP(){try{const r=await fetch("https://ipapi.co/json/");const j=await r.json();$("ip").textContent=j.ip;$("isp").textContent=j.org||"";$("loc").textContent=`${j.city}, ${j.country_name}`;placeGlobeMarker({lat:j.latitude,lon:j.longitude});}catch(e){$("ip").textContent="Err";}}
 $("btnIp").onclick=fetchIP;
 
-/* === DEVICE === */
-function detectType(){
-  const ua=navigator.userAgent;
-  if(/Mobi|Android/i.test(ua))return"Phone";
-  if(/iPad/i.test(ua))return"Tablet";
-  return"PC/Laptop";
-}
-function detectBrand(){
-  const ua=navigator.userAgent;
-  if(/iPhone/i.test(ua))return"Apple iPhone";
-  if(/iPad/i.test(ua))return"Apple iPad";
-  return ua.split("(")[1]?.split(";")[0]||"—";
-}
-function getGPU(){
-  try{
-    const c=document.createElement("canvas"),
-          gl=c.getContext("webgl")||c.getContext("experimental-webgl");
-    if(!gl) return "—";
-    const ext=gl.getExtension("WEBGL_debug_renderer_info");
-    if(ext) return gl.getParameter(ext.UNMASKED_RENDERER_WEBGL);
-    return "WebGL GPU";
-  }catch(e){ return "—"; }
-}
-function paintDevice(){
-  $("devType").textContent=detectType();
-  $("devBrand").textContent=detectBrand();
-  $("osBrowser").textContent=navigator.platform+" • "+navigator.userAgent;
-  $("cores").textContent=navigator.hardwareConcurrency||"—";
-  $("ram").textContent=(navigator.deviceMemory?navigator.deviceMemory+" GB":"—");
-  $("gpu").textContent=getGPU();
-}
-
-/* === Benchmark & Fingerprint === */
-$("btnBench").onclick=()=>{
-  const t0=performance.now(); let x=0;
-  for(let i=0;i<2e6;i++){x+=Math.sin(i);}
-  const ms=(performance.now()-t0).toFixed(0);
-  $("bench").textContent=`${ms} ms`;
-};
-async function fingerprint(){
-  const str=navigator.userAgent+navigator.language+navigator.platform+getGPU();
-  const buf=new TextEncoder().encode(str);
-  const hash=await crypto.subtle.digest("SHA-256",buf);
-  const hex=Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
-  $("fp").textContent=hex.slice(0,32)+"…";
-}
-$("btnFP").onclick=fingerprint;
-
-/* === Sensors === */
-function format3(n){return (Math.round(n*100)/100).toFixed(2);}
-function initSensors(){
-  if(window.DeviceMotionEvent){
-    window.addEventListener("devicemotion",e=>{
-      const a=e.accelerationIncludingGravity||{};
-      $("accel").textContent=`X:${format3(a.x||0)} Y:${format3(a.y||0)} Z:${format3(a.z||0)}`;
-    });
-  }
-  if(window.DeviceOrientationEvent){
-    window.addEventListener("deviceorientation",e=>{
-      $("orient").textContent=`α:${format3(e.alpha||0)} β:${format3(e.beta||0)} γ:${format3(e.gamma||0)}`;
-    });
-  }
-}
-
-/* === Camera & Brightness Chart === */
-let media=null,camCtx=null,camChart=null,camData=[];
-$("btnCam").onclick=async()=>{
-  try{
-    media=await navigator.mediaDevices.getUserMedia({video:true,audio:false});
-    $("vid").srcObject=media;
-    const cvs=$("snap");camCtx=cvs.getContext("2d");
-    if(!camChart) camChart=new Chart($("camChart"),{
-      type:"line",
-      data:{labels:Array(60).fill(""),datasets:[{label:"Luminosity",data:camData,borderColor:"#00ffc6",tension:.25}]},
-      options:{animation:false,scales:{y:{beginAtZero:true,max:255}}}
-    });
-    sampleBrightness();
-  }catch(e){alert("Camera error: "+e.message);}
-};
-function sampleBrightness(){
-  if(!media)return;
-  const v=$("vid"),cvs=$("snap");
-  cvs.width=v.videoWidth;cvs.height=v.videoHeight;
-  camCtx.drawImage(v,0,0,cvs.width,cvs.height);
-  const {data}=camCtx.getImageData(0,0,cvs.width,cvs.height);
-  let sum=0;for(let i=0;i<data.length;i+=4){sum+=0.2126*data[i]+0.7152*data[i+1]+0.0722*data[i+2];}
-  const avg=sum/(data.length/4);
-  camData.push(avg);if(camData.length>60)camData.shift();
-  camChart.data.datasets[0].data=camData.slice();camChart.update("none");
-  requestAnimationFrame(sampleBrightness);
-}
-
-/* === Charts: FPS, CPU, Battery === */
-const fpsArr=[],cpuArr=[],battArr=[];let fpsChart,cpuChart,batChart;
+/* === Charts === */
+const fpsArr=[],cpuArr=[];let fpsChart,cpuChart;
 function push(arr,v){arr.push(v);if(arr.length>120)arr.shift();}
-function initCharts(){
-  fpsChart=new Chart($("fpsChart"),{type:"line",data:{labels:Array(120).fill(""),datasets:[{label:"FPS",data:fpsArr,borderColor:"#00ffc6",tension:.25}]},options:{animation:false,scales:{y:{beginAtZero:true,max:120}}}});
-  cpuChart=new Chart($("cpuChart"),{type:"line",data:{labels:Array(120).fill(""),datasets:[{label:"CPU proxy",data:cpuArr,borderColor:"#00c2ff",tension:.25}]},options:{animation:false}});
-  batChart=new Chart($("batChart"),{type:"line",data:{labels:Array(120).fill(""),datasets:[{label:"Battery %",data:battArr,borderColor:"#6ef37b",tension:.25}]},options:{animation:false,scales:{y:{beginAtZero:true,max:100}}}});
-}
-let frames=0,last=performance.now();
-function loopFPS(now){frames++;if(now-last>=1000){push(fpsArr,frames);frames=0;last=now;fpsChart.update("none");}requestAnimationFrame(loopFPS);}
-setInterval(()=>{const t0=performance.now();let s=0;for(let i=0;i<100000;i++){s+=Math.sqrt(i);}push(cpuArr,(performance.now()-t0).toFixed(2));cpuChart.update("none");},1000);
-navigator.getBattery?.().then(b=>{const paint=()=>{push(battArr,Math.round(b.level*100));$("batLvl").textContent=Math.round(b.level*100)+"%";batChart.update("none");};b.addEventListener("levelchange",paint);paint();});
+function initCharts(){fpsChart=new Chart($("fpsChart"),{type:"line",data:{labels:Array(120).fill(""),datasets:[{label:"FPS",data:fpsArr,borderColor:"#00ffc6"}]},options:{animation:false,scales:{y:{beginAtZero:true,max:120}}}});cpuChart=new Chart($("cpuChart"),{type:"line",data:{labels:Array(120).fill(""),datasets:[{label:"CPU proxy",data:cpuArr,borderColor:"#00c2ff"}]},options:{animation:false}});}
+let frames=0,last=performance.now();function loopFPS(now){frames++;if(now-last>=1000){push(fpsArr,frames);frames=0;last=now;fpsChart.update("none");}requestAnimationFrame(loopFPS);}setInterval(()=>{const t0=performance.now();for(let i=0;i<100000;i++){Math.sqrt(i);}push(cpuArr,(performance.now()-t0).toFixed(2));cpuChart.update("none");},1000);
 
-/* === Hologram Icons === */
-function neonScene(elId,builder){
-  const el=$(elId),w=el.clientWidth,h=el.clientHeight;
-  const scene=new THREE.Scene();
-  const cam=new THREE.PerspectiveCamera(45,w/h,.1,100);cam.position.z=6;
-  const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setSize(w,h);el.innerHTML="";el.appendChild(renderer.domElement);
-  const obj=builder();scene.add(obj);
-  scene.add(new THREE.AmbientLight(0x224455,1.5));const p=new THREE.PointLight(0x00ffc6,2,20);p.position.set(3,3,6);scene.add(p);
-  (function anim(){requestAnimationFrame(anim);obj.rotation.y+=.01;renderer.render(scene,cam);})();
-}
-function buildWebIcon(){const g=new THREE.Group();g.add(new THREE.Mesh(new THREE.TorusKnotGeometry(1,.3,120,16),new THREE.MeshPhongMaterial({color:0x00c2ff,wireframe:true})));return g;}
-function buildDeviceIcon(){const g=new THREE.Group();g.add(new THREE.Mesh(new THREE.BoxGeometry(2.2,4.2,.2),new THREE.MeshPhongMaterial({color:0x00ffc6,wireframe:true})));return g;}
+/* === Neon Icons === */
+function neonScene(elId,builder){const el=$(elId),w=el.clientWidth,h=el.clientHeight;const scene=new THREE.Scene();const cam=new THREE.PerspectiveCamera(45,w/h,.1,100);cam.position.z=6;const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setSize(w,h);el.innerHTML="";el.appendChild(renderer.domElement);const obj=builder();scene.add(obj);scene.add(new THREE.AmbientLight(0x224455,1.5));(function anim(){requestAnimationFrame(anim);obj.rotation.y+=.01;obj.scale.setScalar(1+0.05*Math.sin(Date.now()/400));renderer.render(scene,cam)})();}
+function buildWebIcon(){return new THREE.Mesh(new THREE.TorusKnotGeometry(1,.3,120,16),new THREE.MeshPhongMaterial({color:0x00c2ff,wireframe:true}));}
+function buildDeviceIcon(){return new THREE.Mesh(new THREE.BoxGeometry(2.2,4.2,.2),new THREE.MeshPhongMaterial({color:0x00ffc6,wireframe:true}));}
 
 /* === Tabs === */
 document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));t.classList.add("active");$("tab-charts").style.display=t.dataset.tab==="charts"?"":"none";$("tab-holo").style.display=t.dataset.tab==="holo"?"":"none";});
 
 /* === INIT === */
-function init(){
-  paintDevice();
-  fingerprint();
-  initThreeClock();
-  initGlobe();
-  initSensors();
-  initCharts();
-  neonScene("threeWeb",buildWebIcon);
-  neonScene("threeDevice",buildDeviceIcon);
-  tick();renderCalendar();fetchIP();requestAnimationFrame(loopFPS);
-}
+function init(){initThreeClock();initGlobe();initCharts();neonScene("threeWeb",buildWebIcon);neonScene("threeDevice",buildDeviceIcon);tick();renderCalendar();fetchIP();requestAnimationFrame(loopFPS);}
 window.onload=init;
 </script>
 </body>
-                                                    </html>
+</html>
