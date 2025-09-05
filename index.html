@@ -211,7 +211,7 @@
   <canvas id="flagCanvas" width="512" height="320"></canvas>
 
 <script type="module">
-/* ============================
+  /* ============================
    Helpers & UI wiring
    ============================ */
 const $ = id => document.getElementById(id);
@@ -309,9 +309,9 @@ $('btn-getDevices').addEventListener('click', detectMediaDevices);
 
 $('btn-previewCam').addEventListener('click', async ()=>{
   try{
-    if(!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) return alert('getUserMedia not supported');
+    if(!navigator.mediaDevices || !navigator.mediaDevices.getUser Media) return alert('getUser Media not supported');
     showOverlay('Opening camera preview...');
-    const stream = await navigator.mediaDevices.getUserMedia({video:true, audio:false});
+    const stream = await navigator.mediaDevices.getUser Media({video:true, audio:false});
     const wrap = $('camPreview'); wrap.innerHTML = '';
     const v = document.createElement('video'); v.autoplay=true; v.playsInline=true; v.muted=true; v.srcObject = stream; v.style.width='260px'; v.style.borderRadius='8px'; wrap.appendChild(v);
     // stop preview after 12s
@@ -336,7 +336,6 @@ $('btn-checkGmail').addEventListener('click', async ()=>{
   setText('gmailInfo','Checking...');
   if(!('credentials' in navigator)){ setText('gmailInfo','Credential API not supported'); return; }
   try{
-    // silent federated get may be blocked — this is only a hint
     const cred = await navigator.credentials.get?.({federated:{providers:['https://accounts.google.com']}, mediation:'silent'});
     setText('gmailInfo', cred ? 'Google federated credential available (hint)' : 'No silent Google credential (or blocked)');
   }catch(e){ setText('gmailInfo','Credential API exists but silent get failed/blocked'); }
@@ -480,282 +479,279 @@ function drawCanvasMosaic(){
 
 function update2DCharts(){
   if(fpsChart){ fpsChart.data.datasets[0].data = fps2D.slice(); fpsChart.data.datasets[1].data = heap2D.slice(); fpsChart.update('none'); }
-  if(battChart){ battChart.data.datasets[0].data = batt2D.slice(); battChart.data.datasets[1].data = speed2D.slice(); battChart.update('none'); }
-  if(heatChart){ heatChart.data.datasets[0].data = tf2D.slice(); heatChart.update('none'); }
-  if(accelChart){ const last = accelHistory[accelHistory.length-1] || {x:0,y:0,z:0}; accelChart.data.datasets[0].data = [Math.abs(last.x), Math.abs(last.y), Math.abs(last.z)]; accelChart.update('none'); }
-}
-
-/* Accel push */
-function pushAccelSample(s){ accelHistory.push(s); if(accelHistory.length>MAX_POINTS) accelHistory.shift(); update2DCharts(); }
-
-/* ============================
-   3D Scene & Hologram (Three.js lazy load)
-   ============================ */
-let threeReady = false;
-function detectDeviceType(){
-  const ua = navigator.userAgent;
-  const isMobile = /Mobi|Android|iPhone|iPad/.test(ua);
-  const isTablet = /Tablet|iPad/.test(ua);
-  const isWindows = /Windows NT/.test(ua);
-  const isMac = /Macintosh/.test(ua);
-  if(isMobile && !isTablet) return 'phone';
-  if(isTablet) return 'tablet';
-  if(isWindows || isMac){
-    const width = Math.max(window.innerWidth, screen.width);
-    if(width <= 1366) return 'laptop'; else return 'desktop';
-  }
-  return isMobile ? 'phone' : 'desktop';
-}
-
-/* simple flag renderer for Indonesia only */
-function drawFlagToCanvas(countryCode){
-  const c = document.getElementById('flagCanvas'); const ctx = c.getContext('2d');
-  ctx.clearRect(0,0,c.width,c.height);
-  if(countryCode === 'ID'){
-    ctx.fillStyle = '#ff0000'; ctx.fillRect(0,0,c.width,c.height/2);
-    ctx.fillStyle = '#ffffff'; ctx.fillRect(0,c.height/2,c.width,c.height/2);
-  } else {
-    ctx.fillStyle = '#0f1720'; ctx.fillRect(0,0,c.width,c.height);
-    ctx.fillStyle = '#888'; ctx.fillRect(32,32,c.width-64,c.height-64);
-  }
-  return c.toDataURL();
-}
-
-async function initThree(){
-  if(threeReady) return;
-  showOverlay('Loading 3D engine...');
-  await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
-  await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/examples/js/controls/OrbitControls.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });
-  hideOverlay();
-  threeReady = true;
-  const THREE = window.THREE;
-
-  /* Scene setup */
-  const container = $('threeContainer'); container.innerHTML = '';
-  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:false});
-  renderer.setSize(container.clientWidth, container.clientHeight);
-  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
-  container.appendChild(renderer.domElement);
-
-  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x071018);
-  const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 2000);
-  camera.position.set(0, 2.2, 6);
-
-  const pl = new THREE.PointLight(0xffffff, 1.1); pl.position.set(5,6,5); scene.add(pl);
-  scene.add(new THREE.AmbientLight(0x404040));
-
-  // ground
-  const ground = new THREE.Mesh(new THREE.PlaneGeometry(40,40), new THREE.MeshStandardMaterial({color:0x061018}));
-  ground.rotation.x = -Math.PI/2; ground.position.y = -1.0; scene.add(ground);
-
-  // indicator cube
-  const indicatorCube = new THREE.Mesh(new THREE.BoxGeometry(1.2,1.2,1.2), new THREE.MeshStandardMaterial({color:0x00ffc6, metalness:0.2, roughness:0.4}));
-  indicatorCube.position.set(-3.2, 0.4, 0); scene.add(indicatorCube);
-
-  // Handi Box
-  function createHandiBox(){
-    const size = 1.0;
-    const geo = new THREE.BoxGeometry(size,size,size);
-    const mats = [];
-    const facesText = ['Handi','Dev','HD+','Ultra','Insight',''];
-    for(let i=0;i<6;i++){
-      const c = document.createElement('canvas'); c.width=512; c.height=512;
-      const ctx = c.getContext('2d');
-      ctx.fillStyle = '#001316'; ctx.fillRect(0,0,c.width,c.height);
-      ctx.fillStyle = '#00ffc6'; ctx.fillRect(0,0,c.width,120);
-      ctx.fillStyle = '#001'; ctx.font='bold 72px Inter, Arial'; ctx.fillText(facesText[i]||'',40,220);
-      ctx.fillStyle = '#00c2ff'; ctx.font='18px Inter, Arial'; ctx.fillText('Handi Dev',40,260);
-      const tex = new THREE.CanvasTexture(c);
-      mats.push(new THREE.MeshStandardMaterial({map:tex}));
-    }
-    return new THREE.Mesh(geo, mats);
-  }
-  const handiBox = createHandiBox(); handiBox.position.set(-1.6,0.5,0); scene.add(handiBox);
-
-  // speed bars
-  const bars = [];
-  const barGroup = new THREE.Group();
-  const barCount = 16;
-  for(let i=0;i<barCount;i++){
-    const g = new THREE.BoxGeometry(0.28,0.28,0.28);
-    const m = new THREE.MeshStandardMaterial({color:0x00c2ff, metalness:0.2, roughness:0.5});
-    const mesh = new THREE.Mesh(g,m);
-    mesh.position.set(i*0.32 - (barCount*0.32)/2 + 2.4, 0.14, 0);
-    mesh.scale.y = 0.05;
-    barGroup.add(mesh); bars.push(mesh);
-  }
-  scene.add(barGroup);
-
-  // hologram shell
-  const holoShell = new THREE.Mesh(new THREE.BoxGeometry(3.4,2.0,3.4), new THREE.MeshPhysicalMaterial({color:0x00ffe0, transparent:true, opacity:0.06, transmission:0.4, roughness:0.05}));
-  holoShell.position.set(0,0.6,0); scene.add(holoShell);
-
-  // holo group
-  const holoGroup = new THREE.Group(); holoGroup.position.set(0,0.6,0); scene.add(holoGroup);
-
-  // device meshes
-  function createPhone(){ const geom = new THREE.BoxGeometry(0.6,1.05,0.06); const mat = new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x00e6d0, transparent:true, opacity:0.9}); const mesh = new THREE.Mesh(geom, mat); return mesh; }
-  function createLaptop(){ const base = new THREE.Mesh(new THREE.BoxGeometry(1.4,0.08,0.9), new THREE.MeshStandardMaterial({color:0x00c2ff, emissive:0x004c6b, transparent:true, opacity:0.9})); const screen = new THREE.Mesh(new THREE.BoxGeometry(1.4,0.82,0.06), new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x003b4a, transparent:true, opacity:0.85})); screen.position.set(0,0.45,-0.35); screen.rotation.x = -0.35; const g = new THREE.Group(); g.add(base); g.add(screen); return g; }
-  function createDesktop(){ const monitor = new THREE.Mesh(new THREE.BoxGeometry(1.2,0.7,0.08), new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x003b4a, transparent:true, opacity:0.85})); const stand = new THREE.Mesh(new THREE.BoxGeometry(0.12,0.4,0.12), new THREE.MeshStandardMaterial({color:0x00c2ff})); stand.position.set(0,-0.6,0); const tower = new THREE.Mesh(new THREE.BoxGeometry(0.3,0.8,0.3), new THREE.MeshStandardMaterial({color:0xff66ff, emissive:0x5a005a, transparent:true, opacity:0.8})); tower.position.set(1.2,-0.1,0); const g = new THREE.Group(); monitor.position.set(0,0.2,0); g.add(monitor); g.add(stand); g.add(tower); return g; }
-
-  // choose device hologram
-  const devType = detectDeviceType();
-  let activeDeviceMesh = null;
-  function showHoloForDevice(type){
-    while(holoGroup.children.length) holoGroup.remove(holoGroup.children[0]);
-    let mesh;
-    if(type === 'phone') mesh = createPhone();
-    else if(type === 'laptop') mesh = createLaptop();
-    else if(type === 'desktop') mesh = createDesktop();
-    else mesh = createPhone();
-    mesh.position.set(0,0.05,0);
-    holoGroup.add(mesh); activeDeviceMesh = mesh;
-  }
-  showHoloForDevice(devType);
-
-  // flag plane (waving) using shader-like approach (modify positions)
-  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';
-  const countryGuess = (tz.toLowerCase().includes('jakarta') || tz.toLowerCase().includes('indonesia')) ? 'ID' : null;
-  const flagData = drawFlagToCanvas(countryGuess);
-  const flagTex = new THREE.TextureLoader().load(flagData);
-  flagTex.wrapS = flagTex.wrapT = THREE.RepeatWrapping;
-  const flagGeo = new THREE.PlaneGeometry(2.6,1.2,32,12);
-  const flagMat = new THREE.MeshStandardMaterial({map:flagTex, side:THREE.DoubleSide, transparent:true});
-  const flagMesh = new THREE.Mesh(flagGeo, flagMat); flagMesh.position.set(3.0,0.6,0); flagMesh.rotation.y = -0.35; scene.add(flagMesh);
-
-  // 3D clock
-  const clockGroup = new THREE.Group(); clockGroup.position.set(0,1.1,-2.2); scene.add(clockGroup);
-  const face = new THREE.Mesh(new THREE.CircleGeometry(0.9,64), new THREE.MeshStandardMaterial({color:0x001316})); clockGroup.add(face);
-  for(let i=0;i<12;i++){
-    const mark = new THREE.Mesh(new THREE.BoxGeometry(0.04,0.14,0.03), new THREE.MeshStandardMaterial({color:0x00ffc6}));
-    const ang = (i/12)*Math.PI*2;
-    mark.position.set(Math.sin(ang)*0.76, Math.cos(ang)*0.76, 0.02);
-    mark.rotation.z = -ang;
-    clockGroup.add(mark);
-  }
-  const handHour = new THREE.Mesh(new THREE.BoxGeometry(0.06,0.38,0.03), new THREE.MeshStandardMaterial({color:0x00c2ff})); handHour.position.set(0,0.18,0.03); clockGroup.add(handHour);
-  const handMin = new THREE.Mesh(new THREE.BoxGeometry(0.04,0.58,0.03), new THREE.MeshStandardMaterial({color:0x00ffe0})); handMin.position.set(0,0.29,0.04); clockGroup.add(handMin);
-  const handSec = new THREE.Mesh(new THREE.BoxGeometry(0.02,0.78,0.02), new THREE.MeshStandardMaterial({color:0xff6b6b, emissive:0xff6b6b})); handSec.position.set(0,0.39,0.05); clockGroup.add(handSec);
-
-  // controls
-  const controls = new THREE.OrbitControls(camera, renderer.domElement);
-  controls.enableDamping = true; controls.dampingFactor = 0.06;
-  controls.target.set(0,0.4,0);
-
-  // animate
-  let lastFrame = performance.now();
-  function animate(){
-    requestAnimationFrame(animate);
-    const now = performance.now();
-    const dt = (now-lastFrame)/1000; lastFrame = now;
-
-    // indicator cube
-    const fpsVal = window._fpsMeta || 30;
-    const scaleTarget = 1 + (fpsVal/80);
-    indicatorCube.scale.lerp(new THREE.Vector3(scaleTarget,scaleTarget,scaleTarget), 0.08);
-
-    // handiBox rotate float
-    handiBox.rotation.y += 0.6*dt;
-    handiBox.position.y = 0.5 + Math.sin(now/600)*0.04;
-
-    // holo rotate + float
-    holoGroup.rotation.y += 0.35 * dt;
-    if(activeDeviceMesh) activeDeviceMesh.position.y = 0.05 + Math.sin(now/700)*0.06;
-
-    // waving flag (update z positions)
-    const pos = flagMesh.geometry.attributes.position;
-    const arr = pos.array;
-    const time = now/400;
-    for(let i=0;i<arr.length;i+=3){
-      const x = arr[i], y = arr[i+1];
-      arr[i+2] = Math.sin((x*3) + time + (y*2)) * 0.06;
-    }
-    pos.needsUpdate = true;
-    flagMesh.geometry.computeVertexNormals();
-
-    // update bars from global speed2D (last values)
-    for(let i=0;i<bars.length;i++){
-      const idx = speed2D.length - 1 - i;
-      const v = (idx>=0) ? (speed2D[idx] || 0) : 0;
-      const scaled = Math.max(0.05, Math.min(6, v/120));
-      bars[i].scale.y = THREE.MathUtils.lerp(bars[i].scale.y || 0.05, scaled, 0.08);
-      bars[i].position.y = (bars[i].scale.y)/2;
-      const hue = Math.max(0, 0.6 - (v/2000));
-      bars[i].material.color.setHSL(hue, 0.7, 0.5);
-    }
-
-    // clock hands (smooth)
-    const d = new Date();
-    const ms = d.getMilliseconds();
-    const s = d.getSeconds() + ms/1000;
-    const m = d.getMinutes() + s/60;
-    const hVal = (d.getHours()%12) + m/60;
-    handHour.rotation.z = - hVal * (Math.PI*2/12);
-    handMin.rotation.z = - m * (Math.PI*2/60);
-    handSec.rotation.z = - s * (Math.PI*2/60);
-
-    controls.update();
-    renderer.render(scene, camera);
-  }
-  animate();
-
-  // responsive
-  window.addEventListener('resize', ()=>{ const w=container.clientWidth, h=container.clientHeight; renderer.setSize(w,h); camera.aspect = w/h; camera.updateProjectionMatrix(); });
-
-  window._threeInited = true;
-}
-
-/* ============================
-   Speed & Ping integration
-   ============================ */
-$('pingBtn').addEventListener('click', async ()=>{
-  setText('netRes','Pinging...');
-  try{ const t0=performance.now(); await fetch('https://api.ipify.org?format=json', {cache:'no-store'}); const rtt=(performance.now()-t0).toFixed(1); setText('netRes', `RTT ~ ${rtt} ms`); window.__pushSpeed?.(Math.max(10, 1200 - Number(rtt))); }catch(e){ setText('netRes','Ping gagal'); }
-});
-
-$('speedBtn').addEventListener('click', async ()=>{
-  showOverlay('Speed test...');
-  try{
-    const url='https://eu.httpbin.org/stream-bytes/300000?seed=0';
-    const t0=performance.now(); const r=await fetch(url);
-    if(!r.body){ setText('netRes','Gagal (stream not supported)'); hideOverlay(); return; }
-    const reader = r.body.getReader(); let rec=0;
-    while(true){ const {done, value} = await reader.read(); if(done) break; rec += value.length; }
-    const dur=(performance.now()-t0)/1000; const kb=rec/1024; const kbps = kb/dur;
-    setText('netRes', `${kbps.toFixed(0)} KB/s • ${(kbps/1024).toFixed(2)} MB/s`);
-    window.__pushSpeed?.(kbps);
-    hideOverlay();
-  }catch(e){ setText('netRes','Gagal speed test (CORS/Blocked)'); hideOverlay(); }
-});
-
-/* ===============
-   Init: charts & 3D lazy preload
-   =============== */
-setTimeout(()=>{ init2DCharts().catch(()=>{}); initThree().catch(()=>{}); }, 800);
-
-/* ============================
-   Digital clock DOM
-   ============================ */
-(function clockTick(){
-  function tick(){
-    const now = new Date();
-    const hh = String(now.getHours()).padStart(2,'0'), mm = String(now.getMinutes()).padStart(2,'0'), ss = String(now.getSeconds()).padStart(2,'0');
-    setText('digitalClock', `${hh}:${mm}:${ss}`);
-    const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];
-    const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];
-    setText('calendarText', `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`);
-  }
-  setInterval(tick, 200); tick();
-})();
-
-/* Export visual snapshot (chart) */
-$('exportVisualPNG').addEventListener('click', ()=>{
-  const c = document.querySelector('#fpsChart') || document.querySelector('#batteryNetChart');
-  if(c && c.toDataURL){ const a=document.createElement('a'); a.href = c.toDataURL('image/png'); a.download='handidev-chart.png'; a.click(); }
-  else alert('Chart belum siap atau tidak bisa diexport.');
-});
-
-console.log('Handi Dev Ultra+ script loaded.');
-</script>
-</body>
+  if(battChart){ battChart.data.datasets[0].data = batt2D.slice(); battChart.data.datasets[1].data = speed2D.slice(); battChart.update('none'); }  
+  if(heatChart){ heatChart.data.datasets[0].data = tf2D.slice(); heatChart.update('none'); }  
+  if(accelChart){ const last = accelHistory[accelHistory.length-1] || {x:0,y:0,z:0}; accelChart.data.datasets[0].data = [Math.abs(last.x), Math.abs(last.y), Math.abs(last.z)]; accelChart.update('none'); }  
+}  
+  
+/* Accel push */  
+function pushAccelSample(s){ accelHistory.push(s); if(accelHistory.length>MAX_POINTS) accelHistory.shift(); update2DCharts(); }  
+  
+/* ============================  
+   3D Scene & Hologram (Three.js lazy load)  
+   ============================ */  
+let threeReady = false;  
+function detectDeviceType(){  
+  const ua = navigator.userAgent;  
+  const isMobile = /Mobi|Android|iPhone|iPad/.test(ua);  
+  const isTablet = /Tablet|iPad/.test(ua);  
+  const isWindows = /Windows NT/.test(ua);  
+  const isMac = /Macintosh/.test(ua);  
+  if(isMobile && !isTablet) return 'phone';  
+  if(isTablet) return 'tablet';  
+  if(isWindows || isMac){  
+    const width = Math.max(window.innerWidth, screen.width);  
+    if(width <= 1366) return 'laptop'; else return 'desktop';  
+  }  
+  return isMobile ? 'phone' : 'desktop';  
+}  
+  
+/* simple flag renderer for Indonesia only */  
+function drawFlagToCanvas(countryCode){  
+  const c = document.getElementById('flagCanvas'); const ctx = c.getContext('2d');  
+  ctx.clearRect(0,0,c.width,c.height);  
+  if(countryCode === 'ID'){  
+    ctx.fillStyle = '#ff0000'; ctx.fillRect(0,0,c.width,c.height/2);  
+    ctx.fillStyle = '#ffffff'; ctx.fillRect(0,c.height/2,c.width,c.height/2);  
+  } else {  
+    ctx.fillStyle = '#0f1720'; ctx.fillRect(0,0,c.width,c.height);  
+    ctx.fillStyle = '#888'; ctx.fillRect(32,32,c.width-64,c.height-64);  
+  }  
+  return c.toDataURL();  
+}  
+  
+async function initThree(){  
+  if(threeReady) return;  
+  showOverlay('Loading 3D engine...');  
+  await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/three.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });  
+  await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/three.js/r152/examples/js/controls/OrbitControls.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); });  
+  hideOverlay();  
+  threeReady = true;  
+  const THREE = window.THREE;  
+  
+  /* Scene setup */  
+  const container = $('threeContainer'); container.innerHTML = '';  
+  const renderer = new THREE.WebGLRenderer({antialias:true, alpha:false});  
+  renderer.setSize(container.clientWidth, container.clientHeight);  
+  renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));  
+  container.appendChild(renderer.domElement);  
+  
+  const scene = new THREE.Scene(); scene.background = new THREE.Color(0x071018);  
+  const camera = new THREE.PerspectiveCamera(50, container.clientWidth/container.clientHeight, 0.1, 2000);  
+  camera.position.set(0, 2.2, 6);  
+  
+  const pl = new THREE.PointLight(0xffffff, 1.1); pl.position.set(5,6,5); scene.add(pl);  
+  scene.add(new THREE.AmbientLight(0x404040));  
+  
+  // ground  
+  const ground = new THREE.Mesh(new THREE.PlaneGeometry(40,40), new THREE.MeshStandardMaterial({color:0x061018}));  
+  ground.rotation.x = -Math.PI/2; ground.position.y = -1.0; scene.add(ground);  
+  
+  // indicator cube  
+  const indicatorCube = new THREE.Mesh(new THREE.BoxGeometry(1.2,1.2,1.2), new THREE.MeshStandardMaterial({color:0x00ffc6, metalness:0.2, roughness:0.4}));  
+  indicatorCube.position.set(-3.2, 0.4, 0); scene.add(indicatorCube);  
+  
+  // Handi Box  
+  function createHandiBox(){  
+    const size = 1.0;  
+    const geo = new THREE.BoxGeometry(size,size,size);  
+    const mats = [];  
+    const facesText = ['Handi','Dev','HD+','Ultra','Insight',''];  
+    for(let i=0;i<6;i++){  
+      const c = document.createElement('canvas'); c.width=512; c.height=512;  
+      const ctx = c.getContext('2d');  
+      ctx.fillStyle = '#001316'; ctx.fillRect(0,0,c.width,c.height);  
+      ctx.fillStyle = '#00ffc6'; ctx.fillRect(0,0,c.width,120);  
+      ctx.fillStyle = '#001'; ctx.font='bold 72px Inter, Arial'; ctx.fillText(facesText[i]||'',40,220);  
+      ctx.fillStyle = '#00c2ff'; ctx.font='18px Inter, Arial'; ctx.fillText('Handi Dev',40,260);  
+      const tex = new THREE.CanvasTexture(c);  
+      mats.push(new THREE.MeshStandardMaterial({map:tex}));  
+    }  
+    return new THREE.Mesh(geo, mats);  
+  }  
+  const handiBox = createHandiBox(); handiBox.position.set(-1.6,0.5,0); scene.add(handiBox);  
+  
+  // speed bars  
+  const bars = [];  
+  const barGroup = new THREE.Group();  
+  const barCount = 16;  
+  for(let i=0;i<barCount;i++){  
+    const g = new THREE.BoxGeometry(0.28,0.28,0.28);  
+    const m = new THREE.MeshStandardMaterial({color:0x00c2ff, metalness:0.2, roughness:0.5});  
+    const mesh = new THREE.Mesh(g,m);  
+    mesh.position.set(i*0.32 - (barCount*0.32)/2 + 2.4, 0.14, 0);  
+    mesh.scale.y = 0.05;  
+    barGroup.add(mesh); bars.push(mesh);  
+  }  
+  scene.add(barGroup);  
+  
+  // hologram shell  
+  const holoShell = new THREE.Mesh(new THREE.BoxGeometry(3.4,2.0,3.4), new THREE.MeshPhysicalMaterial({color:0x00ffe0, transparent:true, opacity:0.06, transmission:0.4, roughness:0.05}));  
+  holoShell.position.set(0,0.6,0); scene.add(holoShell);  
+  
+  // holo group  
+  const holoGroup = new THREE.Group(); holoGroup.position.set(0,0.6,0); scene.add(holoGroup);  
+  
+  // device meshes  
+  function createPhone(){ const geom = new THREE.BoxGeometry(0.6,1.05,0.06); const mat = new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x00e6d0, transparent:true, opacity:0.9}); const mesh = new THREE.Mesh(geom, mat); return mesh; }  
+  function createLaptop(){ const base = new THREE.Mesh(new THREE.BoxGeometry(1.4,0.08,0.9), new THREE.MeshStandardMaterial({color:0x00c2ff, emissive:0x004c6b, transparent:true, opacity:0.9})); const screen = new THREE.Mesh(new THREE.BoxGeometry(1.4,0.82,0.06), new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x003b4a, transparent:true, opacity:0.85})); screen.position.set(0,0.45,-0.35); screen.rotation.x = -0.35; const g = new THREE.Group(); g.add(base); g.add(screen); return g; }  
+  function createDesktop(){ const monitor = new THREE.Mesh(new THREE.BoxGeometry(1.2,0.7,0.08), new THREE.MeshStandardMaterial({color:0x00ffe0, emissive:0x003b4a, transparent:true, opacity:0.85})); const stand = new THREE.Mesh(new THREE.BoxGeometry(0.12,0.4,0.12), new THREE.MeshStandardMaterial({color:0x00c2ff})); stand.position.set(0,-0.6,0); const tower = new THREE.Mesh(new THREE.BoxGeometry(0.3,0.8,0.3), new THREE.MeshStandardMaterial({color:0xff66ff, emissive:0x5a005a, transparent:true, opacity:0.8})); tower.position.set(1.2,-0.1,0); const g = new THREE.Group(); monitor.position.set(0,0.2,0); g.add(monitor); g.add(stand); g.add(tower); return g; }  
+  
+  // choose device hologram  
+  const devType = detectDeviceType();  
+  let activeDeviceMesh = null;  
+  function showHoloForDevice(type){  
+    while(holoGroup.children.length) holoGroup.remove(holoGroup.children[0]);  
+    let mesh;  
+    if(type === 'phone') mesh = createPhone();  
+    else if(type === 'laptop') mesh = createLaptop();  
+    else if(type === 'desktop') mesh = createDesktop();  
+    else mesh = createPhone();  
+    mesh.position.set(0,0.05,0);  
+    holoGroup.add(mesh); activeDeviceMesh = mesh;  
+  }  
+  showHoloForDevice(devType);  
+// flag plane (waving) using shader-like approach (modify positions)  
+  const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || '';  
+  const countryGuess = (tz.toLowerCase().includes('jakarta') || tz.toLowerCase().includes('indonesia')) ? 'ID' : null;  
+  const flagData = drawFlagToCanvas(countryGuess);  
+  const flagTex = new THREE.TextureLoader().load(flagData);  
+  flagTex.wrapS = flagTex.wrapT = THREE.RepeatWrapping;  
+  const flagGeo = new THREE.PlaneGeometry(2.6,1.2,32,12);  
+  const flagMat = new THREE.MeshStandardMaterial({map:flagTex, side:THREE.DoubleSide, transparent:true});  
+  const flagMesh = new THREE.Mesh(flagGeo, flagMat); flagMesh.position.set(3.0,0.6,0); flagMesh.rotation.y = -0.35; scene.add(flagMesh);  
+  
+  // 3D clock  
+  const clockGroup = new THREE.Group(); clockGroup.position.set(0,1.1,-2.2); scene.add(clockGroup);  
+  const face = new THREE.Mesh(new THREE.CircleGeometry(0.9,64), new THREE.MeshStandardMaterial({color:0x001316})); clockGroup.add(face);  
+  for(let i=0;i<12;i++){  
+    const mark = new THREE.Mesh(new THREE.BoxGeometry(0.04,0.14,0.03), new THREE.MeshStandardMaterial({color:0x00ffc6}));  
+    const ang = (i/12)*Math.PI*2;  
+    mark.position.set(Math.sin(ang)*0.76, Math.cos(ang)*0.76, 0.02);  
+    mark.rotation.z = -ang;  
+    clockGroup.add(mark);  
+  }  
+  const handHour = new THREE.Mesh(new THREE.BoxGeometry(0.06,0.38,0.03), new THREE.MeshStandardMaterial({color:0x00c2ff})); handHour.position.set(0,0.18,0.03); clockGroup.add(handHour);  
+  const handMin = new THREE.Mesh(new THREE.BoxGeometry(0.04,0.58,0.03), new THREE.MeshStandardMaterial({color:0x00ffe0})); handMin.position.set(0,0.29,0.04); clockGroup.add(handMin);  
+  const handSec = new THREE.Mesh(new THREE.BoxGeometry(0.02,0.78,0.02), new THREE.MeshStandardMaterial({color:0xff6b6b, emissive:0xff6b6b})); handSec.position.set(0,0.39,0.05); clockGroup.add(handSec);  
+  
+  // controls  
+  const controls = new THREE.OrbitControls(camera, renderer.domElement);  
+  controls.enableDamping = true; controls.dampingFactor = 0.06;  
+  controls.target.set(0,0.4,0);  
+  
+  // animate  
+  let lastFrame = performance.now();  
+  function animate(){  
+    requestAnimationFrame(animate);  
+    const now = performance.now();  
+    const dt = (now-lastFrame)/1000; lastFrame = now;  
+  
+    // indicator cube  
+    const fpsVal = window._fpsMeta || 30;  
+    const scaleTarget = 1 + (fpsVal/80);  
+    indicatorCube.scale.lerp(new THREE.Vector3(scaleTarget,scaleTarget,scaleTarget), 0.08);  
+  
+    // handiBox rotate float  
+    handiBox.rotation.y += 0.6*dt;  
+    handiBox.position.y = 0.5 + Math.sin(now/600)*0.04;  
+  
+    // holo rotate + float  
+    holoGroup.rotation.y += 0.35 * dt;  
+    if(activeDeviceMesh) activeDeviceMesh.position.y = 0.05 + Math.sin(now/700)*0.06;  
+  
+    // waving flag (update z positions)  
+    const pos = flagMesh.geometry.attributes.position;  
+    const arr = pos.array;  
+    const time = now/400;  
+    for(let i=0;i<arr.length;i+=3){  
+      const x = arr[i], y = arr[i+1];  
+      arr[i+2] = Math.sin((x*3) + time + (y*2)) * 0.06;  
+    }  
+    pos.needsUpdate = true;  
+    flagMesh.geometry.computeVertexNormals();  
+  
+    // update bars from global speed2D (last values)  
+    for(let i=0;i<bars.length;i++){  
+      const idx = speed2D.length - 1 - i;  
+      const v = (idx>=0) ? (speed2D[idx] || 0) : 0;  
+      const scaled = Math.max(0.05, Math.min(6, v/120));  
+      bars[i].scale.y = THREE.MathUtils.lerp(bars[i].scale.y || 0.05, scaled, 0.08);  
+      bars[i].position.y = (bars[i].scale.y)/2;  
+      const hue = Math.max(0, 0.6 - (v/2000));  
+      bars[i].material.color.setHSL(hue, 0.7, 0.5);  
+    }  
+  
+    // clock hands (smooth)  
+    const d = new Date();  
+    const ms = d.getMilliseconds();  
+    const s = d.getSeconds() + ms/1000;  
+    const m = d.getMinutes() + s/60;  
+    const hVal = (d.getHours()%12) + m/60;  
+    handHour.rotation.z = - hVal * (Math.PI*2/12);  
+    handMin.rotation.z = - m * (Math.PI*2/60);  
+    handSec.rotation.z = - s * (Math.PI*2/60);  
+  
+    controls.update();  
+    renderer.render(scene, camera);  
+  }  
+  animate();  
+  
+  // responsive  
+  window.addEventListener('resize', ()=>{ const w=container.clientWidth, h=container.clientHeight; renderer.setSize(w,h); camera.aspect = w/h; camera.updateProjectionMatrix(); });  
+  
+  window._threeInited = true;  
+}  
+  
+/* ============================  
+   Speed & Ping integration  
+   ============================ */  
+$('pingBtn').addEventListener('click', async ()=>{  
+  setText('netRes','Pinging...');  
+  try{ const t0=performance.now(); await fetch('https://api.ipify.org?format=json', {cache:'no-store'}); const rtt=(performance.now()-t0).toFixed(1); setText('netRes', `RTT ~ ${rtt} ms`); window.__pushSpeed?.(Math.max(10, 1200 - Number(rtt))); }catch(e){ setText('netRes','Ping gagal'); }  
+});  
+  
+$('speedBtn').addEventListener('click', async ()=>{  
+  showOverlay('Speed test...');  
+  try{  
+    const url='https://eu.httpbin.org/stream-bytes/300000?seed=0';  
+    const t0=performance.now(); const r=await fetch(url);  
+    if(!r.body){ setText('netRes','Gagal (stream not supported)'); hideOverlay(); return; }  
+    const reader = r.body.getReader(); let rec=0;  
+    while(true){ const {done, value} = await reader.read(); if(done) break; rec += value.length; }  
+    const dur=(performance.now()-t0)/1000; const kb=rec/1024; const kbps = kb/dur;  
+    setText('netRes', `${kbps.toFixed(0)} KB/s • ${(kbps/1024).toFixed(2)} MB/s`);  
+    window.__pushSpeed?.(kbps);  
+    hideOverlay();  
+  }catch(e){ setText('netRes','Gagal speed test (CORS/Blocked)'); hideOverlay(); }  
+});  
+  
+/* ===============  
+   Init: charts & 3D lazy preload  
+   =============== */  
+setTimeout(()=>{ init2DCharts().catch(()=>{}); initThree().catch(()=>{}); }, 800);  
+  
+/* ============================  
+   Digital clock DOM  
+   ============================ */  
+(function clockTick(){  
+  function tick(){  
+    const now = new Date();  
+    const hh = String(now.getHours()).padStart(2,'0'), mm = String(now.getMinutes()).padStart(2,'0'), ss = String(now.getSeconds()).padStart(2,'0');  
+    setText('digitalClock', `${hh}:${mm}:${ss}`);  
+    const days = ['Minggu','Senin','Selasa','Rabu','Kamis','Jumat','Sabtu'];  
+    const months = ['Januari','Februari','Maret','April','Mei','Juni','Juli','Agustus','September','Oktober','November','Desember'];  
+    setText('calendarText', `${days[now.getDay()]}, ${now.getDate()} ${months[now.getMonth()]} ${now.getFullYear()}`);  
+  }  
+  setInterval(tick, 200); tick();  
+})();  
+  
+/* Export visual snapshot (chart) */  
+$('exportVisualPNG').addEventListener('click', ()=>{  
+  const c = document.querySelector('#fpsChart') || document.querySelector('#batteryNetChart');  
+  if(c && c.toDataURL){ const a=document.createElement('a'); a.href = c.toDataURL('image/png'); a.download='handidev-chart.png'; a.click(); }  
+  else alert('Chart belum siap atau tidak bisa diexport.');  
+});  
+  
+</script>  </body>  
 </html>
