@@ -4,20 +4,20 @@
 <head>
   <meta charset="utf-8" />
   <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>Handi Dev • Device Insight — Ultra</title>
+  <title>Handi Dev • Device Insight — Ultimate</title>
   <meta name="theme-color" content="#071018" />
   <link rel="manifest" href="/manifest.json" />
   <style>
     :root{--bg:#071018;--card:#0f1720;--text:#dff8f6;--muted:#9fbfc8;--accent:#00ffc6;--accent-2:#00c2ff;--glass:rgba(255,255,255,0.03);--radius:14px}
     [data-theme='light']{--bg:#f6fbff;--card:#fff;--text:#032027;--muted:#4b6b74;--glass:rgba(0,0,0,0.03)}
     *{box-sizing:border-box}html,body{height:100%;margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Arial,sans-serif;background:linear-gradient(180deg,var(--bg),#071018);color:var(--text)}
-    .wrap{max-width:1200px;margin:18px auto;padding:18px}
+    .wrap{max-width:1250px;margin:18px auto;padding:18px}
     header{display:flex;align-items:center;justify-content:space-between;gap:12px}
     .brand{display:flex;gap:12px;align-items:center}
     .logo{width:56px;height:56px;border-radius:12px;background:linear-gradient(135deg,var(--accent),var(--accent-2));display:flex;align-items:center;justify-content:center;font-weight:800;color:#001}
     h1{margin:0;font-size:20px}
     .subtitle{color:var(--muted);font-size:13px}
-    .controls{display:flex;gap:10px;align-items:center}
+    .controls{display:flex;gap:10px;align-items:center;flex-wrap:wrap}
     .btn{background:linear-gradient(90deg,var(--accent-2),var(--accent));border:none;padding:8px 12px;border-radius:10px;color:#001;font-weight:700;cursor:pointer}
     .toggle{background:var(--card);border:1px solid rgba(255,255,255,0.04);padding:8px;border-radius:12px;cursor:pointer}
     .badges{display:grid;grid-template-columns:repeat(auto-fit,minmax(180px,1fr));gap:12px;margin-top:18px}
@@ -37,7 +37,6 @@
     .cols{display:grid;grid-template-columns:1fr 1fr;gap:12px}
     @media (max-width:920px){.cols{grid-template-columns:1fr}}
   </style>
-  <!-- external libs (Chart.js, jsPDF, QR) loaded on demand -->
 </head>
 <body>
   <div class="wrap" id="app">
@@ -45,16 +44,16 @@
       <div class="brand">
         <div class="logo">HD</div>
         <div>
-          <h1>Handi Dev • Device Insight — Ultra</h1>
-          <div class="subtitle">100x lebih canggih — diagnostics, fingerprint, media, network, AI heuristics</div>
+          <h1>Handi Dev • Device Insight — Ultimate</h1>
+          <div class="subtitle">Semua info: device, network, media, sensor, security, export & insights</div>
         </div>
       </div>
       <div class="controls">
         <button class="toggle btn" id="themeBtn">Theme</button>
         <button class="toggle btn" id="copyAll">Copy</button>
         <button class="toggle btn" id="exportJSON">JSON</button>
-        <button class="toggle btn" id="exportPDF">PDF</button>
-        <button class="toggle btn" id="signinGoogle">Sign in Google</button>
+        <button class="toggle btn" id="exportCSV">CSV</button>
+        <button class="toggle btn" id="exportXLSX">XLSX</button>
       </div>
     </header><div class="badges">
   <div class="badge"><div class="k">Today</div><div class="v" id="today">—</div></div>
@@ -64,6 +63,7 @@
 </div>
 
 <div class="grid">
+  <!-- Basic info -->
   <div class="card">
     <h3>Device & Browser</h3>
     <div class="v" id="device">—</div>
@@ -74,79 +74,124 @@
   </div>
 
   <div class="card">
-    <h3>GPU & WebGL</h3>
-    <div class="v" id="gpu">—</div>
-    <div class="small" id="webglInfo">WebGL: —</div>
-    <div style="margin-top:8px" class="row"><button class="btn" id="gpuBench">GPU Bench</button><div id="gpuRes" class="small">—</div></div>
+    <h3>Battery & Power</h3>
+    <div class="v" id="battery-level">—</div>
+    <div class="small" id="battery-status">—</div>
   </div>
 
   <div class="card">
     <h3>Network & IP</h3>
     <div class="v mono" id="ip">—</div>
-    <div class="small">ISP: <span id="isp">—</span> • ASN: <span id="asn">—</span></div>
-    <div class="row" style="margin-top:8px"><button class="btn" id="btn-ip">Refresh IP</button><button class="btn" id="localIP">Local IP</button><button class="btn" id="checkVPN">VPN?</button></div>
+    <div class="small">Status: <span id="online">—</span> • Downlink: <span id="downlink">—</span> Mbps</div>
+    <div class="row" style="margin-top:8px"><button class="btn" id="btn-ip">Refresh IP</button><button class="btn" id="pingBtn">Ping</button><button class="btn" id="speedBtn">Speed</button></div>
     <div class="small" id="netRes">—</div>
-  </div>
-
-  <div class="card">
-    <h3>Media & Camera</h3>
-    <div class="v" id="mediaDevices">—</div>
-    <div class="small">Default cam resolution: <span id="camRes">—</span></div>
-    <div style="margin-top:8px" class="row"><button class="btn" id="scanCam">Detect Cameras</button><button class="btn" id="camTest">Test Camera</button><button class="btn" id="screenshotBtn">Screenshot</button></div>
-    <video id="preview" autoplay playsinline style="width:100%;margin-top:8px;border-radius:8px;display:none"></video>
-  </div>
-
-  <div class="card">
-    <h3>Local IP & WebRTC</h3>
-    <div class="v mono" id="localIPs">—</div>
-    <div class="small">This uses WebRTC (best-effort)</div>
-  </div>
-
-  <div class="card">
-    <h3>Sensors & Orientation</h3>
-    <div class="v" id="sensorVal">—</div>
-    <div class="small">Light / Motion / Orientation jika tersedia</div>
-  </div>
-
-  <div class="card">
-    <h3>Fingerprint</h3>
-    <div class="v mono" id="fingerprint">—</div>
-    <div class="small">Hash dari UA, WebGL, fonts, timezone, device</div>
-  </div>
-
-  <div class="card">
-    <h3>AdBlock & Incognito</h3>
-    <div class="v" id="adblock">—</div>
-    <div class="small" id="incognito">Incognito: —</div>
   </div>
 
   <div class="card">
     <h3>Performance</h3>
     <div class="v" id="sys">—</div>
     <div class="small">Cores: <span id="cores">—</span> • RAM: <span id="ram">—</span> GB • JS Heap: <span id="heap">—</span></div>
-    <div style="margin-top:8px" class="row"><button class="btn" id="benchBtn">CPU Bench</button><div id="benchRes" class="small">—</div></div>
+    <div style="margin-top:8px" class="row"><button class="btn" id="benchBtn">Run Benchmark</button><div id="benchRes" class="small">—</div></div>
+  </div>
+
+  <!-- Sensors -->
+  <div class="card">
+    <h3>Sensors</h3>
+    <div class="v" id="sensorVal">—</div>
+    <div class="small">Accelerometer / Orientation jika tersedia</div>
+  </div>
+
+  <!-- Security -->
+  <div class="card">
+    <h3>Security</h3>
+    <div class="v" id="incognito">—</div>
+    <div class="small" id="secureNotes">Cookies/localStorage & proxy check</div>
+  </div>
+
+  <!-- Viewport -->
+  <div class="card">
+    <h3>Viewport & FPS</h3>
+    <div class="v" id="vp">—</div>
+    <div class="small">DPR: <span id="dpr">—</span> • FPS: <span id="fps">—</span></div>
+  </div>
+
+  <!-- AI -->
+  <div class="card">
+    <h3>AI Insight</h3>
+    <div class="v" id="aiInsight">—</div>
+    <div class="small">Rekomendasi otomatis berdasarkan data</div>
+  </div>
+
+  <!-- New detection features -->
+  <div class="card">
+    <h3>GPU & WebGL</h3>
+    <div class="v" id="gpu">—</div>
+    <div class="small" id="webglInfo">WebGL: —</div>
   </div>
 
   <div class="card">
-    <h3>AI Insight & Recommendations</h3>
-    <div class="v" id="aiInsight">—</div>
-    <div class="small">Rekomendasi otomatis berdasarkan data</div>
+    <h3>Languages & Locale</h3>
+    <div class="v" id="lang">—</div>
+    <div class="small">All: <span id="langs">—</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Cookies & Privacy</h3>
+    <div class="v" id="cookies">—</div>
+    <div class="small">Do Not Track: <span id="dnt">—</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Storage & Quota</h3>
+    <div class="v" id="storage">—</div>
+    <div class="small">Quota: <span id="quota">—</span> • Used: <span id="usage">—</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Permissions</h3>
+    <div class="v" id="permClipboard">Clipboard: —</div>
+    <div class="small">Camera: <span id="permCamera">—</span> • Microphone: <span id="permMic">—</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Screen & Touch</h3>
+    <div class="v" id="screen">—</div>
+    <div class="small">Color depth: <span id="colorDepth">—</span> • Touch points: <span id="touch">—</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Geolocation</h3>
+    <div class="v mono" id="geo">—</div>
+    <div class="row" style="margin-top:8px"><button class="btn" id="btn-geo">Get Location</button></div>
+    <div class="small">Izin lokasi diperlukan untuk akurasi.</div>
+  </div>
+
+  <div class="card">
+    <h3>Vibrate / Idle / SW</h3>
+    <div class="v" id="vibrate">—</div>
+    <div class="small">IdleDetector: <span id="idle">—</span> • ServiceWorker: <span id="swstatus">—</span></div>
+  </div>
+
+  <div class="card">
+    <h3>Referrer & Media</h3>
+    <div class="v" id="referrer">—</div>
+    <div class="small">Camera devices: <span id="mediaDevices">—</span></div>
   </div>
 
   <div class="card cols">
     <div>
       <h3>Export / Save</h3>
-      <div class="row" style="margin-top:8px"><button class="btn" id="exportJSON">Export JSON</button><button class="btn" id="exportCSV">CSV</button><button class="btn" id="exportXLSX">XLSX</button></div>
+      <div class="row" style="margin-top:8px"><button class="btn" id="exportJSONBtn">Export JSON</button><button class="btn" id="exportCSVBtn">CSV</button><button class="btn" id="exportXLSXBtn">XLSX</button></div>
     </div>
     <div>
       <h3>Utilities</h3>
-      <div class="row" style="margin-top:8px"><button class="btn" id="qrBtn">QR</button><button class="btn" id="notifyBtn">Push</button><button class="btn" id="fsAccess">FS Access</button></div>
+      <div class="row" style="margin-top:8px"><button class="btn" id="qrBtn">QR</button><button class="btn" id="notifyBtn">Push</button><button class="btn" id="clipboardTest">Clipboard Test</button></div>
     </div>
   </div>
 
 </div>
 
-<div class="footer">Catatan: Beberapa deteksi memerlukan izin. Fitur Google Sign-In perlu Client ID & server token verification. Semua data tetap disimpan lokal kecuali pengguna mengizinkan upload.</div>
+<div class="footer">Beberapa fitur memerlukan izin (lokasi/sensor/clipboard). XLSX memakai SheetJS CDN. PWA & service worker bisa diaktifkan pada server.</div>
 
   </div>  <div class="overlay" id="overlay"><div class="loader"><div class="dot"></div><div><div id="overlayTxt">Loading…</div><div class="small">Mohon tunggu</div></div></div></div>  <script>
     // helpers
@@ -160,114 +205,144 @@
 
     const tz = Intl.DateTimeFormat().resolvedOptions().timeZone || 'Unknown';$('region').textContent = tz;
 
-    // theme
+    // theme persistence + auto
     const root=document.documentElement;const themeBtn=$('themeBtn');
     function applyTheme(t){root.setAttribute('data-theme',t);localStorage.setItem('handi_theme',t)}
     (function(){const saved=localStorage.getItem('handi_theme');if(saved){applyTheme(saved);}else{const prefers = window.matchMedia && window.matchMedia('(prefers-color-scheme: light)').matches;applyTheme(prefers? 'light':'dark')}})();
     themeBtn.addEventListener('click',()=>applyTheme(root.getAttribute('data-theme')==='light'?'dark':'light'));
 
-    // UA parsing + browser details
+    // UA, device, browser
     $('ua').textContent = navigator.userAgent;
     function parseDevice(ua){const isAndroid=/Android/i.test(ua);const isIOS=/iPhone|iPad|iPod/i.test(ua);const isWin=/Windows/i.test(ua);const isMac=/Macintosh/i.test(ua);const isLinux=/Linux/i.test(ua)&&!isAndroid;const os=isAndroid?'Android':isIOS?'iOS':isWin?'Windows':isMac?'macOS':isLinux?'Linux':'Unknown';let br='Browser lain'; if(/Chrome\//.test(ua)&&!/Edg\//.test(ua)) br='Chrome'; if(/Edg\//.test(ua)) br='Edge'; if(/Firefox\//.test(ua)) br='Firefox'; if(/Safari\//.test(ua)&&!/Chrome\//.test(ua)) br='Safari'; const brVer = (ua.match(/(Chrome|Firefox|Edg|Safari)\/([0-9\.]+)/)||[])[2]||'—'; return {os,br,brVer}}
     const dv = parseDevice(navigator.userAgent); $('device').textContent = `${dv.os} • ${dv.br}`; $('browserEngine').textContent = `Engine: ${navigator.product || '—'}`; $('browserVersion').textContent = `Version: ${dv.brVer}`; $('osVersion').textContent = navigator.platform || '—';
 
-    // GPU & WebGL info
-    function getWebGLInfo(){ try{ const c = document.createElement('canvas'); const gl = c.getContext('webgl') || c.getContext('experimental-webgl'); if(!gl) return null; const dbg = gl.getExtension('WEBGL_debug_renderer_info'); const vendor = dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR); const renderer = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); return {vendor,renderer}; }catch(e){return null} }
-    const webgl = getWebGLInfo(); if(webgl){$('gpu').textContent = `${webgl.renderer || '—'} (${webgl.vendor || '—'})`; $('webglInfo').textContent = JSON.stringify(webgl);}else{$('gpu').textContent='Tidak tersedia';$('webglInfo').textContent='—'}
+    // battery
+    async function setupBattery(){try{if(!('getBattery' in navigator)) throw new Error('Tidak didukung');const b=await navigator.getBattery();const paint=()=>{$('battery-level').textContent=Math.round(b.level*100)+'%';$('battery-status').textContent=b.charging? 'Charging' : 'Discharging • ' + (b.chargingTime? 'CT:'+b.chargingTime+'s':'');};['levelchange','chargingchange'].forEach(e=>b.addEventListener(e,paint));paint();}catch(e){$('battery-level').textContent='—';$('battery-status').textContent=e.message}}setupBattery();
 
-    // GPU bench (simple WebGL draw loop)
-    $('gpuBench').addEventListener('click',async ()=>{
-      $('gpuRes').textContent='Running...';
-      try{
-        const canvas = document.createElement('canvas'); canvas.width=256; canvas.height=256; const gl = canvas.getContext('webgl')||canvas.getContext('experimental-webgl'); if(!gl) throw new Error('WebGL not supported');
-        const start = performance.now(); let frames=0; const t= start+1500; while(performance.now()<t){ // simple clears
-          gl.clearColor(Math.random(),Math.random(),Math.random(),1); gl.clear(gl.COLOR_BUFFER_BIT); frames++; }
-        const dur = (performance.now()-start)/1000; $('gpuRes').textContent = `${Math.round(frames/dur)} fps (approx)`;
-      }catch(e){$('gpuRes').textContent = 'Gagal: '+e.message}
-    });
+    // network & ip
+    async function fetchIP(){try{$('overlay').classList.add('show');$('overlayTxt').textContent='Mengambil IP...';const r=await fetch('https://api.ipify.org?format=json');const j=await r.json();$('ip').textContent=j.ip || '—';}catch(e){$('ip').textContent='Gagal ambil IP'}finally{$('overlay').classList.remove('show')}}
+    $('btn-ip').addEventListener('click',fetchIP);fetchIP();
 
-    // IP, ISP, ASN via ipapi & ipinfo (best-effort)
-    async function fetchIPandISP(){ try{ const r = await fetch('https://ipapi.co/json/'); const j = await r.json(); $('ip').textContent = j.ip || '—'; $('isp').textContent = j.org || j.network || '—'; $('asn').textContent = j.asn || j.org || '—'; }catch(e){$('ip').textContent='Gagal';$('isp').textContent='—';$('asn').textContent='—'} }
-    $('btn-ip').addEventListener('click',fetchIPandISP); fetchIPandISP();
+    function paintNet(){const c=navigator.connection||navigator.mozConnection||navigator.webkitConnection;$('online').textContent = navigator.onLine? 'online':'offline';$('downlink').textContent = c?.downlink ?? '—';}
+    paintNet();(navigator.connection||{}).addEventListener?.('change',paintNet);window.addEventListener('online',paintNet);window.addEventListener('offline',paintNet);
 
-    // WebRTC local IPs
-    async function getLocalIPs(){ const ips = new Set(); try{ const pc = new RTCPeerConnection({iceServers:[]}); pc.createDataChannel(''); pc.onicecandidate = e => { if(!e.candidate) return; const s = e.candidate.candidate; const m = s.match(/([0-9]{1,3}(?:\.[0-9]{1,3}){3})/g); if(m) m.forEach(ip=>ips.add(ip)); $('localIPs').textContent = Array.from(ips).join(', '); }; const offer = await pc.createOffer(); await pc.setLocalDescription(offer); setTimeout(()=>pc.close(),2000);}catch(e){$('localIPs').textContent='Tidak tersedia'} }
-    $('localIP').addEventListener('click',getLocalIPs);
+    // storage estimate
+    async function paintStorage(){try{const est = await navigator.storage.estimate(); const used=est.usage||0, quota=est.quota||0; $('storage').textContent = `${fmtBytes(used)} / ${fmtBytes(quota)} (${Math.round(quota?used/quota*100:0)}%)`; $('quota').textContent = fmtBytes(quota); $('usage').textContent = fmtBytes(used);}catch(e){$('storage').textContent='—';$('quota').textContent='—';$('usage').textContent='—'}}
+    function fmtBytes(n){if(!n && n!==0) return '—';const units=['B','KB','MB','GB','TB'];let i=0;let v=n;while(v>1024 && i<units.length-1){v/=1024;i++}return `${v.toFixed(1)} ${units[i]}`}
+    paintStorage();
 
-    // Media devices
-    async function listMedia(){ try{ const devices = await navigator.mediaDevices.enumerateDevices(); const cams = devices.filter(d=>d.kind==='videoinput'); $('mediaDevices').textContent = devices.map(d=>`${d.kind}:${d.label||'—'}`).join(' | '); return cams;}catch(e){$('mediaDevices').textContent='Gagal';return []}}
-    $('scanCam').addEventListener('click',async ()=>{ const cams = await listMedia(); $('mediaDevices').textContent = `Cameras detected: ${cams.length}`});
+    // storage / heap & cores
+    $('cores').textContent = navigator.hardwareConcurrency || '—';$('ram').textContent = navigator.deviceMemory || '—';
+    async function paintMemory(){try{if(performance?.memory){$('heap').textContent = (performance.memory.usedJSHeapSize/1024/1024).toFixed(1)+' MB';}else{$('heap').textContent='N/A'}}catch(e){$('heap').textContent='—'}}
+    setInterval(paintMemory,1500);paintMemory();
 
-    // camera test & resolution detection
-    $('camTest').addEventListener('click',async ()=>{
-      try{ const stream = await navigator.mediaDevices.getUserMedia({video:true,audio:false}); const v = $('preview'); v.srcObject = stream; v.style.display='block'; // detect resolution from track settings
-        const track = stream.getVideoTracks()[0]; const s = track.getSettings(); $('camRes').textContent = `${s.width||'—'}×${s.height||'—'} (${s.deviceId? 'device':'—'})`; // stop after 6s
-        setTimeout(()=>{track.stop(); v.style.display='none';},6000);
-      }catch(e){alert('Gagal akses kamera: '+e.message)}
-    });
-
-    // screenshot via getDisplayMedia
-    $('screenshotBtn').addEventListener('click',async ()=>{
-      try{ const stream = await navigator.mediaDevices.getDisplayMedia({video:true}); const track = stream.getVideoTracks()[0]; const img = document.createElement('canvas'); const settings = track.getSettings(); img.width = settings.width || 1280; img.height = settings.height || 720; const ctx = img.getContext('2d'); const video = document.createElement('video'); video.srcObject = stream; await video.play(); ctx.drawImage(video,0,0,img.width,img.height); const data = img.toDataURL('image/png'); const a=document.createElement('a'); a.href=data; a.download='screenshot.png'; a.click(); track.stop(); }catch(e){alert('Screenshot gagal: '+e.message)}
-    });
+    // viewport & fps
+    function paintVP(){ $('vp').textContent = `${window.innerWidth} × ${window.innerHeight}`; $('dpr').textContent = window.devicePixelRatio || 1 }
+    paintVP();window.addEventListener('resize',paintVP);
+    let frames=0,last=performance.now();function loop(now){frames++; if(now-last>=1000){$('fps').textContent = frames+' fps'; frames=0; last=now;} requestAnimationFrame(loop);}requestAnimationFrame(loop);
 
     // sensors
     if('DeviceMotionEvent' in window){window.addEventListener('devicemotion',e=>{const a=e.accelerationIncludingGravity; if(a) $('sensorVal').textContent = `Acc X:${(a.x||0).toFixed(2)} Y:${(a.y||0).toFixed(2)} Z:${(a.z||0).toFixed(2)}`;});}
     if('DeviceOrientationEvent' in window){window.addEventListener('deviceorientation',e=>{$('sensorVal').textContent = `α:${(e.alpha||0).toFixed(1)} β:${(e.beta||0).toFixed(1)} γ:${(e.gamma||0).toFixed(1)}`;});}
 
-    // fingerprint (simple) — hashed string
+    // languages
+    $('lang').textContent = navigator.language || '—'; $('langs').textContent = (navigator.languages||[]).join(', ');
+
+    // cookies & DNT
+    $('cookies').textContent = navigator.cookieEnabled? 'Enabled':'Disabled'; $('dnt').textContent = navigator.doNotTrack || navigator.msDoNotTrack || '—';
+
+    // permissions: clipboard, camera, mic
+    async function checkPermissions(){ try{ const cb = await navigator.permissions.query({name:'clipboard-read'}).catch(()=>null); const cbw = await navigator.permissions.query({name:'clipboard-write'}).catch(()=>null); $('permClipboard').textContent = (cb?.state||cbw?.state||'unknown'); }catch(e){$('permClipboard').textContent='—'}
+      try{ const cam = await navigator.permissions.query({name:'camera'}).catch(()=>null); const mic = await navigator.permissions.query({name:'microphone'}).catch(()=>null); $('permCamera').textContent = cam?.state||'unknown'; $('permMic').textContent = mic?.state||'unknown'; }catch(e){$('permCamera').textContent='—';$('permMic').textContent='—'} }
+    checkPermissions();
+
+    // screen info & touch
+    $('screen').textContent = `${screen.width}×${screen.height}`; $('colorDepth').textContent = screen.colorDepth || '—'; $('touch').textContent = navigator.maxTouchPoints || 0;
+
+    // geolocation
+    $('btn-geo').addEventListener('click', ()=>{
+      if(!('geolocation' in navigator)) return $('geo').textContent = 'Geolocation tidak didukung'; $('overlay').classList.add('show');$('overlayTxt').textContent='Mengambil koordinat...';
+      navigator.geolocation.getCurrentPosition(pos=>{ const {latitude,longitude}=pos.coords; $('geo').textContent = `${latitude.toFixed(6)}, ${longitude.toFixed(6)}`; $('overlay').classList.remove('show'); }, err=>{ $('geo').textContent = err.message; $('overlay').classList.remove('show'); }, {enableHighAccuracy:true,timeout:10000});
+    });
+
+    // vibrate support
+    $('vibrate').textContent = (typeof navigator.vibrate === 'function')? 'Supported' : 'Not supported';
+
+    // IdleDetector check
+    (async ()=>{ if('IdleDetector' in window){$('idle').textContent='Supported'}else{$('idle').textContent='Not supported'}})();
+
+    // service worker status
+    if('serviceWorker' in navigator){ navigator.serviceWorker.getRegistration().then(reg=>{$('swstatus').textContent = reg? 'Registered':'Not registered';}).catch(()=>{$('swstatus').textContent='Error'});}else{$('swstatus').textContent='No SW'}
+
+    // referrer
+    $('referrer').textContent = document.referrer || '—';
+
+    // media devices list
+    async function listMedia(){ try{ const devices = await navigator.mediaDevices.enumerateDevices(); const cams = devices.filter(d=>d.kind==='videoinput'); $('mediaDevices').textContent = cams.length + ' cameras'; return devices;}catch(e){$('mediaDevices').textContent='Gagal';return []}}
+    listMedia();
+
+    // camera permission quick-check by querying permissions (may be 'prompt')
+    async function detectCameraPermission(){ try{ const p = await navigator.permissions.query({name:'camera'}).catch(()=>null); $('permCamera').textContent = p?.state || '—'; }catch(e){$('permCamera').textContent='—'} }
+    detectCameraPermission();
+
+    // fingerprint (improved)
+    function getWebGLInfo(){ try{ const c = document.createElement('canvas'); const gl = c.getContext('webgl') || c.getContext('experimental-webgl'); if(!gl) return null; const dbg = gl.getExtension('WEBGL_debug_renderer_info'); const vendor = dbg ? gl.getParameter(dbg.UNMASKED_VENDOR_WEBGL) : gl.getParameter(gl.VENDOR); const renderer = dbg ? gl.getParameter(dbg.UNMASKED_RENDERER_WEBGL) : gl.getParameter(gl.RENDERER); return {vendor,renderer}; }catch(e){return null} }
     async function sha256(s){ const buf = new TextEncoder().encode(s); const h = await crypto.subtle.digest('SHA-256',buf); return Array.from(new Uint8Array(h)).map(b=>b.toString(16).padStart(2,'0')).join(''); }
-    async function makeFingerprint(){ const fonts = Intl.DateTimeFormat().resolvedOptions().timeZone + '|' + navigator.language; const webglInfo = JSON.stringify(getWebGLInfo()||{}); const base = navigator.userAgent + '|' + fonts + '|' + webglInfo + '|' + (navigator.hardwareConcurrency||'') + '|' + (navigator.deviceMemory||''); const hash = await sha256(base); $('fingerprint').textContent = hash.slice(0,20); }
+    async function makeFingerprint(){ const webgl = JSON.stringify(getWebGLInfo()||{}); const base = navigator.userAgent + '|' + navigator.language + '|' + webgl + '|' + (navigator.hardwareConcurrency||'') + '|' + (navigator.deviceMemory||'') + '|' + screen.width + 'x' + screen.height; const h = await sha256(base); $('fingerprint').textContent = h.slice(0,22); }
     makeFingerprint();
 
     // adblock detection
-    (function detectAdblock(){ const bait = document.createElement('div'); bait.className = 'adsbox'; bait.style.height='1px'; document.body.appendChild(bait); window.setTimeout(()=>{ if(getComputedStyle(bait).display==='none' || bait.offsetParent===null){ $('adblock').textContent='AdBlock terdeteksi'}else{$('adblock').textContent='No AdBlock'} bait.remove(); },100); })();
+    (function detectAdblock(){ const bait = document.createElement('div'); bait.className = 'adsbox'; bait.style.height='1px'; bait.style.position='absolute'; bait.style.left='-10000px'; document.body.appendChild(bait); window.setTimeout(()=>{ try{ if(getComputedStyle(bait).display==='none' || bait.offsetParent===null){ $('adblock').textContent='AdBlock terdeteksi'}else{$('adblock').textContent='No AdBlock'} }catch(e){$('adblock').textContent='—'} bait.remove(); },120); })();
 
-    // incognito check improved (Chrome + Safari heuristics)
-    (async function incognito(){ try{ const fs = window.RequestFileSystem || window.webkitRequestFileSystem; if(!fs){ try{ localStorage.setItem('test','1'); localStorage.removeItem('test'); $('incognito').textContent='Normal (localStorage)'; return;}catch(e){ $('incognito').textContent='Private/Restricted (localStorage)'; return;} }
-      fs(window.TEMPORARY,100,()=>{$('incognito').textContent='Normal'},()=>{$('incognito').textContent='Incognito/Private'} ); }catch(e){$('incognito').textContent='Tidak pasti'} })();
+    // incognito check (best-effort)
+    (async function incognitoCheck(){ try{ let fs = window.RequestFileSystem || window.webkitRequestFileSystem; if(!fs){ try{ localStorage.setItem('handi_test','1'); localStorage.removeItem('handi_test'); $('incognito').textContent='Normal (localStorage OK)'; return;}catch(err){$('incognito').textContent='Private/Restricted (localStorage failure)'; return;} }
+      fs(window.TEMPORARY,100,()=>{$('incognito').textContent='Normal'},()=>{$('incognito').textContent='Incognito/Private'})
+    }catch(e){$('incognito').textContent='Tidak pasti'} })();
 
-    // CPU benchmark via WebWorker
-    $('benchBtn').addEventListener('click',()=>{
-      $('benchRes').textContent='Running...';
-      const blob = new Blob([`onmessage=function(){const t0=Date.now();let c=0; for(let i=0;i<5e7;i++){ c+= (i&1); } postMessage((Date.now()-t0));}`],{type:'text/javascript'});
-      const w = new Worker(URL.createObjectURL(blob)); w.onmessage = e=>{ $('benchRes').textContent = `Worker: ${e.data} ms`; w.terminate(); makeAI(); }; w.postMessage('start');
-    });
+    // benchmark - CPU (web worker)
+    $('benchBtn').addEventListener('click',()=>{ $('benchRes').textContent='Running...'; const blob = new Blob([`onmessage=function(){const t0=Date.now();let c=0; for(let i=0;i<4e7;i++){ c += (i&1); } postMessage(Date.now()-t0);}`],{type:'text/javascript'}); const w = new Worker(URL.createObjectURL(blob)); w.onmessage = e=>{ $('benchRes').textContent = e.data + ' ms (worker)'; w.terminate(); }; w.postMessage('start'); });
 
-    // VPN guess & more advanced network checks
-    $('checkVPN').addEventListener('click',async ()=>{ $('netRes').textContent='Checking...'; try{ const r = await fetch('https://ipapi.co/json/'); const j = await r.json(); const tz_ip = j.timezone; const tz_local = Intl.DateTimeFormat().resolvedOptions().timeZone; if(tz_ip && tz_local && tz_ip.split('/')[0] !== tz_local.split('/')[0]){$('netRes').textContent = `Kemungkinan VPN/Proxy (TZ mismatch: ${tz_ip} ≠ ${tz_local})`}else{$('netRes').textContent = `IP Country: ${j.country_name} • Org: ${j.org}`;} }catch(e){$('netRes').textContent='API gagal'} });
+    // ping & speed (simple)
+    $('pingBtn').addEventListener('click',async ()=>{ $('netRes').textContent='Pinging...'; const url='https://api.ipify.org?format=json'; try{ const t0=performance.now(); await fetch(url,{cache:'no-store'}); $('netRes').textContent = `RTT ${(performance.now()-t0).toFixed(1)} ms`; }catch(e){$('netRes').textContent='Ping gagal'} });
+    $('speedBtn').addEventListener('click',async ()=>{ $('overlay').classList.add('show');$('overlayTxt').textContent='Speed test...'; try{ const u='https://eu.httpbin.org/stream-bytes/500000?seed=0'; const t0=performance.now(); const r=await fetch(u); const reader = r.body.getReader(); let rec=0; while(true){ const {done,value} = await reader.read(); if(done) break; rec += value.length } const dur=(performance.now()-t0)/1000; const kb=rec/1024; $('netRes').textContent = `${(kb/dur).toFixed(0)} KB/s • ${(kb/1024/dur).toFixed(2)} MB/s`; }catch(e){$('netRes').textContent='Gagal (CORS/Blocked)'} finally{$('overlay').classList.remove('show')} });
 
-    // AI insight
-    function makeAI(){ const cores = navigator.hardwareConcurrency||2; const ram = navigator.deviceMemory||2; const heap = (performance?.memory?.usedJSHeapSize||0)/1024/1024; const notes = []; if(ram<2) notes.push('RAM rendah'); else if(ram>=8) notes.push('RAM kuat'); if(cores<=2) notes.push('CPU lemah'); if(heap>300) notes.push('Heap JS tinggi'); $('aiInsight').textContent = notes.join(' • ') || 'Normal'; }
-    makeAI(); setInterval(makeAI,10000);
+    // export helpers
+    function collectAll(){ return {
+      timestamp:new Date().toISOString(), device: $('device').textContent, ua:navigator.userAgent, gpu: $('gpu').textContent, ip: $('ip').textContent,
+      online: $('online').textContent, downlink: $('downlink').textContent, cores: $('cores').textContent, ram: $('ram').textContent, heap: $('heap').textContent,
+      storage: $('storage').textContent, fingerprint: $('fingerprint').textContent, ai: $('aiInsight').textContent, incognito: $('incognito').textContent
+    }}
 
-    // Export JSON/CSV/XLSX + PDF (jsPDF)
-    function collectAll(){ return {timestamp:new Date().toISOString(), device: $('device').textContent, ua:navigator.userAgent, gpu: $('gpu').textContent, ip: $('ip').textContent, localIPs: $('localIPs').textContent, isp: $('isp').textContent, asn: $('asn').textContent, fingerprint: $('fingerprint').textContent, ai: $('aiInsight').textContent}};
-    document.querySelectorAll('#exportJSON').forEach(b=>b.addEventListener('click', ()=>{ const j=JSON.stringify(collectAll(),null,2); const blob=new Blob([j],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='handidev-ultra.json'; a.click(); }));
+    document.getElementById('copyAll').addEventListener('click', async ()=>{ try{ await navigator.clipboard.writeText(JSON.stringify(collectAll(),null,2)); alert('Disalin ke clipboard'); }catch(e){ alert('Gagal salin: '+e.message) }});
 
-    // PDF export
-    document.querySelectorAll('#exportPDF').forEach(b=>b.addEventListener('click', async ()=>{
-      if(typeof jspdf === 'undefined' && typeof window.jspdf === 'undefined'){ await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/jspdf/2.5.1/jspdf.umd.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
-      const { jsPDF } = window.jspdf || jspdf; const doc = new jsPDF(); doc.text('Handi Dev • Report',10,10); doc.text(JSON.stringify(collectAll(),null,2),10,20); doc.save('handidev-ultra.pdf'); }));
+    document.getElementById('exportJSONBtn').addEventListener('click', ()=>{ const j=JSON.stringify(collectAll(),null,2); const blob=new Blob([j],{type:'application/json'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='handidev-ultimate.json'; a.click(); });
+    document.getElementById('exportCSVBtn').addEventListener('click', ()=>{ const obj=collectAll(); const keys=Object.keys(obj); const csv = keys.join(',') + '
+' + keys.map(k=>`"${String(obj[k]).replace(/"/g,'""')}"`).join(','); const blob=new Blob([csv],{type:'text/csv'}); const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='handidev-ultimate.csv'; a.click(); });
+    document.getElementById('exportXLSXBtn').addEventListener('click', async ()=>{ if(typeof XLSX === 'undefined'){ try{ $('overlay').classList.add('show');$('overlayTxt').textContent='Mengunduh SheetJS...'; await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdn.sheetjs.com/xlsx-latest/package/dist/xlsx.full.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }catch(e){ $('overlay').classList.remove('show'); return alert('Gagal load SheetJS'); } finally{ $('overlay').classList.remove('show'); } }
+      try{ const obj = collectAll(); const ws = XLSX.utils.json_to_sheet([obj]); const wb = XLSX.utils.book_new(); XLSX.utils.book_append_sheet(wb,ws,'Report'); const wbout = XLSX.write(wb,{bookType:'xlsx',type:'array'}); const blob = new Blob([wbout],{type:'application/octet-stream'}); const a=document.createElement('a'); a.href = URL.createObjectURL(blob); a.download = 'handidev-ultimate.xlsx'; a.click(); }catch(e){ alert('Export XLSX gagal: '+e.message) } });
 
-    // QR generator (text -> QR as dataURL)
-    $('qrBtn')?.addEventListener('click', async ()=>{ if(typeof QRCode === 'undefined'){ await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); }
-      const data = JSON.stringify(collectAll()); const w = window.open('about:blank','_blank'); w.document.write(`<div id="q"></div><pre>${data}</pre>`); const qrDiv = w.document.getElementById('q'); new w.QRCode(qrDiv, {text:data, width:240, height:240}); });// Push notification permission (PWA)
-$('notifyBtn')?.addEventListener('click', async ()=>{ if(!('Notification' in window)) return alert('Notifikasi tidak didukung'); const p = await Notification.requestPermission(); if(p==='granted'){ new Notification('Handi Dev','Notifikasi diizinkan'); } else alert('Izin notifikasi: '+p); });
+    // QR generator
+    document.getElementById('qrBtn').addEventListener('click', async ()=>{ if(typeof QRCode === 'undefined'){ await new Promise((res,rej)=>{ const s=document.createElement('script'); s.src='https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js'; s.onload=res; s.onerror=rej; document.head.appendChild(s); }); } const data = JSON.stringify(collectAll()); const w = window.open('about:blank'); w.document.write('<div id="q"></div><pre>'+data+'</pre>'); new w.QRCode(w.document.getElementById('q'),{text:data,width:240,height:240}); });// notifications
+document.getElementById('notifyBtn').addEventListener('click', async ()=>{ if(!('Notification' in window)) return alert('Notifikasi tidak didukung'); const p = await Notification.requestPermission(); if(p==='granted'){ new Notification('Handi Dev','Notifikasi diizinkan'); } else alert('Izin notifikasi: '+p); });
 
-// File System Access (write file)
-$('fsAccess')?.addEventListener('click', async ()=>{ try{ if(!window.showSaveFilePicker) return alert('File System Access API tidak didukung'); const handle = await window.showSaveFilePicker({suggestedName:'handidev-report.txt'}); const writable = await handle.createWritable(); await writable.write(JSON.stringify(collectAll(),null,2)); await writable.close(); alert('Tersimpan'); }catch(e){alert('FS Access gagal: '+e.message)} });
+// clipboard live test
+document.getElementById('clipboardTest').addEventListener('click', async ()=>{ try{ await navigator.clipboard.writeText('HandiDev Clipboard Test'); const text = await navigator.clipboard.readText(); alert('Clipboard read: '+text); }catch(e){ alert('Clipboard test gagal: '+e.message) } });
 
-// Google Sign-In (placeholder) — shows flow to open google auth page (requires client/server setup)
-$('signinGoogle')?.addEventListener('click', ()=>{ alert('Untuk enable Google Sign-In: sediakan OAuth Client ID. Aku bisa tambahkan langkah lengkap & contoh server verify jika mau.'); });
+// service worker register hook
+if('serviceWorker' in navigator){ navigator.serviceWorker.register('/sw.js').then(()=>console.log('SW registered')).catch(()=>console.log('SW failed')); }
 
-// service worker hook
-if('serviceWorker' in navigator){ navigator.serviceWorker.register('/sw.js').then(()=>console.log('SW ok')).catch(()=>console.log('SW fail')); }
+// AI insight heuristics
+function aiAnalysis(){ const cores=navigator.hardwareConcurrency||2; const ram=navigator.deviceMemory||2; const heap=(performance?.memory?.usedJSHeapSize||0)/1024/1024; const notes=[]; if(ram<2) notes.push('RAM terbatas'); else if(ram>=8) notes.push('RAM besar: multitasking OK'); if(cores<=2) notes.push('CPU sedikit'); else notes.push('CPU cukup'); if(heap>300) notes.push('Heap JS tinggi'); $('aiInsight').textContent = notes.join(' • ') || 'Normal'; }
+aiAnalysis(); setInterval(aiAnalysis,10000);
 
-// initial fills
-(async function init(){ await listMedia(); fetchIPandISP(); getLocalIPs(); makeFingerprint(); detectAdBlockInitial(); })();
+// init
+(async function init(){ try{ await listMedia(); fetchIP(); getLocalIPs(); paintStorage(); checkPermissions(); makeFingerprint(); }catch(e){console.error(e);} })();
 
-function detectAdBlockInitial(){ /* reuse earlier check */ }
+// WebRTC local IPs (best-effort)
+async function getLocalIPs(){ const ips=new Set(); try{ const pc = new RTCPeerConnection({iceServers:[]}); pc.createDataChannel(''); pc.onicecandidate = e=>{ if(!e.candidate) return; const s=e.candidate.candidate; const m = s.match(/([0-9]{1,3}(?:\.[0-9]{1,3}){3})/g); if(m) m.forEach(ip=>ips.add(ip)); $('localIPs').textContent = Array.from(ips).join(', '); }; const offer = await pc.createOffer(); await pc.setLocalDescription(offer); setTimeout(()=>pc.close(),2000);}catch(e){$('localIPs').textContent='Tidak tersedia'} }
+
+// make fingerprint convenience wrapper
+async function makeFingerprint(){ const webgl=getWebGLInfo(); const base = navigator.userAgent + '|' + navigator.language + '|' + JSON.stringify(webgl) + '|' + (navigator.hardwareConcurrency||'') + '|' + (navigator.deviceMemory||'') + '|' + screen.width + 'x' + screen.height; const hash = await sha256(base); $('fingerprint').textContent = hash.slice(0,22); }
 
   </script>
 </body>
