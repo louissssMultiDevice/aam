@@ -159,7 +159,13 @@ video#cam{width:100%;border-radius:12px;background:#000;max-height:220px}
       </div>
     </div>
   </div>
-</div><div class="toast" id="toast"></div><!-- libs --><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script><script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/FontLoader.js"></script><script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/geometries/TextGeometry.js"></script><script>
+</div><div class="toast" id="toast"></div><!-- libs -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/FontLoader.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/geometries/TextGeometry.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/controls/OrbitControls.js"></script>
+  <script>
 const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s), pad=n=>String(n).padStart(2,'0');
 const AI=$('#aiAvatar');
 function aiNod(){AI.classList.remove('shake');AI.classList.add('nod');setTimeout(()=>AI.classList.remove('nod'),600)}
@@ -222,7 +228,7 @@ $('#btnIp').onclick=()=>fetchIP();
 $('#btnCopy').onclick=()=>{navigator.clipboard.writeText(`IP: ${$('#ip').textContent} | ISP: ${$('#isp').textContent} | ${$('#loc').textContent}`);toast('Disalin ke clipboard')}
 
 /* ===== Device Detect ===== */
-function detectDevice(){const ua=navigator.userAgent||'';const uad=navigator.userAgentData;const isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(ua);const type=isMobile?'HP/Tablet':'Laptop/PC';const platform=navigator.platform||navigator.oscpu||'—';let brand='Tidak diketahui';const brandMap=['Samsung','Xiaomi','OPPO','Vivo','Realme','OnePlus','Huawei','Infinix','Nokia','Sony','Apple','Asus','Lenovo','Acer','HP'];for(const b of brandMap){if(new RegExp(b,'i').test(ua)){brand=b;break}}const cores=navigator.hardwareConcurrency||'—';const mem=(navigator.deviceMemory||'—');$('#devType').textContent=type;$('#devOS').textContent=platform;$('#devBrand').textContent=brand;$('#devCores').textContent=cores;$('#devMem').textContent=mem;$('#ua').textContent=ua;}
+function detectDevice(){const ua = navigator.userAgentData ? JSON.stringify(navigator.userAgentData) : navigator.userAgent;const uad=navigator.userAgentData;const isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(ua);const type=isMobile?'HP/Tablet':'Laptop/PC';const platform=navigator.platform||navigator.oscpu||'—';let brand='Tidak diketahui';const brandMap=['Samsung','Xiaomi','OPPO','Vivo','Realme','OnePlus','Huawei','Infinix','Nokia','Sony','Apple','Asus','Lenovo','Acer','HP'];for(const b of brandMap){if(new RegExp(b,'i').test(ua)){brand=b;break}}const cores=navigator.hardwareConcurrency||'—';const mem=(navigator.deviceMemory||'—');$('#devType').textContent=type;$('#devOS').textContent=platform;$('#devBrand').textContent=brand;$('#devCores').textContent=cores;$('#devMem').textContent=mem;$('#ua').textContent=ua;}
 
 /* ===== Performance quick score ===== */
 async function perfScore(){const t0=performance.now();for(let k=0;k<2;k++){for(let i=0;i<200000;i++){Math.sqrt(i)}}const ms=(performance.now()-t0);const cores=navigator.hardwareConcurrency||1;const score=Math.round(10000/(ms/cores));$('#perfScore').textContent=`${score} pts (↓ms: ${ms.toFixed(0)})`}
