@@ -1,141 +1,291 @@
 <!doctype html>
+
 <html lang="id">
 <head>
 <meta charset="utf-8"/>
 <meta name="viewport" content="width=device-width, initial-scale=1"/>
-<title>Handi Ultra+ Hologram</title>
+<title>Handi Ultra++ Quantum Hologram — Ultra Pack</title>
 <meta name="theme-color" content="#071018"/>
+<link rel="preconnect" href="https://cdn.jsdelivr.net" crossorigin>
 <style>
-:root{--bg:#071018;--card:#0f1720;--text:#dff8f6;--muted:#9fbfc8;--accent:#00ffc6;--accent2:#00c2ff;--danger:#ff5d7a;--ok:#6ef37b;}
-body{margin:0;font-family:Inter,system-ui,sans-serif;background:linear-gradient(180deg,var(--bg),#060b13);color:var(--text)}
-.wrap{max-width:1280px;margin:18px auto;padding:18px}
-header{display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:12px}
-.logo{width:56px;height:56px;border-radius:14px;background:linear-gradient(135deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#001;box-shadow:0 0 14px var(--accent),0 0 28px var(--accent2)}
-h1{margin:0;font-size:18px}
+:root{
+  --bg:#05080e;--bg2:#060b13;--card:#0b1220;--card2:#0e1626;--text:#e9fbff;--muted:#a6c8cf;
+  --accent:#00ffc6;--accent2:#00c2ff;--danger:#ff5d7a;--ok:#6ef37b;--warn:#ffd166;--ring:rgba(0,194,255,.35)
+}
+@media (prefers-color-scheme: light){
+  :root{--bg:#f3fbff;--bg2:#e9f6ff;--card:#ffffff;--card2:#f7fbff;--text:#001b26;--muted:#496773;--ring:rgba(0,194,255,.2)}
+}
+*{box-sizing:border-box}
+html,body{height:100%}
+body{margin:0;font-family:Inter,system-ui,Segoe UI,Roboto,Apple Color Emoji,Noto Color Emoji,sans-serif;background:
+  radial-gradient(1200px 600px at 10% -10%,rgba(0,255,198,.15),transparent),
+  linear-gradient(180deg,var(--bg),var(--bg2));color:var(--text);letter-spacing:.2px}
+.wrap{max-width:1300px;margin:18px auto;padding:18px}
+header{display:flex;align-items:center;justify-content:space-between;gap:12px;flex-wrap:wrap;position:relative}
+.logo{width:58px;height:58px;border-radius:14px;background:conic-gradient(from 120deg,var(--accent),var(--accent2));display:flex;align-items:center;justify-content:center;font-weight:900;color:#001;box-shadow:0 0 14px var(--accent),0 0 28px var(--accent2);position:relative;overflow:hidden}
+.logo::after{content:"";position:absolute;inset:-40% -40%;background:radial-gradient(circle at 30% 20%,rgba(255,255,255,.35),transparent 40%);transform:rotate(25deg)}
 .subtitle{color:var(--muted);font-size:13px}
-.btn{background:linear-gradient(90deg,var(--accent2),var(--accent));border:none;padding:9px 12px;border-radius:10px;color:#001;font-weight:800;cursor:pointer;transition:.3s;box-shadow:0 0 8px var(--accent2)}
-.btn:hover{transform:translateY(-2px) scale(1.05);box-shadow:0 0 14px var(--accent2),0 0 28px var(--accent)}
+.btn{background:linear-gradient(90deg,var(--accent2),var(--accent));border:none;padding:10px 14px;border-radius:12px;color:#001;font-weight:800;cursor:pointer;transition:.25s;box-shadow:0 0 8px var(--accent2)}
+.btn:hover{transform:translateY(-2px) scale(1.04);box-shadow:0 0 14px var(--accent2),0 0 28px var(--accent)}
+.btn.ghost{background:transparent;color:var(--text);border:1px solid rgba(255,255,255,.15)}
 .grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:16px}
-.card{background:var(--card);padding:14px;border-radius:14px;border:1px solid rgba(255,255,255,.05);transition:.3s}
-.card:hover{box-shadow:0 0 20px rgba(0,255,198,.35)}
+.card{background:linear-gradient(180deg,var(--card),var(--card2));padding:14px;border-radius:16px;border:1px solid rgba(255,255,255,.06);transition:.3s;position:relative;overflow:hidden}
+.card:hover{box-shadow:0 0 24px rgba(0,255,198,.25)}
+.card::before{content:"";position:absolute;inset:-40% -40%;background:radial-gradient(600px 200px at var(--mx,50%) var(--my,0%),rgba(0,194,255,.12),transparent 50%);pointer-events:none;transition:.2s}
 .small{font-size:12px;color:var(--muted)}
-.mono{font-family:monospace}
-.tabs{display:flex;gap:8px;margin-bottom:8px}
-.tab{padding:8px 12px;border-radius:10px;background:rgba(255,255,255,.06);cursor:pointer;transition:.2s}
+.mono{font-family:ui-monospace,Menlo,monospace}
+.badge{display:inline-flex;gap:6px;align-items:center;padding:5px 8px;border:1px solid rgba(255,255,255,.12);border-radius:999px;background:rgba(255,255,255,.05)}
+.tabs{display:flex;gap:8px;margin:18px 0 8px}
+.tab{padding:8px 12px;border-radius:12px;background:rgba(255,255,255,.06);cursor:pointer;transition:.2s;border:1px solid rgba(255,255,255,.06);user-select:none}
 .tab.active{background:linear-gradient(90deg,var(--accent2),var(--accent));color:#001;box-shadow:0 0 12px var(--accent2)}
-#threeClock,#threeGlobe,#threeWeb,#threeDevice{width:100%;height:280px;border-radius:12px;background:#000}
+#threeClock,#threeGlobe,#threeWeb,#threeDevice{width:100%;height:300px;border-radius:12px;background:#000}
+#threeWeb,#threeDevice{height:260px}
+.dissolve{animation:dissolve .5s ease}
+@keyframes dissolve{from{filter:blur(8px);opacity:.3;transform:scale(.98)}to{filter:blur(0);opacity:1;transform:scale(1)}}
+/* AI avatar (kanan atas) */
+#aiAvatar{position:absolute;top:-10px;right:-10px;width:72px;height:72px;border-radius:50%;background:radial-gradient(circle at 30% 30%,var(--accent),var(--accent2));box-shadow:0 0 18px rgba(0,194,255,.7),0 0 32px rgba(0,255,198,.4);display:grid;place-items:center;cursor:default;user-select:none;font-size:30px;color:#001}
+#aiAvatar.nod{animation:nodAnim .55s ease}
+#aiAvatar.shake{animation:shakeAnim .6s ease}
+@keyframes nodAnim{0%{transform:rotate(0)}25%{transform:rotate(12deg)}50%{transform:rotate(0)}75%{transform:rotate(-12deg)}100%{transform:rotate(0)}}
+@keyframes shakeAnim{0%{transform:translateX(0)}25%{transform:translateX(-8px)}50%{transform:translateX(8px)}75%{transform:translateX(-8px)}100%{transform:translateX(0)}}
+.toast{position:fixed;left:50%;bottom:20px;transform:translateX(-50%);background:rgba(0,0,0,.6);color:#fff;padding:10px 14px;border-radius:12px;border:1px solid rgba(255,255,255,.15);backdrop-filter:blur(8px);display:none}
+.kbd{font:600 11px ui-monospace,Menlo,monospace;background:rgba(255,255,255,.08);padding:3px 6px;border-radius:6px;border:1px solid rgba(255,255,255,.15)}
+video#cam{width:100%;border-radius:12px;background:#000;max-height:220px}
 </style>
 </head>
-<body data-theme="dark">
+<body>
 <div class="wrap">
   <header>
-    <div class="logo">HD+</div>
-    <div><h1>Handi Ultra+ Hologram</h1>
-      <div class="subtitle">Jam Globe • IP Geo • Device Holo • Charts</div></div>
-    <div><button class="btn" id="themeBtn">Theme</button></div>
-  </header>
-
-  <!-- CLOCK + KALENDER -->
-  <div class="grid">
-    <div class="card"><h3>Jam 3D Globe</h3>
-      <div style="display:flex;justify-content:space-between"><div id="tzBadge">—</div><div id="digitalClock">--:--:--</div></div>
+    <div class="logo">HD++</div>
+    <div>
+      <h2 style="margin:0">Handi Ultra++ Quantum Hologram — Ultra Pack</h2>
+      <div class="subtitle">Jam 3D • Kalender • IP+Globe • Device+Sensor • Charts Live • Hologram Icons</div>
+    </div>
+    <div style="display:flex;gap:8px;align-items:center">
+      <button class="btn" id="themeBtn">Tema</button>
+      <span class="badge"><span style="width:8px;height:8px;background:var(--ok);border-radius:50%"></span><span id="conn">Online</span></span>
+    </div>
+    <div id="aiAvatar" title="AI Helper">🤖</div>
+  </header>  <!-- Jam 3D + Digital -->  <div class="grid">
+    <div class="card" id="cardClock">
+      <h3>Jam Dinding 3D + Digital</h3>
+      <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:6px">
+        <div class="badge">TZ: <span class="mono" id="tzBadge">—</span></div>
+        <div class="mono" id="digitalClock">--:--:--</div>
+      </div>
       <div id="threeClock"></div>
       <div class="small">Timezone: <span id="tzName">—</span> • Offset: <span id="tzOffset">—</span></div>
-    </div>
-    <div class="card"><h3>Kalender</h3><div id="calendar"></div><div class="small">Hari ini: <span id="todayStr">—</span></div></div>
+    </div><!-- Kalender -->
+<div class="card" id="cardCal">
+  <h3>Kalender</h3>
+  <div style="display:flex;gap:8px;align-items:center;margin-bottom:6px">
+    <button class="btn ghost" id="prevMon">◀</button>
+    <div class="badge" id="calTitle">—</div>
+    <button class="btn ghost" id="nextMon">▶</button>
   </div>
+  <div id="calendar"></div>
+  <div class="small">Klik tanggal untuk catatan. <span class="kbd">Del</span> hapus semua.</div>
+</div>
 
-  <!-- IP + Globe -->
-  <div class="grid">
-    <div class="card"><h3>Network & Lokasi</h3>
+  </div>  <!-- IP + Globe & Device Info -->  <div class="grid">
+    <div class="card" id="cardNet">
+      <h3>Network & Lokasi (3D Hologram Maps)</h3>
       <div>IP: <span id="ip">—</span></div>
       <div>ISP: <span id="isp">—</span></div>
       <div>Lokasi: <span id="loc">—</span></div>
-      <button class="btn" id="btnIp">Refresh IP</button>
+      <div style="display:flex;gap:8px;margin-top:8px">
+        <button class="btn" id="btnIp">Refresh IP</button>
+        <button class="btn ghost" id="btnCopy">Copy</button>
+      </div>
     </div>
-    <div class="card"><h3>Globe</h3><div id="threeGlobe"></div></div>
-  </div>
-
-  <!-- Charts -->
-  <div class="tabs">
+    <div class="card">
+      <h3>Globe + Pin Atmosfer</h3>
+      <div id="threeGlobe"></div>
+      <div class="small">Pin merah ≈ lokasi IP publik • Pin hologram = ikon peta</div>
+    </div>
+  </div>  <!-- Device, Sensor, Fingerprint -->  <div class="grid">
+    <div class="card">
+      <h3>Deteksi Device</h3>
+      <div>Jenis: <span id="devType">—</span></div>
+      <div>OS/Platform: <span id="devOS">—</span></div>
+      <div>Merek (perkiraan): <span id="devBrand">—</span></div>
+      <div>CPU Cores: <span id="devCores">—</span> • Mem (GB, perkiraan): <span id="devMem">—</span></div>
+      <div>UA: <span class="small mono" id="ua">—</span></div>
+      <div style="margin-top:8px">Kinerja instan: <span id="perfScore">—</span></div>
+    </div>
+    <div class="card">
+      <h3>Sensor (HP)</h3>
+      <div>Orientation: <span id="orient">—</span></div>
+      <div>Accel: <span id="accel">—</span></div>
+      <div>Gyro: <span id="gyro">—</span></div>
+      <div style="margin-top:8px">
+        <button class="btn ghost" id="btnSensor">Aktifkan Sensor</button>
+      </div>
+    </div>
+    <div class="card">
+      <h3>Fingerprint (lokal)</h3>
+      <div>Hash: <span class="mono" id="fp">—</span></div>
+      <div class="small">Dibuat dari TZ, bahasa, layar, UA, HW. <em>Tidak dikirim ke server.</em></div>
+      <div style="margin-top:8px"><button class="btn ghost" id="btnCopyFP">Copy</button></div>
+    </div>
+  </div>  <!-- Charts + Kamera -->  <div class="tabs">
     <div class="tab active" data-tab="charts">Charts</div>
     <div class="tab" data-tab="holo">3D Icons</div>
+    <div class="tab" data-tab="camera">Kamera</div>
+  </div>  <div id="tab-charts">
+    <div class="grid">
+      <div class="card"><h4>FPS</h4><canvas id="fpsChart"></canvas></div>
+      <div class="card"><h4>CPU (proxy)</h4><canvas id="cpuChart"></canvas></div>
+      <div class="card"><h4>Battery</h4><canvas id="batChart"></canvas></div>
+      <div class="card"><h4>Kamera (brightness)</h4><canvas id="camChart"></canvas></div>
+    </div>
+  </div>  <div id="tab-holo" style="display:none">
+    <div class="grid">
+      <div class="card"><h3>Web Icon (knot)</h3><div id="threeWeb"></div></div>
+      <div class="card"><h3>Device Icon (icosa)</h3><div id="threeDevice"></div></div>
+    </div>
+  </div>  <div id="tab-camera" style="display:none">
+    <div class="grid">
+      <div class="card">
+        <h3>Preview Kamera</h3>
+        <video id="cam" autoplay playsinline muted></video>
+        <div style="display:flex;gap:8px;margin-top:8px"><button class="btn" id="btnCam">Start Kamera</button><button class="btn ghost" id="btnCamStop">Stop</button></div>
+        <canvas id="camHidden" width="320" height="240" style="display:none"></canvas>
+      </div>
+      <div class="card">
+        <h3>Export Diagnostik</h3>
+        <div class="small">Unduh JSON berisi ringkasan device, sensor, dan metrik.</div>
+        <button class="btn" id="btnExport">Download JSON</button>
+      </div>
+    </div>
   </div>
-  <div id="tab-charts"><div class="grid">
-    <div class="card"><h4>FPS</h4><canvas id="fpsChart"></canvas></div>
-    <div class="card"><h4>CPU</h4><canvas id="cpuChart"></canvas></div>
-    <div class="card"><h4>Battery</h4><canvas id="batChart"></canvas></div>
-  </div></div>
-  <div id="tab-holo" style="display:none"><div class="grid">
-    <div class="card"><h3>Web Icon</h3><div id="threeWeb"></div></div>
-    <div class="card"><h3>Device Icon</h3><div id="threeDevice"></div></div>
-  </div></div>
-</div>
+</div><div class="toast" id="toast"></div><!-- libs --><script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script><script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script><script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/FontLoader.js"></script><script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/geometries/TextGeometry.js"></script><script>
+const $=s=>document.querySelector(s), $$=s=>document.querySelectorAll(s), pad=n=>String(n).padStart(2,'0');
+const AI=$('#aiAvatar');
+function aiNod(){AI.classList.remove('shake');AI.classList.add('nod');setTimeout(()=>AI.classList.remove('nod'),600)}
+function aiShake(){AI.classList.remove('nod');AI.classList.add('shake');setTimeout(()=>AI.classList.remove('shake'),600)}
+function toast(msg){const t=$('#toast');t.textContent=msg;t.style.display='block';t.classList.add('dissolve');setTimeout(()=>{t.style.display='none';t.classList.remove('dissolve')},1600)}
 
-<!-- libs -->
-<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.0/dist/chart.umd.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/build/three.min.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/loaders/FontLoader.js"></script>
-<script src="https://cdn.jsdelivr.net/npm/three@0.160.0/examples/js/geometries/TextGeometry.js"></script>
+/* ===== Theme (auto + toggle) ===== */
+const mediaDark=window.matchMedia('(prefers-color-scheme: dark)');
+const applyTheme=()=>{document.documentElement.dataset.theme = mediaDark.matches? 'dark':'light';};
+applyTheme(); mediaDark.addEventListener?.('change',applyTheme);
+$('#themeBtn').onclick=()=>{const cur=document.documentElement.dataset.theme;document.documentElement.dataset.theme=cur==='dark'?'light':'dark'}
 
-<script>
-const $=id=>document.getElementById(id),pad=n=>String(n).padStart(2,"0");
+/* ===== Online status ===== */
+function updateConn(){ $('#conn').textContent=navigator.onLine? 'Online':'Offline'; }
+window.addEventListener('online',updateConn);window.addEventListener('offline',updateConn);updateConn();
 
-/* === Theme toggle === */
-$("themeBtn").onclick=()=>{document.body.dataset.theme=document.body.dataset.theme==="dark"?"light":"dark";};
+/* ===== Card hover glow follow ===== */
+$$('.card').forEach(c=>c.addEventListener('pointermove',e=>{const r=c.getBoundingClientRect();c.style.setProperty('--mx',((e.clientX-r.left)/r.width*100)+'%');c.style.setProperty('--my',((e.clientY-r.top)/r.height*100)+'%')}));
 
-/* === CLOCK Globe === */
+/* ===== Jam 3D + Digital ===== */
 let clockScene,clockRenderer,clockCam,clockHands={};
+function neonMat(color=0x00c2ff){return new THREE.MeshPhongMaterial({color,emissive:color,emissiveIntensity:.35,wireframe:true,transparent:true,opacity:.5});}
+function auroraMaterial(){return new THREE.ShaderMaterial({transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,uniforms:{time:{value:0}},vertexShader:`varying vec3 vPos;void main(){vPos=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`varying vec3 vPos;uniform float time;float noise(vec3 p){return fract(sin(dot(p,vec3(12.9898,78.233,37.719)))*43758.5453);}void main(){float n=noise(vPos*1.2+time);float a=smoothstep(0.4,1.0,n);gl_FragColor=vec4(0.0,0.8,1.0,a*0.25);}`})}
 function initThreeClock(){
-  const el=$("threeClock"),w=el.clientWidth,h=el.clientHeight;
-  clockScene=new THREE.Scene();clockCam=new THREE.PerspectiveCamera(45,w/h,.1,100);clockCam.position.z=7;
-  clockRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true});clockRenderer.setSize(w,h);el.innerHTML="";el.appendChild(clockRenderer.domElement);
-
-  const globe=new THREE.Mesh(new THREE.SphereGeometry(2.3,32,32),new THREE.MeshPhongMaterial({color:0x00c2ff,wireframe:true,opacity:0.4}));clockScene.add(globe);
-  new THREE.FontLoader().load("https://threejs.org/examples/fonts/helvetiker_regular.typeface.json",f=>{
-    for(let i=1;i<=12;i++){const g=new THREE.TextGeometry(i.toString(),{font:f,size:.35,height:.05});const m=new THREE.MeshBasicMaterial({color:0xffffff});const mesh=new THREE.Mesh(g,m);const a=i/12*Math.PI*2;mesh.position.set(Math.cos(a)*2,Math.sin(a)*2,.2);mesh.lookAt(0,0,0);clockScene.add(mesh);}
-  });
-  clockHands.hour=new THREE.Mesh(new THREE.BoxGeometry(.1,1.2,.1),new THREE.MeshBasicMaterial({color:0xffffff}));
-  clockHands.min=new THREE.Mesh(new THREE.BoxGeometry(.07,1.8,.07),new THREE.MeshBasicMaterial({color:0x00ffc6}));
-  clockHands.sec=new THREE.Mesh(new THREE.BoxGeometry(.04,2.2,.04),new THREE.MeshBasicMaterial({color:0xff5d7a}));
-  [clockHands.hour,clockHands.min,clockHands.sec].forEach(m=>{m.position.z=.2;clockScene.add(m)});
-  clockScene.add(new THREE.AmbientLight(0x334466,1.2));
-  (function anim(){requestAnimationFrame(anim);globe.rotation.y+=.002;clockRenderer.render(clockScene,clockCam)})(); }
-function updateThreeClock(n){const s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=n.getHours()%12+m/60;clockHands.sec.rotation.z=-s*2*Math.PI/60;clockHands.min.rotation.z=-m*2*Math.PI/60;clockHands.hour.rotation.z=-h*2*Math.PI/12;}
-function tick(){const n=new Date();$("digitalClock").textContent=`${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;$("tzBadge").textContent=Intl.DateTimeFormat().resolvedOptions().timeZone;$("tzName").textContent=Intl.DateTimeFormat().resolvedOptions().timeZone;const o=-n.getTimezoneOffset(),sign=o>=0?"+":"-",hh=Math.floor(Math.abs(o)/60),mm=Math.abs(o)%60;$("tzOffset").textContent=`${sign}${pad(hh)}:${pad(mm)}`;$("todayStr").textContent=n.toDateString();updateThreeClock(n);requestAnimationFrame(tick);}
-function renderCalendar(){const n=new Date(),y=n.getFullYear(),m=n.getMonth(),f=new Date(y,m,1).getDay(),d=new Date(y,m+1,0).getDate();let html='<table style="width:100%;font-size:13px;text-align:center"><tr>'; "SMTWTFS".split("").forEach(x=>html+=`<th>${x}</th>`);html+="</tr><tr>";for(let i=0;i<f;i++)html+="<td></td>";for(let day=1;day<=d;day++){const t=day===n.getDate();html+=`<td style="padding:4px;${t?'background:linear-gradient(90deg,var(--accent2),var(--accent));color:#001;border-radius:6px;':''}">${day}</td>`;if((day+f)%7===0&&day!==d)html+="</tr><tr>"}html+="</tr></table>";$("calendar").innerHTML=html;}
-
-/* === Globe IP === */
-let globeScene,globeRenderer,globeCam,globeMarker;
-function initGlobe(){const el=$("threeGlobe"),w=el.clientWidth,h=el.clientHeight;globeScene=new THREE.Scene();globeCam=new THREE.PerspectiveCamera(45,w/h,.1,100);globeCam.position.z=4;globeRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true});globeRenderer.setSize(w,h);el.innerHTML="";el.appendChild(globeRenderer.domElement);const s=new THREE.Mesh(new THREE.SphereGeometry(1.3,32,32),new THREE.MeshPhongMaterial({color:0x00c2ff,wireframe:true}));globeScene.add(s);globeMarker=new THREE.Mesh(new THREE.SphereGeometry(.08,16,16),new THREE.MeshBasicMaterial({color:0xff5d7a}));globeScene.add(globeMarker);(function anim(){requestAnimationFrame(anim);s.rotation.y+=.002;globeMarker.material.opacity=Math.abs(Math.sin(Date.now()/500));globeMarker.material.transparent=true;globeRenderer.render(globeScene,globeCam)})(); }
-function placeGlobeMarker(g){if(!globeMarker)return;const lat=g.lat*Math.PI/180,lon=g.lon*Math.PI/180,r=1.3;globeMarker.position.set(r*Math.cos(lat)*Math.sin(lon),r*Math.sin(lat),r*Math.cos(lat)*Math.cos(lon));}
-async function fetchIP(){try{const r=await fetch("https://ipapi.co/json/");const j=await r.json();$("ip").textContent=j.ip;$("isp").textContent=j.org||"";$("loc").textContent=`${j.city}, ${j.country_name}`;placeGlobeMarker({lat:j.latitude,lon:j.longitude});}catch(e){$("ip").textContent="Err";}}
-$("btnIp").onclick=fetchIP;
-
-/* === Charts === */
-const fpsArr=[],cpuArr=[],batArr=[];let fpsChart,cpuChart,batChart;
-function push(arr,v){arr.push(v);if(arr.length>120)arr.shift();}
-function gradient(ctx,color1,color2){const g=ctx.createLinearGradient(0,0,0,220);g.addColorStop(0,color1);g.addColorStop(1,color2);return g;}
-function initCharts(){
-  fpsChart=new Chart($("fpsChart"),{type:"line",data:{labels:Array(120).fill(""),datasets:[{label:"FPS",data:fpsArr,borderColor:"#00ffc6",backgroundColor:"rgba(0,255,198,.2)",fill:true,tension:.25}]},options:{animation:false,scales:{y:{beginAtZero:true,max:120}}}});
-  cpuChart=new Chart($("cpuChart"),{type:"line",data:{labels:Array(120).fill(""),datasets:[{label:"CPU proxy",data:cpuArr,borderColor:"#00c2ff",backgroundColor:"rgba(0,194,255,.2)",fill:true,tension:.25}]},options:{animation:false}});
-  batChart=new Chart($("batChart"),{type:"line",data:{labels:Array(120).fill(""),datasets:[{label:"Battery %",data:batArr,borderColor:"#6ef37b",backgroundColor:"rgba(110,243,123,.2)",fill:true,tension:.25}]},options:{animation:false,scales:{y:{beginAtZero:true,max:100}}}});
+  const el=$('#threeClock'),w=el.clientWidth,h=el.clientHeight;
+  clockScene=new THREE.Scene();
+  clockCam=new THREE.PerspectiveCamera(45,w/h,.1,100);clockCam.position.set(0,0,7);
+  clockRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true});clockRenderer.setSize(w,h);el.innerHTML='';el.appendChild(clockRenderer.domElement);
+  const dial=new THREE.Mesh(new THREE.CylinderGeometry(2.3,2.3,.15,64),neonMat(0x00c2ff));dial.rotation.x=Math.PI/2;clockScene.add(dial);
+  const aurora=new THREE.Mesh(new THREE.SphereGeometry(2.35,48,48),auroraMaterial());clockScene.add(aurora);
+  // hour markers
+  new THREE.FontLoader().load('https://threejs.org/examples/fonts/helvetiker_regular.typeface.json',f=>{for(let i=1;i<=12;i++){const g=new THREE.TextGeometry(i.toString(),{font:f,size:.35,height:.02});const m=new THREE.MeshBasicMaterial({color:0xffffff});const mesh=new THREE.Mesh(g,m);const a=i/12*Math.PI*2;mesh.position.set(Math.cos(a)*1.8,Math.sin(a)*1.8,.2);mesh.lookAt(0,0,0);clockScene.add(mesh);}});
+  // hands
+  clockHands.hour=new THREE.Mesh(new THREE.BoxGeometry(.12,1.2,.1),new THREE.MeshBasicMaterial({color:0xffffff}));
+  clockHands.min=new THREE.Mesh(new THREE.BoxGeometry(.08,1.8,.08),new THREE.MeshBasicMaterial({color:0x00ffc6}));
+  clockHands.sec=new THREE.Mesh(new THREE.BoxGeometry(.04,2.1,.04),new THREE.MeshBasicMaterial({color:0xff5d7a}));
+  [clockHands.hour,clockHands.min,clockHands.sec].forEach(m=>{m.position.z=.22;clockScene.add(m)});
+  clockScene.add(new THREE.AmbientLight(0x334466,1.4));
+  (function anim(){requestAnimationFrame(anim);aurora.material.uniforms.time.value=performance.now()/2000;clockRenderer.render(clockScene,clockCam)})();
 }
-let frames=0,last=performance.now();function loopFPS(now){frames++;if(now-last>=1000){push(fpsArr,frames);frames=0;last=now;fpsChart.update("none");}requestAnimationFrame(loopFPS);}
-setInterval(()=>{const t0=performance.now();for(let i=0;i<100000;i++){Math.sqrt(i);}push(cpuArr,(performance.now()-t0).toFixed(2));cpuChart.update("none");},1000);
-navigator.getBattery?.().then(b=>{const paint=()=>{push(batArr,Math.round(b.level*100));batChart.update("none");};b.addEventListener("levelchange",paint);paint();});
+function updateThreeClock(n){const s=n.getSeconds()+n.getMilliseconds()/1000,m=n.getMinutes()+s/60,h=n.getHours()%12+m/60;clockHands.sec.rotation.z=-s*2*Math.PI/60;clockHands.min.rotation.z=-m*2*Math.PI/60;clockHands.hour.rotation.z=-h*2*Math.PI/12;}
+function tick(){const n=new Date();$('#digitalClock').textContent=`${pad(n.getHours())}:${pad(n.getMinutes())}:${pad(n.getSeconds())}`;const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;$('#tzBadge').textContent=tz;$('#tzName').textContent=tz;const o=-n.getTimezoneOffset(),sign=o>=0?'+':'-',hh=Math.floor(Math.abs(o)/60),mm=Math.abs(o)%60;$('#tzOffset').textContent=`${sign}${pad(hh)}:${pad(mm)}`;updateThreeClock(n);requestAnimationFrame(tick);} 
 
-/* === Neon Icons === */
-function neonScene(elId,builder){const el=$(elId),w=el.clientWidth,h=el.clientHeight;const scene=new THREE.Scene();const cam=new THREE.PerspectiveCamera(45,w/h,.1,100);cam.position.z=6;const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setSize(w,h);el.innerHTML="";el.appendChild(renderer.domElement);const obj=builder();scene.add(obj);scene.add(new THREE.AmbientLight(0x224455,1.5));(function anim(){requestAnimationFrame(anim);obj.rotation.y+=.01;obj.scale.setScalar(1+0.05*Math.sin(Date.now()/400));renderer.render(scene,cam)})();}
-function buildWebIcon(){return new THREE.Mesh(new THREE.TorusKnotGeometry(1,.3,120,16),new THREE.MeshPhongMaterial({color:0x00c2ff,wireframe:true}));}
-function buildDeviceIcon(){return new THREE.Mesh(new THREE.BoxGeometry(2.2,4.2,.2),new THREE.MeshPhongMaterial({color:0x00ffc6,wireframe:true}));}
+/* ===== Kalender ===== */
+let calDate=new Date();
+function monthTitle(d){return d.toLocaleString('id-ID',{month:'long',year:'numeric'})}
+function renderCalendar(){const n=new Date(calDate),y=n.getFullYear(),m=n.getMonth();$('#calTitle').textContent=monthTitle(n);const first=new Date(y,m,1).getDay();const days=new Date(y,m+1,0).getDate();let html='<table style="width:100%;font-size:13px;text-align:center;border-collapse:separate;border-spacing:6px 6px"><thead><tr>'; 'SMTWTFS'.split('').forEach(x=>html+=`<th style="color:var(--muted)">${x}</th>`);html+='</tr></thead><tbody><tr>';for(let i=0;i<first;i++) html+='<td></td>';const today=new Date();for(let d=1;d<=days;d++){const isToday=d===today.getDate()&&m===today.getMonth()&&y===today.getFullYear();const key=`evt-${y}-${m+1}-${d}`;const note=localStorage.getItem(key)||'';html+=`<td data-day="${d}" style="padding:6px;border-radius:8px;${isToday?'background:linear-gradient(90deg,var(--accent2),var(--accent));color:#001;':''};border:1px dashed rgba(255,255,255,.08);cursor:pointer" title="${note?('Catatan: '+note):'Klik untuk tambah catatan'}">${d}${note? ' ✦':''}</td>`;if((d+first)%7===0&&d!==days) html+='</tr><tr>'}html+='</tr></tbody></table>';$('#calendar').innerHTML=html;$('#calendar').classList.add('dissolve');setTimeout(()=>$('#calendar').classList.remove('dissolve'),450);$('#calendar').querySelectorAll('td[data-day]').forEach(td=>td.addEventListener('click',()=>{const d=+td.dataset.day;const key=`evt-${y}-${m+1}-${d}`;const prev=localStorage.getItem(key)||'';const val=prompt(`Catatan untuk ${d} ${monthTitle(n)}:`,prev||'');if(val===null) return; if(val.trim()===''){localStorage.removeItem(key);} else {localStorage.setItem(key,val.trim());}renderCalendar();}))}
+$('#prevMon').onclick=()=>{calDate.setMonth(calDate.getMonth()-1);renderCalendar();}
+$('#nextMon').onclick=()=>{calDate.setMonth(calDate.getMonth()+1);renderCalendar();}
 
-/* === Tabs === */
-document.querySelectorAll(".tab").forEach(t=>t.onclick=()=>{document.querySelectorAll(".tab").forEach(x=>x.classList.remove("active"));t.classList.add("active");$("tab-charts").style.display=t.dataset.tab==="charts"?"":"none";$("tab-holo").style.display=t.dataset.tab==="holo"?"":"none";});
+/* ===== Globe + Pin ===== */
+let globeScene,globeRenderer,globeCam,globeMarker,glowPin;
+function atmosphereMaterial(){return new THREE.ShaderMaterial({side:THREE.BackSide,transparent:true,blending:THREE.AdditiveBlending,depthWrite:false,vertexShader:`varying vec3 vNormal;void main(){vNormal=normalize(normalMatrix*normal);gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`varying vec3 vNormal;void main(){float i=pow(0.6+dot(vNormal,vec3(0.0,0.0,1.0)),6.0);gl_FragColor=vec4(0.2,0.6,1.0,i*0.6);}`})}
+function initGlobe(){const el=$('#threeGlobe'),w=el.clientWidth,h=el.clientHeight;globeScene=new THREE.Scene();globeCam=new THREE.PerspectiveCamera(45,w/h,.1,100);globeCam.position.z=3.8;globeRenderer=new THREE.WebGLRenderer({antialias:true,alpha:true});globeRenderer.setSize(w,h);el.innerHTML='';el.appendChild(globeRenderer.domElement);const loader=new THREE.TextureLoader();const tex=loader.load('https://threejs.org/examples/textures/land_ocean_ice_cloud_2048.jpg');const earth=new THREE.Mesh(new THREE.SphereGeometry(1.25,64,64),new THREE.MeshPhongMaterial({map:tex,shininess:5}));globeScene.add(earth);const atm=new THREE.Mesh(new THREE.SphereGeometry(1.28,64,64),atmosphereMaterial());globeScene.add(atm);glowPin=new THREE.Mesh(new THREE.ConeGeometry(.12,.4,16),new THREE.MeshBasicMaterial({color:0x00ffc6,wireframe:true}));glowPin.rotation.x=Math.PI;globeMarker=new THREE.Mesh(new THREE.SphereGeometry(.06,16,16),new THREE.MeshBasicMaterial({color:0xff5d7a}));globeScene.add(glowPin);globeScene.add(globeMarker);globeScene.add(new THREE.AmbientLight(0x335577,1.4));const dir=new THREE.DirectionalLight(0xffffff,0.6);dir.position.set(5,2,2);globeScene.add(dir);(function anim(){requestAnimationFrame(anim);earth.rotation.y+=.002;glowPin.material.opacity=Math.abs(Math.sin(Date.now()/600));glowPin.material.transparent=true;globeMarker.material.opacity=glowPin.material.opacity;globeRenderer.render(globeScene,globeCam)})();}
+function placeGlobeMarker(g){if(!globeMarker||!glowPin)return;const lat=g.lat*Math.PI/180,lon=g.lon*Math.PI/180,r=1.25;const x=r*Math.cos(lat)*Math.sin(lon),y=r*Math.sin(lat),z=r*Math.cos(lat)*Math.cos(lon);globeMarker.position.set(x,y,z);glowPin.position.set(x*1.05,y*1.05,z*1.05);}
 
-/* === INIT === */
-function init(){initThreeClock();initGlobe();initCharts();neonScene("threeWeb",buildWebIcon);neonScene("threeDevice",buildDeviceIcon);tick();renderCalendar();fetchIP();requestAnimationFrame(loopFPS);}
+/* ===== IP Fetch ===== */
+async function fetchIP(){try{const r=await fetch('https://ipapi.co/json/');if(!r.ok)throw new Error('HTTP '+r.status);const j=await r.json();$('#ip').textContent=j.ip;$('#isp').textContent=j.org||'';$('#loc').textContent=`${j.city}, ${j.country_name}`;placeGlobeMarker({lat:j.latitude,lon:j.longitude});aiNod();toast('IP updated ✓')}catch(e){$('#ip').textContent='Err';aiShake();toast('Gagal ambil IP')}}
+$('#btnIp').onclick=()=>fetchIP();
+$('#btnCopy').onclick=()=>{navigator.clipboard.writeText(`IP: ${$('#ip').textContent} | ISP: ${$('#isp').textContent} | ${$('#loc').textContent}`);toast('Disalin ke clipboard')}
+
+/* ===== Device Detect ===== */
+function detectDevice(){const ua=navigator.userAgent||'';const uad=navigator.userAgentData;const isMobile=/Android|iPhone|iPad|iPod|Mobile/i.test(ua);const type=isMobile?'HP/Tablet':'Laptop/PC';const platform=navigator.platform||navigator.oscpu||'—';let brand='Tidak diketahui';const brandMap=['Samsung','Xiaomi','OPPO','Vivo','Realme','OnePlus','Huawei','Infinix','Nokia','Sony','Apple','Asus','Lenovo','Acer','HP'];for(const b of brandMap){if(new RegExp(b,'i').test(ua)){brand=b;break}}const cores=navigator.hardwareConcurrency||'—';const mem=(navigator.deviceMemory||'—');$('#devType').textContent=type;$('#devOS').textContent=platform;$('#devBrand').textContent=brand;$('#devCores').textContent=cores;$('#devMem').textContent=mem;$('#ua').textContent=ua;}
+
+/* ===== Performance quick score ===== */
+async function perfScore(){const t0=performance.now();for(let k=0;k<2;k++){for(let i=0;i<200000;i++){Math.sqrt(i)}}const ms=(performance.now()-t0);const cores=navigator.hardwareConcurrency||1;const score=Math.round(10000/(ms/cores));$('#perfScore').textContent=`${score} pts (↓ms: ${ms.toFixed(0)})`}
+
+/* ===== Sensors ===== */
+let sensorStarted=false;let orientHandler,accel,gyro;
+function startSensors(){if(sensorStarted)return;try{if('DeviceOrientationEvent' in window){orientHandler=(e)=>{$('#orient').textContent=`α:${(e.alpha||0).toFixed(0)} β:${(e.beta||0).toFixed(0)} γ:${(e.gamma||0).toFixed(0)}`};window.addEventListener('deviceorientation',orientHandler)}if('Accelerometer' in window){accel=new Accelerometer({frequency:30});accel.addEventListener('reading',()=>{$('#accel').textContent=`x:${accel.x.toFixed(2)} y:${accel.y.toFixed(2)} z:${accel.z.toFixed(2)}`});accel.start()} else if('DeviceMotionEvent' in window){window.addEventListener('devicemotion',e=>{$('#accel').textContent=`ax:${(e.acceleration?.x||0).toFixed(2)} ay:${(e.acceleration?.y||0).toFixed(2)} az:${(e.acceleration?.z||0).toFixed(2)}`})}if('Gyroscope' in window){gyro=new Gyroscope({frequency:30});gyro.addEventListener('reading',()=>{$('#gyro').textContent=`x:${gyro.x.toFixed(2)} y:${gyro.y.toFixed(2)} z:${gyro.z.toFixed(2)}`});gyro.start()}sensorStarted=true;aiNod();toast('Sensor aktif')}catch(err){aiShake();toast('Sensor tidak tersedia / izin ditolak')}}
+$('#btnSensor').onclick=startSensors;
+
+/* ===== Fingerprint (local, hash) ===== */
+async function sha256(str){const enc=new TextEncoder().encode(str);const buf=await crypto.subtle.digest('SHA-256',enc);return Array.from(new Uint8Array(buf)).map(b=>b.toString(16).padStart(2,'0')).join('')}
+async function makeFingerprint(){const tz=Intl.DateTimeFormat().resolvedOptions().timeZone;const lang=navigator.language;const res=`${screen.width}x${screen.height}@${window.devicePixelRatio}`;const ua=navigator.userAgent;const cores=navigator.hardwareConcurrency;const mem=navigator.deviceMemory;const colorDepth=screen.colorDepth;const platform=navigator.platform;const str=[tz,lang,res,ua,cores,mem,colorDepth,platform].join('|');const hash=await sha256(str);$('#fp').textContent=hash}
+$('#btnCopyFP').onclick=()=>{navigator.clipboard.writeText($('#fp').textContent);toast('Fingerprint disalin')}
+
+/* ===== Charts ===== */
+const fpsArr=[],cpuArr=[],batArr=[],camArr=[];let fpsChart,cpuChart,batChart,camChart;
+function push(arr,v){arr.push(v);if(arr.length>120)arr.shift();}
+function initCharts(){
+  fpsChart=new Chart($('#fpsChart'),{type:'line',data:{labels:Array(120).fill(''),datasets:[{label:'FPS',data:fpsArr,borderWidth:2,pointRadius:0,fill:true}]},options:{animation:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:120}}}});
+  cpuChart=new Chart($('#cpuChart'),{type:'line',data:{labels:Array(120).fill(''),datasets:[{label:'CPU proxy (ms)',data:cpuArr,borderWidth:2,pointRadius:0,fill:true}]},options:{animation:false,plugins:{legend:{display:false}}}});
+  batChart=new Chart($('#batChart'),{type:'line',data:{labels:Array(120).fill(''),datasets:[{label:'Battery %',data:batArr,borderWidth:2,pointRadius:0,fill:true}]},options:{animation:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:100}}}});
+  camChart=new Chart($('#camChart'),{type:'line',data:{labels:Array(120).fill(''),datasets:[{label:'Brightness',data:camArr,borderWidth:2,pointRadius:0,fill:true}]},options:{animation:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,max:255}}}});
+  // dynamic gradient
+  [fpsChart,cpuChart,batChart,camChart].forEach(ch=>{const ctx=ch.ctx;const set=ch.data.datasets[0];set.borderColor='#00e7ff';const g=ctx.createLinearGradient(0,0,0,220);g.addColorStop(0,'rgba(0,194,255,.35)');g.addColorStop(1,'rgba(0,255,198,.05)');set.backgroundColor=g});
+}
+let frames=0,last=performance.now();function loopFPS(now){frames++;if(now-last>=1000){push(fpsArr,frames);frames=0;last=now;fpsChart.update('none');}requestAnimationFrame(loopFPS);} 
+setInterval(()=>{const t0=performance.now();for(let i=0;i<100000;i++){Math.sqrt(i);}push(cpuArr,(performance.now()-t0));cpuChart.update('none');},1000);
+if(navigator.getBattery){navigator.getBattery().then(b=>{const paint=()=>{push(batArr,Math.round(b.level*100));batChart.update('none');};b.addEventListener('levelchange',paint);paint();});}
+
+/* ===== Kamera (grafik brightness) ===== */
+let camStream=null;const video=$('#cam');const camCv=$('#camHidden');const camCtx=camCv.getContext('2d');
+async function startCam(){try{camStream=await navigator.mediaDevices.getUserMedia({video:true,audio:false});video.srcObject=camStream;aiNod();toast('Kamera aktif');renderCam()}catch(err){aiShake();toast('Tidak bisa akses kamera')}}
+function stopCam(){if(!camStream)return;camStream.getTracks().forEach(t=>t.stop());video.srcObject=null;toast('Kamera dimatikan')}
+function renderCam(){if(!camStream) return;camCtx.drawImage(video,0,0,camCv.width,camCv.height);const img=camCtx.getImageData(0,0,camCv.width,camCv.height).data;let sum=0;for(let i=0;i<img.length;i+=4){sum+= (img[i]+img[i+1]+img[i+2])/3}const avg=sum/(img.length/4);push(camArr,avg);camChart.update('none');requestAnimationFrame(renderCam)}
+$('#btnCam').onclick=startCam;$('#btnCamStop').onclick=stopCam;
+
+/* ===== Neon Icons (procedural) ===== */
+function neonScene(elSel,builder){const el=$(elSel),w=el.clientWidth,h=el.clientHeight;const scene=new THREE.Scene();const cam=new THREE.PerspectiveCamera(45,w/h,.1,100);cam.position.z=6;const renderer=new THREE.WebGLRenderer({antialias:true,alpha:true});renderer.setSize(w,h);el.innerHTML='';el.appendChild(renderer.domElement);const obj=builder();scene.add(obj);scene.add(new THREE.AmbientLight(0x224455,1.5));(function anim(){requestAnimationFrame(anim);obj.rotation.y+=.01;obj.rotation.x+=.005;obj.scale.setScalar(1+0.05*Math.sin(Date.now()/400));renderer.render(scene,cam)})();}
+function buildWebIcon(){return new THREE.Mesh(new THREE.TorusKnotGeometry(1,.32,220,24),new THREE.ShaderMaterial({transparent:true,blending:THREE.AdditiveBlending,uniforms:{time:{value:0}},vertexShader:`varying vec3 vP;void main(){vP=position;gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`varying vec3 vP;void main(){float d=length(vP);float glow=smoothstep(1.3,0.2,d);gl_FragColor=vec4(0.0,1.0,0.8,glow*.8);}`}))}
+function buildDeviceIcon(){return new THREE.Mesh(new THREE.IcosahedronGeometry(1.6,1),new THREE.ShaderMaterial({transparent:true,wireframe:true,uniforms:{},vertexShader:`void main(){gl_Position=projectionMatrix*modelViewMatrix*vec4(position,1.0);}`,fragmentShader:`void main(){gl_FragColor=vec4(0.0,1.0,1.0,0.6);}`}))}
+
+/* ===== Tabs ===== */
+$$('.tab').forEach(t=>t.addEventListener('click',()=>{$$('.tab').forEach(x=>x.classList.remove('active'));t.classList.add('active');const v=t.dataset.tab;$('#tab-charts').style.display=v==='charts'?'':'none';$('#tab-holo').style.display=v==='holo'?'':'none';$('#tab-camera').style.display=v==='camera'?'':'none';$('#tab-charts').classList.add('dissolve');$('#tab-holo').classList.add('dissolve');$('#tab-camera').classList.add('dissolve');setTimeout(()=>{$('#tab-charts').classList.remove('dissolve');$('#tab-holo').classList.remove('dissolve');$('#tab-camera').classList.remove('dissolve');},450)}));
+
+/* ===== Export JSON ===== */
+function exportJSON(){const data={
+  tz: Intl.DateTimeFormat().resolvedOptions().timeZone,
+  lang: navigator.language,
+  screen: {w:screen.width,h:screen.height,dpr:devicePixelRatio},
+  ua: navigator.userAgent,
+  cores: navigator.hardwareConcurrency,
+  mem: navigator.deviceMemory,
+  platform: navigator.platform,
+  charts:{fps:fpsArr, cpuMs:cpuArr, battery:batArr, camera:camArr}
+};const blob=new Blob([JSON.stringify(data,null,2)],{type:'application/json'});const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download='diagnostik.json';a.click();URL.revokeObjectURL(url);}
+$('#btnExport').onclick=exportJSON;
+
+/* ===== INIT ===== */
+function init(){
+  initThreeClock();initGlobe();initCharts();neonScene('#threeWeb',buildWebIcon);neonScene('#threeDevice',buildDeviceIcon);tick();renderCalendar();fetchIP();detectDevice();perfScore();makeFingerprint();requestAnimationFrame(loopFPS);
+  // resize simple reinit
+  window.addEventListener('resize',()=>{ $('#threeClock').innerHTML='';initThreeClock(); $('#threeGlobe').innerHTML='';initGlobe(); $('#threeWeb').innerHTML='';neonScene('#threeWeb',buildWebIcon); $('#threeDevice').innerHTML='';neonScene('#threeDevice',buildDeviceIcon); });
+}
 window.onload=init;
-</script>
-</body>
+</script></body>
 </html>
